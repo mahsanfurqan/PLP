@@ -16,6 +16,8 @@ import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/otp/bindings/otp_binding.dart';
 import '../modules/otp/views/otp_view.dart';
+import '../modules/pendaftaranplp/bindings/pendaftaranplp_binding.dart';
+import '../modules/pendaftaranplp/views/pendaftaranplp_view.dart';
 import '../modules/selengkapnya/bindings/selengkapnya_binding.dart';
 import '../modules/selengkapnya/views/selengkapnya_view.dart';
 
@@ -71,6 +73,11 @@ class AppPages {
       name: _Paths.ISILOGBOOK,
       page: () => const IsilogbookView(),
       binding: IsilogbookBinding(),
+    ),
+    GetPage(
+      name: _Paths.PENDAFTARANPLP,
+      page: () => const PendaftaranplpView(),
+      binding: PendaftaranplpBinding(),
     ),
   ];
 }

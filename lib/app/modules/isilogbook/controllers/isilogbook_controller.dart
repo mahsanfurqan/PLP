@@ -1,9 +1,13 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:get_storage/get_storage.dart';
 
 class IsilogbookController extends GetxController {
   var logbookList = <Map<String, dynamic>>[].obs;
-
   var isStartButtonPressed = false.obs;
+  final box = GetStorage();
 
   @override
   void onInit() {
@@ -12,43 +16,50 @@ class IsilogbookController extends GetxController {
   }
 
   void goToTambahLogbook() {
-    // Navigasi ke halaman tambah logbook
-    // Contoh: Get.toNamed('/tambah-logbook');
-    print("Navigasi ke halaman tambah logbook");
+    Get.toNamed('/tambah-logbook');
   }
 
   Future<void> fetchLogbookData() async {
-    logbookList.value = [
-      {
-        'id': '001',
-        'durasi': '8 jam',
-        'uraian': 'Forem ipsum dolor sit amet forem ipsum dolor sit amet..',
-        'tanggal': '13 - 12 - 2024',
-      },
-      {
-        'id': '002',
-        'durasi': '8 jam',
-        'uraian': 'Forem ipsum dolor sit amet forem ipsum dolor sit amet..',
-        'tanggal': '14 - 12 - 2024',
-      },
-      {
-        'id': '003',
-        'durasi': '7 jam',
-        'uraian': 'Dolor sit amet consectetuer adipiscing elit..',
-        'tanggal': '15 - 12 - 2024',
-      },
-      {
-        'id': '004',
-        'durasi': '6 jam',
-        'uraian': 'Sed diam nonummy nibh euismod tincidunt ut laoreet dolore..',
-        'tanggal': '16 - 12 - 2024',
-      },
-      {
-        'id': '005',
-        'durasi': '8 jam',
-        'uraian': 'Ut wisi enim ad minim veniam quis nostrud exerci tation..',
-        'tanggal': '17 - 12 - 2024',
-      },
-    ];
+    final token = box.read('token');
+    final url = Uri.parse('http://127.0.0.1:8000/api/logbooks');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        logbookList.value =
+            data.map((item) {
+              final mulai = DateFormat("HH:mm:ss").parse(item['mulai']);
+              final selesai = DateFormat("HH:mm:ss").parse(item['selesai']);
+              final durasiJam = selesai.difference(mulai).inHours;
+              final durasiMenit = selesai.difference(mulai).inMinutes % 60;
+              final durasi =
+                  durasiMenit == 0
+                      ? "$durasiJam jam"
+                      : "$durasiJam jam $durasiMenit menit";
+
+              return {
+                'id': item['id'].toString(),
+                'durasi': durasi,
+                'uraian': item['keterangan'] ?? '',
+                'tanggal': item['tanggal'],
+                'mulai': item['mulai'],
+                'selesai': item['selesai'],
+                'dokumentasi': item['dokumentasi'],
+              };
+            }).toList();
+      } else {
+        Get.snackbar("Error", "Gagal memuat data logbook");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Terjadi kesalahan: $e");
+    }
   }
 }

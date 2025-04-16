@@ -107,12 +107,12 @@ class MahasiswaPendaftaranSheet extends StatelessWidget {
               height: 28,
             ),
             title: const Text(
-              "Registrasi PLP",
+              "Pendaftaran PLP",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             onTap: () {
               Navigator.pop(context);
-              Get.toNamed('/pendaftaran/registrasi');
+              Get.toNamed('/pendaftaranplp');
             },
           ),
           const Divider(),
