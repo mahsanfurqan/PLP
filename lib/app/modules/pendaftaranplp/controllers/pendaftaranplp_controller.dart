@@ -1,10 +1,7 @@
-// pendaftaranplp_controller.dart
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart' as http;
 import 'package:plp/app/routes/app_pages.dart';
+import 'package:plp/service/pendaftaran_plp_service.dart';
 
 class PendaftaranplpController extends GetxController {
   final keminatanIdController = TextEditingController();
@@ -15,45 +12,66 @@ class PendaftaranplpController extends GetxController {
 
   final isSubmitting = false.obs;
 
-  final _box = GetStorage();
-  final String baseUrl = "http://10.0.2.2:8000/api";
+  // ✅ Tambahan untuk dropdown data
+  var keminatanList = <Map<String, dynamic>>[].obs;
+  var smkList = <Map<String, dynamic>>[].obs;
+
+  var selectedKeminatanId = RxnInt();
+  var selectedSmk1Id = RxnInt();
+  var selectedSmk2Id = RxnInt();
+  var selectedNilaiPlp1 = ''.obs;
+  var selectedNilaiMicro = ''.obs;
+
+  final List<String> nilaiOptions = [
+    'A',
+    'B+',
+    'B',
+    'C+',
+    'C',
+    'D',
+    'E',
+    'Belum',
+  ];
 
   void submitPendaftaran() async {
     isSubmitting.value = true;
 
-    final token = _box.read("token");
-    if (token == null) {
-      Get.snackbar("Error", "Token tidak ditemukan, silakan login ulang.");
-      isSubmitting.value = false;
-      return;
-    }
+    try {
+      final pendaftaran = await PendaftaranPlpService.submitPendaftaranPlp(
+        keminatanId: selectedKeminatanId.value ?? 0,
+        nilaiPlp1: selectedNilaiPlp1.value,
+        nilaiMicroTeaching: selectedNilaiMicro.value,
+        pilihanSmk1: selectedSmk1Id.value ?? 0,
+        pilihanSmk2: selectedSmk2Id.value ?? 0,
+      );
 
-    final response = await http.post(
-      Uri.parse("$baseUrl/pendaftaran-plp"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({
-        "keminatan_id": int.tryParse(keminatanIdController.text),
-        "nilai_plp_1": nilaiPlp1Controller.text,
-        "nilai_micro_teaching": nilaiMicroController.text,
-        "pilihan_smk_1": int.tryParse(pilihanSmk1Controller.text),
-        "pilihan_smk_2": int.tryParse(pilihanSmk2Controller.text),
-      }),
-    );
-
-    isSubmitting.value = false;
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      Get.snackbar("Sukses", data["message"] ?? "Pendaftaran berhasil");
+      Get.snackbar(
+        "Sukses",
+        "Pendaftaran berhasil dengan ID ${pendaftaran.id}",
+      );
       Get.offAllNamed(Routes.HOME);
-    } else {
-      final error = jsonDecode(response.body);
-      Get.snackbar("Gagal", error["message"] ?? "Terjadi kesalahan");
+    } catch (e) {
+      Get.snackbar("Gagal", e.toString());
+    } finally {
+      isSubmitting.value = false;
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDummyDropdowns(); // bisa diganti fetch dari API
+  }
+
+  void fetchDummyDropdowns() {
+    keminatanList.value = [
+      {'id': 1, 'nama': 'Keminatan A'},
+      {'id': 2, 'nama': 'Keminatan B'},
+    ];
+    smkList.value = [
+      {'id': 101, 'nama': 'SMK Negeri 1'},
+      {'id': 102, 'nama': 'SMK Negeri 2'},
+    ];
   }
 
   @override
