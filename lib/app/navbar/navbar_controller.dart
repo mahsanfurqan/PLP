@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plp/app/navbar/navbar_popup_helper.dart';
@@ -21,14 +20,13 @@ class NavbarController extends GetxController {
     selectedIndex.value = index;
 
     switch (index) {
-      case 1: // Logbook
+      case 1:
         _handleLogbook();
         break;
-      case 2: // Pendaftaran
+      case 2:
         _handlePendaftaran();
         break;
       default:
-        // tidak ada aksi untuk tab lainnya
         break;
     }
   }

@@ -19,7 +19,7 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
           () => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dropdown Keminatan
+              /// --- Keminatan ---
               const Text("Pilih Keminatan"),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
@@ -34,23 +34,15 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
                     controller.keminatanList.map((keminatan) {
                       return DropdownMenuItem<int>(
                         value: keminatan['id'],
-                        child: Text(keminatan['nama']),
+                        child: Text(keminatan['name']),
                       );
                     }).toList(),
-                onChanged: (value) {
-                  controller.selectedKeminatanId.value = value!;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                onChanged: (val) => controller.selectedKeminatanId.value = val!,
+                decoration: _dropdownDecoration(),
               ),
               const SizedBox(height: 12),
 
-              // Nilai PLP 1
+              /// --- Nilai PLP 1 ---
               const Text("Nilai PLP 1"),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -67,20 +59,12 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
                         child: Text(nilai),
                       );
                     }).toList(),
-                onChanged: (value) {
-                  controller.selectedNilaiPlp1.value = value!;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                onChanged: (val) => controller.selectedNilaiPlp1.value = val!,
+                decoration: _dropdownDecoration(),
               ),
               const SizedBox(height: 12),
 
-              // Nilai Micro Teaching
+              /// --- Nilai Micro Teaching ---
               const Text("Nilai Micro Teaching"),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -97,20 +81,12 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
                         child: Text(nilai),
                       );
                     }).toList(),
-                onChanged: (value) {
-                  controller.selectedNilaiMicro.value = value!;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                onChanged: (val) => controller.selectedNilaiMicro.value = val!,
+                decoration: _dropdownDecoration(),
               ),
               const SizedBox(height: 12),
 
-              // Dropdown Pilihan SMK 1
+              /// --- SMK 1 ---
               const Text("Pilihan SMK 1"),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
@@ -124,23 +100,15 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
                     controller.smkList.map((smk) {
                       return DropdownMenuItem<int>(
                         value: smk['id'],
-                        child: Text(smk['nama']),
+                        child: Text(smk['name']),
                       );
                     }).toList(),
-                onChanged: (value) {
-                  controller.selectedSmk1Id.value = value!;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                onChanged: (val) => controller.selectedSmk1Id.value = val!,
+                decoration: _dropdownDecoration(),
               ),
               const SizedBox(height: 12),
 
-              // Dropdown Pilihan SMK 2
+              /// --- SMK 2 ---
               const Text("Pilihan SMK 2"),
               const SizedBox(height: 8),
               DropdownButtonFormField<int>(
@@ -154,36 +122,35 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
                     controller.smkList.map((smk) {
                       return DropdownMenuItem<int>(
                         value: smk['id'],
-                        child: Text(smk['nama']),
+                        child: Text(smk['name']),
                       );
                     }).toList(),
-                onChanged: (value) {
-                  controller.selectedSmk2Id.value = value!;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                onChanged: (val) => controller.selectedSmk2Id.value = val!,
+                decoration: _dropdownDecoration(),
               ),
-
               const SizedBox(height: 24),
-              Obx(
-                () => CustomButton(
-                  text: "DAFTAR",
-                  color: Colors.blue,
-                  shadowColor: Colors.blue.shade700,
-                  onTap: controller.submitPendaftaran,
-                  isPressed: controller.isSubmitting.value,
-                ),
+
+              /// --- Tombol Daftar ---
+              CustomButton(
+                text: "DAFTAR",
+                color: Colors.blue,
+                shadowColor: Colors.blue.shade700,
+                onTap: controller.submitPendaftaran,
+                isPressed: controller.isSubmitting.value,
               ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: CustomNavbar(),
+    );
+  }
+
+  InputDecoration _dropdownDecoration() {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.grey[200],
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }
