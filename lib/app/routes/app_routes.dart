@@ -14,6 +14,7 @@ abstract class Routes {
   static const SELENGKAPNYA = _Paths.SELENGKAPNYA;
   static const ISILOGBOOK = _Paths.ISILOGBOOK;
   static const PENDAFTARANPLP = _Paths.PENDAFTARANPLP;
+  static const LIHATDATAPLP = _Paths.LIHATDATAPLP;
 }
 
 abstract class _Paths {
@@ -29,4 +30,5 @@ abstract class _Paths {
   static const SELENGKAPNYA = '/selengkapnya';
   static const ISILOGBOOK = '/isilogbook';
   static const PENDAFTARANPLP = '/pendaftaranplp';
+  static const LIHATDATAPLP = '/lihatdataplp';
 }

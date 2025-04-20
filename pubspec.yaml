@@ -39,6 +39,7 @@ dependencies:
   get_storage: ^2.1.1
   logger: ^2.0.2
   intl: ^0.20.2
+  collection: ^1.15.0
 
 
 dev_dependencies:

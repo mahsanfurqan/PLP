@@ -128,7 +128,7 @@ class MahasiswaPendaftaranSheet extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              Get.toNamed('/pendaftaran/kelengkapan');
+              Get.toNamed('/lihatdataplp');
             },
           ),
         ],

@@ -65,8 +65,16 @@ class PendaftaranplpController extends GetxController {
         sudahDaftar.value = false;
       }
     } catch (e) {
-      Get.log("🔴 Gagal cek status pendaftaran: $e", isError: true);
-      Get.snackbar("Error", "Gagal cek status pendaftaran.");
+      final errorMsg = e.toString();
+
+      // Deteksi jika error sebenarnya pesan sukses (pesan ambigu dari backend)
+      if (errorMsg.contains("berhasil dibuat")) {
+        Get.snackbar("Sukses", "Pendaftaran berhasil.");
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        print("Error during submitPendaftaran: $e");
+        Get.snackbar("Gagal", "Pendaftaran gagal:\n${errorMsg}");
+      }
     }
   }
 

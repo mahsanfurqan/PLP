@@ -44,16 +44,21 @@ class PendaftaranPlpService {
       print("🟡 Status: ${response.statusCode}");
       print("🟡 Response: $json");
 
-      // Asumsikan kalau message-nya sukses tapi status code bukan 200
-      if (json['status'] == 'success' && json['data'] != null) {
-        return PendaftaranPlpModel.fromJson(json['data']);
+      final isSuccess =
+          response.statusCode == 200 || response.statusCode == 201;
+
+      if (isSuccess) {
+        // Gunakan field yang tersedia di respons
+        final data = json['data'] ?? json['pendaftaran_plp'];
+        if (data != null) {
+          return PendaftaranPlpModel.fromJson(data);
+        }
       }
 
-      // Kalau status gagal
       final message = json['message'] ?? 'Gagal mendaftar PLP.';
       throw Exception(message);
     } catch (e) {
-      // Biarkan exception tetap ditampilkan seperti aslinya
+      print("🛑 Error di submitPendaftaranPlp: $e");
       rethrow;
     }
   }
@@ -76,14 +81,14 @@ class PendaftaranPlpService {
       print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        print("Response JSON: $json"); // Log response body untuk debug
+        final decoded = jsonDecode(response.body);
+        print("Response JSON: $decoded");
 
-        // Periksa apakah data pendaftaran ada
-        if (json['data'] != null && json['data'].isNotEmpty) {
-          return true; // Sudah terdaftar
+        // Karena response langsung berupa List
+        if (decoded is List && decoded.isNotEmpty) {
+          return true;
         } else {
-          return false; // Belum terdaftar
+          return false;
         }
       } else {
         throw Exception(
@@ -91,8 +96,46 @@ class PendaftaranPlpService {
         );
       }
     } catch (e) {
-      print("Error saat mengecek status pendaftaran: $e");
-      throw Exception("Gagal mengecek status pendaftaran: $e");
+      print("🛑 Error saat mengecek status pendaftaran: $e");
+      throw Exception("Gagal mengecek status pendaftaran.");
+    }
+  }
+
+  /// 📄 Ambil data pendaftaran PLP untuk ditampilkan
+  static Future<List<PendaftaranPlpModel>> getPendaftaranPlpData() async {
+    final token = getToken();
+    if (token == null) throw Exception("Token tidak ditemukan.");
+
+    try {
+      final response = await http.get(
+        Uri.parse("$_baseUrl/pendaftaran-plp"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+
+        if (decoded is List) {
+          return decoded
+              .map((item) => PendaftaranPlpModel.fromJson(item))
+              .toList();
+        } else {
+          throw Exception("Format respons tidak sesuai (bukan List)");
+        }
+      } else {
+        throw Exception(
+          "Gagal mengambil data pendaftaran. Status: ${response.statusCode}, Body: ${response.body}",
+        );
+      }
+    } catch (e) {
+      print("🛑 Error saat mengambil data pendaftaran: $e");
+      rethrow;
     }
   }
 }

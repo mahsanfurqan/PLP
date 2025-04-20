@@ -8,6 +8,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/isilogbook/bindings/isilogbook_binding.dart';
 import '../modules/isilogbook/views/isilogbook_view.dart';
+import '../modules/lihatdataplp/bindings/lihatdataplp_binding.dart';
+import '../modules/lihatdataplp/views/lihatdataplp_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/lupapassword/bindings/lupapassword_binding.dart';
@@ -78,6 +80,11 @@ class AppPages {
       name: _Paths.PENDAFTARANPLP,
       page: () => const PendaftaranplpView(),
       binding: PendaftaranplpBinding(),
+    ),
+    GetPage(
+      name: _Paths.LIHATDATAPLP,
+      page: () => const LihatdataplpView(),
+      binding: LihatdataplpBinding(),
     ),
   ];
 }
