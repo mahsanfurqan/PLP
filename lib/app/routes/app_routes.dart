@@ -15,6 +15,7 @@ abstract class Routes {
   static const ISILOGBOOK = _Paths.ISILOGBOOK;
   static const PENDAFTARANPLP = _Paths.PENDAFTARANPLP;
   static const LIHATDATAPLP = _Paths.LIHATDATAPLP;
+  static const FORMLOGBOOK = _Paths.FORMLOGBOOK;
 }
 
 abstract class _Paths {
@@ -31,4 +32,5 @@ abstract class _Paths {
   static const ISILOGBOOK = '/isilogbook';
   static const PENDAFTARANPLP = '/pendaftaranplp';
   static const LIHATDATAPLP = '/lihatdataplp';
+  static const FORMLOGBOOK = '/formlogbook';
 }

@@ -24,8 +24,16 @@ class IsilogbookView extends GetView<IsilogbookController> {
       ),
       body: Stack(
         children: [
-          Obx(
-            () => ListView.builder(
+          Obx(() {
+            if (controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (controller.logbookList.isEmpty) {
+              return const Center(child: Text("Belum ada logbook"));
+            }
+
+            return ListView.builder(
               padding: const EdgeInsets.only(bottom: 100),
               itemCount: controller.logbookList.length,
               itemBuilder: (context, index) {
@@ -43,10 +51,25 @@ class IsilogbookView extends GetView<IsilogbookController> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Icon(Icons.delete, color: Colors.red),
+                        // Tombol delete
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            Get.defaultDialog(
+                              title: "Konfirmasi",
+                              middleText: "Hapus logbook ini?",
+                              textConfirm: "Ya",
+                              textCancel: "Tidak",
+                              onConfirm: () {
+                                Get.back();
+                                controller.deleteLogbook(
+                                  logbook.id,
+                                ); // Fixed here
+                              },
+                            );
+                          },
                         ),
+                        // Data logbook
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -57,21 +80,19 @@ class IsilogbookView extends GetView<IsilogbookController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "ID ${logbook['id']}",
+                                  "ID ${logbook.id}",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text("Durasi : ${logbook['durasi']}"),
+                                Text("Durasi : ${logbook.durasi}"),
                                 Text(
-                                  "Uraian : ${logbook['uraian']}",
+                                  "Uraian : ${logbook.uraian}",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                Text(
-                                  "Tanggal Kegiatan : ${logbook['tanggal']}",
-                                ),
+                                Text("Tanggal Kegiatan : ${logbook.tanggal}"),
                               ],
                             ),
                           ),
@@ -81,8 +102,9 @@ class IsilogbookView extends GetView<IsilogbookController> {
                   ),
                 );
               },
-            ),
-          ),
+            );
+          }),
+          // Tombol tambah logbook
           Positioned(
             bottom: 0,
             left: 0,
@@ -115,7 +137,7 @@ class IsilogbookView extends GetView<IsilogbookController> {
           ),
         ],
       ),
-      bottomNavigationBar: CustomNavbar(), // 👈 tambahkan ini
+      bottomNavigationBar: CustomNavbar(),
     );
   }
 }

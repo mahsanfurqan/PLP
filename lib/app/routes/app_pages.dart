@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/createprofile/bindings/createprofile_binding.dart';
 import '../modules/createprofile/views/createprofile_view.dart';
+import '../modules/formlogbook/bindings/formlogbook_binding.dart';
+import '../modules/formlogbook/views/formlogbook_view.dart';
 import '../modules/gantipassword/bindings/gantipassword_binding.dart';
 import '../modules/gantipassword/views/gantipassword_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -85,6 +87,11 @@ class AppPages {
       name: _Paths.LIHATDATAPLP,
       page: () => const LihatdataplpView(),
       binding: LihatdataplpBinding(),
+    ),
+    GetPage(
+      name: _Paths.FORMLOGBOOK,
+      page: () => const FormlogbookView(),
+      binding: FormlogbookBinding(),
     ),
   ];
 }

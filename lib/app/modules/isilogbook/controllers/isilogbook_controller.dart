@@ -1,13 +1,12 @@
 import 'package:get/get.dart';
+import 'package:plp/models/logbook_model.dart';
+import 'package:plp/service/logbook_service.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:get_storage/get_storage.dart';
 
 class IsilogbookController extends GetxController {
-  var logbookList = <Map<String, dynamic>>[].obs;
-  var isStartButtonPressed = false.obs;
-  final box = GetStorage();
+  var logbookList = <LogbookModel>[].obs;
+  var isLoading = false.obs;
+  final isStartButtonPressed = false.obs;
 
   @override
   void onInit() {
@@ -15,51 +14,76 @@ class IsilogbookController extends GetxController {
     fetchLogbookData();
   }
 
+  /// Navigasi ke halaman tambah logbook
   void goToTambahLogbook() {
-    Get.toNamed('/tambah-logbook');
+    Get.toNamed('/formlogbook');
   }
 
+  /// READ - Ambil data logbook dari backend
   Future<void> fetchLogbookData() async {
-    final token = box.read('token');
-    final url = Uri.parse('http://127.0.0.1:8000/api/logbooks');
-
+    isLoading.value = true;
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        logbookList.value =
-            data.map((item) {
-              final mulai = DateFormat("HH:mm:ss").parse(item['mulai']);
-              final selesai = DateFormat("HH:mm:ss").parse(item['selesai']);
-              final durasiJam = selesai.difference(mulai).inHours;
-              final durasiMenit = selesai.difference(mulai).inMinutes % 60;
-              final durasi =
-                  durasiMenit == 0
-                      ? "$durasiJam jam"
-                      : "$durasiJam jam $durasiMenit menit";
-
-              return {
-                'id': item['id'].toString(),
-                'durasi': durasi,
-                'uraian': item['keterangan'] ?? '',
-                'tanggal': item['tanggal'],
-                'mulai': item['mulai'],
-                'selesai': item['selesai'],
-                'dokumentasi': item['dokumentasi'],
-              };
-            }).toList();
-      } else {
-        Get.snackbar("Error", "Gagal memuat data logbook");
-      }
+      final data = await LogbookService.getLogbooks();
+      logbookList.assignAll(data);
     } catch (e) {
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+      Get.snackbar("Error", "Gagal memuat data logbook: $e");
+    } finally {
+      isLoading.value = false;
     }
+  }
+
+  /// CREATE - Tambah logbook baru
+  Future<void> createLogbook(LogbookModel newLogbook) async {
+    isLoading.value = true;
+    try {
+      final createdLogbook = await LogbookService.createLogbook(newLogbook);
+      logbookList.add(createdLogbook);
+      Get.back(); // Kembali ke halaman sebelumnya
+      Get.snackbar("Sukses", "Logbook berhasil ditambahkan");
+    } catch (e) {
+      Get.snackbar("Error", "Gagal menambahkan logbook: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// UPDATE - Edit logbook
+  Future<void> updateLogbook(int id, LogbookModel updatedLogbook) async {
+    isLoading.value = true;
+    try {
+      final updated = await LogbookService.updateLogbook(id, updatedLogbook);
+      final index = logbookList.indexWhere((l) => l.id == id);
+      if (index != -1) {
+        logbookList[index] = updated;
+      }
+      Get.back();
+      Get.snackbar("Sukses", "Logbook berhasil diperbarui");
+    } catch (e) {
+      Get.snackbar("Error", "Gagal memperbarui logbook: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// DELETE - Hapus logbook
+  Future<void> deleteLogbook(int id) async {
+    try {
+      await LogbookService.deleteLogbook(id);
+      logbookList.removeWhere((l) => l.id == id);
+      Get.snackbar("Sukses", "Logbook berhasil dihapus");
+    } catch (e) {
+      Get.snackbar("Error", "Gagal menghapus logbook: $e");
+    }
+  }
+
+  /// Dapatkan durasi dalam format "X jam Y menit"
+  String calculateDuration(String mulai, String selesai) {
+    final start = DateFormat("HH:mm:ss").parse(mulai);
+    final end = DateFormat("HH:mm:ss").parse(selesai);
+    final durasiJam = end.difference(start).inHours;
+    final durasiMenit = end.difference(start).inMinutes % 60;
+    return durasiMenit == 0
+        ? "$durasiJam jam"
+        : "$durasiJam jam $durasiMenit menit";
   }
 }
