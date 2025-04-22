@@ -11,7 +11,7 @@ class IsilogbookController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchLogbookData();
+    fetchLogbookData(); // Ambil data logbook saat controller diinisialisasi
   }
 
   /// Navigasi ke halaman tambah logbook
@@ -24,24 +24,9 @@ class IsilogbookController extends GetxController {
     isLoading.value = true;
     try {
       final data = await LogbookService.getLogbooks();
-      logbookList.assignAll(data);
+      logbookList.assignAll(data); // Update daftar logbook dengan data terbaru
     } catch (e) {
       Get.snackbar("Error", "Gagal memuat data logbook: $e");
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  /// CREATE - Tambah logbook baru
-  Future<void> createLogbook(LogbookModel newLogbook) async {
-    isLoading.value = true;
-    try {
-      final createdLogbook = await LogbookService.createLogbook(newLogbook);
-      logbookList.add(createdLogbook);
-      Get.back(); // Kembali ke halaman sebelumnya
-      Get.snackbar("Sukses", "Logbook berhasil ditambahkan");
-    } catch (e) {
-      Get.snackbar("Error", "Gagal menambahkan logbook: $e");
     } finally {
       isLoading.value = false;
     }

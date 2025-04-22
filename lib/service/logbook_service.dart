@@ -24,8 +24,14 @@ class LogbookService {
     }
   }
 
-  /// POST create logbook (CREATE)
-  static Future<LogbookModel> createLogbook(LogbookModel logbook) async {
+  /// POST create logbook (RAW input sesuai API docs)
+  static Future<void> createLogbookRaw({
+    required String tanggal,
+    required String keterangan,
+    required String mulai,
+    required String selesai,
+    required String dokumentasi,
+  }) async {
     final token = box.read('token');
 
     final response = await http.post(
@@ -35,14 +41,18 @@ class LogbookService {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(logbook.toJson()),
+      body: jsonEncode({
+        'tanggal': tanggal,
+        'keterangan': keterangan,
+        'mulai': mulai,
+        'selesai': selesai,
+        'dokumentasi': dokumentasi,
+      }),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       final data = jsonDecode(response.body);
-      return LogbookModel.fromJson(data['logbook']);
-    } else {
-      throw Exception('Gagal menambahkan logbook');
+      throw Exception(data['message'] ?? 'Gagal menambahkan logbook');
     }
   }
 

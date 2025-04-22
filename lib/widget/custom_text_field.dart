@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
-  final TextEditingController? controller; // Dibuat opsional
+  final TextEditingController? controller;
+  final List<TextInputFormatter>? inputFormatters;
+  final int maxLines; // ✅ Tambahan
 
   const CustomTextField({
     Key? key,
@@ -12,19 +15,21 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.controller,
+    this.inputFormatters,
+    this.maxLines = 1, // ✅ Default tetap 1 agar tidak mengganggu file lain
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller, // Bisa null
+      controller: controller,
       obscureText: obscureText,
-      style: const TextStyle(
-        color: Colors.black87, // Warna teks setelah diketik
-      ),
+      inputFormatters: inputFormatters,
+      maxLines: maxLines, // ✅ Digunakan di sini
+      style: const TextStyle(color: Colors.black87),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.black12), // Warna placeholder
+        hintStyle: const TextStyle(color: Colors.black12),
         filled: true,
         fillColor: Colors.grey[200],
         border: OutlineInputBorder(
