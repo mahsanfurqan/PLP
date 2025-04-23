@@ -1,45 +1,43 @@
 class LogbookModel {
   final int id;
-  final int mahasiswaId;
+  final int userId;
   final String tanggal;
-  final String uraian;
-  final String durasi;
+  final String keterangan;
+  final String mulai;
+  final String selesai;
   final String dokumentasi;
-  final String linkPendukung;
 
   LogbookModel({
     required this.id,
-    required this.mahasiswaId,
+    required this.userId,
     required this.tanggal,
-    required this.uraian,
-    required this.durasi,
+    required this.keterangan,
+    required this.mulai,
+    required this.selesai,
     required this.dokumentasi,
-    required this.linkPendukung,
   });
 
-  // Create LogbookModel from JSON
   factory LogbookModel.fromJson(Map<String, dynamic> json) {
     return LogbookModel(
       id: json['id'],
-      mahasiswaId: json['mahasiswa_id'],
+      userId: json['user_id'],
       tanggal: json['tanggal'],
-      uraian: json['uraian'],
-      durasi: json['durasi'],
+      keterangan: json['keterangan'],
+      mulai: json['mulai'],
+      selesai: json['selesai'],
       dokumentasi: json['dokumentasi'],
-      linkPendukung: json['link_pendukung'],
     );
   }
 
-  // Convert LogbookModel to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'mahasiswa_id': mahasiswaId,
+      'user_id': userId,
       'tanggal': tanggal,
-      'uraian': uraian,
-      'durasi': durasi,
+      'keterangan': keterangan,
+      'mulai': mulai,
+      'selesai': selesai,
       'dokumentasi': dokumentasi,
-      'link_pendukung': linkPendukung,
     };
   }
 }

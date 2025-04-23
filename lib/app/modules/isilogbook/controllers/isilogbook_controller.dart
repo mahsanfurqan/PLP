@@ -11,20 +11,19 @@ class IsilogbookController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchLogbookData(); // Ambil data logbook saat controller diinisialisasi
+    fetchLogbookData();
   }
 
-  /// Navigasi ke halaman tambah logbook
   void goToTambahLogbook() {
     Get.toNamed('/formlogbook');
   }
 
-  /// READ - Ambil data logbook dari backend
+  /// Ambil data logbook dari backend
   Future<void> fetchLogbookData() async {
     isLoading.value = true;
     try {
-      final data = await LogbookService.getLogbooks();
-      logbookList.assignAll(data); // Update daftar logbook dengan data terbaru
+      final data = await LogbookService.getLogbooks(); // panggil dari service
+      logbookList.assignAll(data);
     } catch (e) {
       Get.snackbar("Error", "Gagal memuat data logbook: $e");
     } finally {
@@ -32,7 +31,7 @@ class IsilogbookController extends GetxController {
     }
   }
 
-  /// UPDATE - Edit logbook
+  /// Edit logbook
   Future<void> updateLogbook(int id, LogbookModel updatedLogbook) async {
     isLoading.value = true;
     try {
@@ -50,7 +49,7 @@ class IsilogbookController extends GetxController {
     }
   }
 
-  /// DELETE - Hapus logbook
+  /// Hapus logbook
   Future<void> deleteLogbook(int id) async {
     try {
       await LogbookService.deleteLogbook(id);
@@ -61,7 +60,7 @@ class IsilogbookController extends GetxController {
     }
   }
 
-  /// Dapatkan durasi dalam format "X jam Y menit"
+  /// Hitung durasi kegiatan
   String calculateDuration(String mulai, String selesai) {
     final start = DateFormat("HH:mm:ss").parse(mulai);
     final end = DateFormat("HH:mm:ss").parse(selesai);
