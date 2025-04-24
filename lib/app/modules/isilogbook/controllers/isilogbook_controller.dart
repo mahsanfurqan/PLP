@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:plp/app/modules/formlogbook/controllers/formlogbook_controller.dart';
+import 'package:plp/app/modules/formlogbook/views/formlogbook_view.dart';
 import 'package:plp/models/logbook_model.dart';
 import 'package:plp/service/logbook_service.dart';
 import 'package:intl/intl.dart';
@@ -14,8 +16,12 @@ class IsilogbookController extends GetxController {
     fetchLogbookData();
   }
 
-  void goToTambahLogbook() {
-    Get.toNamed('/formlogbook');
+  void goToTambahLogbook() async {
+    Get.lazyPut(() => FormlogbookController()); // Tambahkan ini dulu
+    final result = await Get.to(() => const FormlogbookView());
+    if (result == true) {
+      fetchLogbookData();
+    }
   }
 
   /// Ambil data logbook dari backend

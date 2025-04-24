@@ -9,6 +9,7 @@ class FormlogbookController extends GetxController {
   final dokumentasi = ''.obs;
 
   final isLoading = false.obs;
+
   String formatTanggal(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
@@ -24,7 +25,8 @@ class FormlogbookController extends GetxController {
         selesai: selesai.value,
         dokumentasi: dokumentasi.value,
       );
-      Get.back();
+
+      Get.back(result: true); // ⬅️ Kirim sinyal ke halaman sebelumnya
       Get.snackbar('Berhasil', 'Logbook berhasil ditambahkan');
     } catch (e) {
       Get.snackbar('Gagal', e.toString());

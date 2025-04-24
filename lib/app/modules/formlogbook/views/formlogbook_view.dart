@@ -116,8 +116,22 @@ class FormlogbookView extends GetView<FormlogbookController> {
                           );
                           controller.keterangan.value = keteranganC.text;
                           controller.dokumentasi.value = dokumentasiC.text;
+
+                          // Validasi opsional
+                          if (controller.tanggal.value.isEmpty ||
+                              controller.mulai.value.isEmpty ||
+                              controller.selesai.value.isEmpty ||
+                              controller.keterangan.value.isEmpty) {
+                            Get.snackbar(
+                              'Gagal',
+                              'Lengkapi semua field terlebih dahulu',
+                            );
+                            return;
+                          }
+
                           controller.submitLogbook();
                         },
+
                         isPressed: false,
                       ),
             ),
