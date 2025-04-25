@@ -48,52 +48,76 @@ class IsilogbookView extends GetView<IsilogbookController> {
                       border: Border.all(color: Colors.black),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
                       children: [
-                        // Tombol delete
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            Get.defaultDialog(
-                              title: "Konfirmasi",
-                              middleText: "Hapus logbook ini?",
-                              textConfirm: "Ya",
-                              textCancel: "Tidak",
-                              onConfirm: () {
-                                Get.back();
-                                controller.deleteLogbook(
-                                  logbook.id,
-                                ); // Fixed here
-                              },
-                            );
-                          },
-                        ),
-                        // Data logbook
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 4,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Column untuk tombol delete dan edit
+                            Column(
                               children: [
-                                Text(
-                                  "ID ${logbook.id}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                // Tombol delete
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
                                   ),
+                                  onPressed: () {
+                                    Get.defaultDialog(
+                                      title: "Konfirmasi",
+                                      middleText: "Hapus logbook ini?",
+                                      textConfirm: "Ya",
+                                      textCancel: "Tidak",
+                                      onConfirm: () {
+                                        Get.back();
+                                        controller.deleteLogbook(logbook.id);
+                                      },
+                                    );
+                                  },
                                 ),
-                                const SizedBox(height: 4),
-                                Text("Mulai : ${logbook.mulai}"),
-                                Text("Selesai : ${logbook.selesai}"),
-                                Text("Keterangan : ${logbook.keterangan}"),
-                                Text("Dokumentasi : ${logbook.dokumentasi}"),
-                                Text("Tanggal Kegiatan : ${logbook.tanggal}"),
+                                // Tombol edit di bawah delete
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    controller.goToEditLogbook(logbook);
+                                  },
+                                ),
                               ],
                             ),
-                          ),
+                            // Data logbook
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 4,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "ID ${logbook.id}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text("Mulai : ${logbook.mulai}"),
+                                    Text("Selesai : ${logbook.selesai}"),
+                                    Text("Keterangan : ${logbook.keterangan}"),
+                                    Text(
+                                      "Dokumentasi : ${logbook.dokumentasi}",
+                                    ),
+                                    Text(
+                                      "Tanggal Kegiatan : ${logbook.tanggal}",
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

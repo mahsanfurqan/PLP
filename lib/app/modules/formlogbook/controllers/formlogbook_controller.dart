@@ -7,6 +7,7 @@ class FormlogbookController extends GetxController {
   final mulai = ''.obs;
   final selesai = ''.obs;
   final dokumentasi = ''.obs;
+  final idLogbook = RxnInt();
 
   final isLoading = false.obs;
 
@@ -18,6 +19,12 @@ class FormlogbookController extends GetxController {
     isLoading.value = true;
 
     try {
+      if (idLogbook.value != null) {
+        // Kalau ternyata ada id-nya, jangan submit karena ini bukan mode tambah
+        Get.snackbar('Error', 'Form ini hanya untuk tambah logbook');
+        return;
+      }
+
       await LogbookService.createLogbookRaw(
         tanggal: tanggal.value,
         keterangan: keterangan.value,
@@ -26,8 +33,7 @@ class FormlogbookController extends GetxController {
         dokumentasi: dokumentasi.value,
       );
 
-      Get.back(result: true); // ⬅️ Kirim sinyal ke halaman sebelumnya
-      Get.snackbar('Berhasil', 'Logbook berhasil ditambahkan');
+      Get.back(result: true);
     } catch (e) {
       Get.snackbar('Gagal', e.toString());
     } finally {
