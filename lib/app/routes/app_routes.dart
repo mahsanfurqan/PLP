@@ -16,6 +16,7 @@ abstract class Routes {
   static const PENDAFTARANPLP = _Paths.PENDAFTARANPLP;
   static const LIHATDATAPLP = _Paths.LIHATDATAPLP;
   static const FORMLOGBOOK = _Paths.FORMLOGBOOK;
+  static const LIHATDATAPLPALL = _Paths.LIHATDATAPLPALL;
 }
 
 abstract class _Paths {
@@ -33,4 +34,5 @@ abstract class _Paths {
   static const PENDAFTARANPLP = '/pendaftaranplp';
   static const LIHATDATAPLP = '/lihatdataplp';
   static const FORMLOGBOOK = '/formlogbook';
+  static const LIHATDATAPLPALL = '/lihatdataplpall';
 }

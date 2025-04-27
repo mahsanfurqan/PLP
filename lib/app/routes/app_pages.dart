@@ -12,6 +12,8 @@ import '../modules/isilogbook/bindings/isilogbook_binding.dart';
 import '../modules/isilogbook/views/isilogbook_view.dart';
 import '../modules/lihatdataplp/bindings/lihatdataplp_binding.dart';
 import '../modules/lihatdataplp/views/lihatdataplp_view.dart';
+import '../modules/lihatdataplpall/bindings/lihatdataplpall_binding.dart';
+import '../modules/lihatdataplpall/views/lihatdataplpall_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/lupapassword/bindings/lupapassword_binding.dart';
@@ -92,6 +94,11 @@ class AppPages {
       name: _Paths.FORMLOGBOOK,
       page: () => const FormlogbookView(),
       binding: FormlogbookBinding(),
+    ),
+    GetPage(
+      name: _Paths.LIHATDATAPLPALL,
+      page: () => const LihatdataplpallView(),
+      binding: LihatdataplpallBinding(),
     ),
   ];
 }
