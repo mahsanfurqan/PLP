@@ -17,6 +17,10 @@ abstract class Routes {
   static const LIHATDATAPLP = _Paths.LIHATDATAPLP;
   static const FORMLOGBOOK = _Paths.FORMLOGBOOK;
   static const LIHATDATAPLPALL = _Paths.LIHATDATAPLPALL;
+  static const LIHATLOGBOOKALL = _Paths.LIHATLOGBOOKALL;
+  static const SMK = _Paths.SMK;
+  static const GURUPAMONG = _Paths.GURUPAMONG;
+  static const KEMINATAN = _Paths.KEMINATAN;
 }
 
 abstract class _Paths {
@@ -35,4 +39,8 @@ abstract class _Paths {
   static const LIHATDATAPLP = '/lihatdataplp';
   static const FORMLOGBOOK = '/formlogbook';
   static const LIHATDATAPLPALL = '/lihatdataplpall';
+  static const LIHATLOGBOOKALL = '/lihatlogbookall';
+  static const SMK = '/smk';
+  static const GURUPAMONG = '/gurupamong';
+  static const KEMINATAN = '/keminatan';
 }

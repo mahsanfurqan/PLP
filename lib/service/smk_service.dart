@@ -1,15 +1,21 @@
 import 'dart:convert';
-import 'dart:developer'; // Untuk log
+import 'dart:developer'; // Untuk logging
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:plp/models/smk_model.dart'; // Pastikan import modelnya
 
 class SmkService {
   static const String _baseUrl = "http://10.0.2.2:8000/api";
+  static final box = GetStorage();
 
-  static Future<List<Map<String, dynamic>>> getSmks() async {
-    final box = GetStorage();
-    final token = box.read("token");
+  /// 🔐 Ambil token dari storage
+  static String? getToken() {
+    return box.read("token");
+  }
 
+  /// ✅ Ambil semua SMK
+  static Future<List<SmkModel>> getSmks() async {
+    final token = getToken();
     if (token == null) throw Exception("Token tidak ditemukan.");
 
     final response = await http.get(
@@ -20,14 +26,40 @@ class SmkService {
     log('🔵 SMK Response Status: ${response.statusCode}');
     log('🔵 SMK Response Body: ${response.body}');
 
-    final json = jsonDecode(response.body);
-
     if (response.statusCode == 200) {
-      final List<dynamic> data = json;
-      return data.map((item) => item as Map<String, dynamic>).toList();
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((item) => SmkModel.fromJson(item)).toList();
     } else {
+      final json = jsonDecode(response.body);
       log('🔴 SMK Error Message: ${json['message']}');
       throw Exception(json['message'] ?? 'Gagal mengambil data SMK');
+    }
+  }
+
+  /// ✅ Tambah SMK baru
+  static Future<SmkModel> addSmk(String name) async {
+    final token = getToken();
+    if (token == null) throw Exception("Token tidak ditemukan.");
+
+    final response = await http.post(
+      Uri.parse("$_baseUrl/smk"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'name': name}),
+    );
+
+    log('🟣 Tambah SMK Status: ${response.statusCode}');
+    log('🟣 Tambah SMK Response: ${response.body}');
+
+    final json = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return SmkModel.fromJson(json['smk']);
+    } else {
+      throw Exception(json['message'] ?? 'Gagal menambah SMK');
     }
   }
 }

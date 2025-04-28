@@ -53,10 +53,18 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
             // 👇 Hanya non-Mahasiswa & non-Observer yang bisa lihat 2 menu ini
             if (role != 'Mahasiswa' && role != 'Observer') ...[
               RoundedMenuItem(
-                icon: 'assets/icons/kepalaorang.png',
-                label: 'Masukkan Data',
+                icon: 'assets/icons/smkicon.png',
+                label: 'SMK',
                 onTap: () {
-                  Get.toNamed('/masukkan-data');
+                  Get.toNamed('/smk');
+                },
+              ),
+              const SizedBox(height: 16),
+              RoundedMenuItem(
+                icon: 'assets/icons/keminatanicon.png',
+                label: 'Keminatan',
+                onTap: () {
+                  Get.toNamed('/keminatan');
                 },
               ),
               const SizedBox(height: 16),
@@ -64,7 +72,7 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
                 icon: 'assets/icons/daftargurupamong.png',
                 label: 'Daftar Guru Pamong',
                 onTap: () {
-                  Get.toNamed('/daftar-guru');
+                  Get.toNamed('/gurupamong');
                 },
               ),
             ],

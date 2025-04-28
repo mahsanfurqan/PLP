@@ -3,13 +3,14 @@ import 'package:plp/app/routes/app_pages.dart';
 import 'package:plp/service/pendaftaran_plp_service.dart';
 import 'package:plp/service/keminatan_service.dart';
 import 'package:plp/service/smk_service.dart';
+import 'package:plp/models/smk_model.dart'; // Tambahkan import SmkModel
 
 class PendaftaranplpController extends GetxController {
   final isSubmitting = false.obs;
 
   // Data Dropdown
   var keminatanList = <Map<String, dynamic>>[].obs;
-  var smkList = <Map<String, dynamic>>[].obs;
+  var smkList = <SmkModel>[].obs; // ✅ GANTI jadi list of SmkModel
 
   // Selected values
   var selectedKeminatanId = RxnInt();
@@ -36,7 +37,7 @@ class PendaftaranplpController extends GetxController {
   void onInit() {
     super.onInit();
     fetchDropdownData();
-    cekStatusPendaftaran(); // Pastikan ini hanya dipanggil sekali saat inisialisasi
+    cekStatusPendaftaran();
   }
 
   // Mengambil data dropdown keminatan dan SMK
@@ -46,7 +47,7 @@ class PendaftaranplpController extends GetxController {
       keminatanList.assignAll(keminatans);
 
       final smks = await SmkService.getSmks();
-      smkList.assignAll(smks);
+      smkList.assignAll(smks); // ✅ assignAll pakai SmkModel
     } catch (e) {
       Get.log("🔴 Error saat fetchDropdownData: $e", isError: true);
       Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
@@ -59,21 +60,18 @@ class PendaftaranplpController extends GetxController {
       final status = await PendaftaranPlpService.cekSudahDaftar();
       if (status) {
         sudahDaftar.value = true;
-        // Menampilkan notifikasi hanya sekali saat sudah terdaftar
         Get.snackbar("Info", "Anda sudah terdaftar untuk PLP.");
       } else {
         sudahDaftar.value = false;
       }
     } catch (e) {
       final errorMsg = e.toString();
-
-      // Deteksi jika error sebenarnya pesan sukses (pesan ambigu dari backend)
       if (errorMsg.contains("berhasil dibuat")) {
         Get.snackbar("Sukses", "Pendaftaran berhasil.");
         Get.offAllNamed(Routes.HOME);
       } else {
-        print("Error during submitPendaftaran: $e");
-        Get.snackbar("Gagal", "Pendaftaran gagal:\n${errorMsg}");
+        print("Error during cekStatusPendaftaran: $e");
+        Get.snackbar("Gagal", "Gagal mengecek pendaftaran:\n$errorMsg");
       }
     }
   }
@@ -82,7 +80,6 @@ class PendaftaranplpController extends GetxController {
   void submitPendaftaran() async {
     isSubmitting.value = true;
 
-    // Validasi input sebelum kirim
     if (selectedKeminatanId.value == null) {
       Get.snackbar("Error", "Keminatan belum dipilih.");
       isSubmitting.value = false;
@@ -101,16 +98,13 @@ class PendaftaranplpController extends GetxController {
       return;
     }
 
-    // Mengecek apakah sudah pernah mendaftar
     if (sudahDaftar.value) {
-      // Jika sudah terdaftar, tidak perlu kirim pendaftaran lagi
       isSubmitting.value = false;
       Get.snackbar("Info", "Anda sudah terdaftar untuk PLP.");
       return;
     }
 
     try {
-      // Melakukan pengiriman pendaftaran PLP
       final pendaftaran = await PendaftaranPlpService.submitPendaftaranPlp(
         keminatanId: selectedKeminatanId.value!,
         nilaiPlp1: selectedNilaiPlp1.value,
@@ -119,21 +113,17 @@ class PendaftaranplpController extends GetxController {
         pilihanSmk2: selectedSmk2Id.value!,
       );
 
-      // Mengecek jika respons berhasil dan data tersedia
       if (pendaftaran != null) {
-        // Menampilkan notifikasi sukses jika pendaftaran berhasil
         Get.snackbar(
           "Sukses",
           "Pendaftaran berhasil dengan ID ${pendaftaran.id}",
         );
         Get.offAllNamed(Routes.HOME);
       } else {
-        // Menangani kegagalan jika respons kosong atau tidak valid
         Get.snackbar("Gagal", "Pendaftaran gagal. Silakan coba lagi.");
       }
     } catch (e) {
-      // Menangani error dengan lebih detail
-      print("Error during submitPendaftaran: $e"); // Log error untuk debug
+      print("Error during submitPendaftaran: $e");
       Get.snackbar("Gagal", "Pendaftaran gagal:\n${e.toString()}");
     } finally {
       isSubmitting.value = false;

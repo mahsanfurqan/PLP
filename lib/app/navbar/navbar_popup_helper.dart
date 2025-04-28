@@ -36,30 +36,6 @@ class LogbookBottomSheet extends StatelessWidget {
               }
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(
-              Icons.remove_red_eye,
-              color: Colors.blue,
-              size: 28,
-            ),
-            title: const Text(
-              "Lihat Logbook",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              if (role == 'Mahasiswa' || role == 'Observer') {
-                Get.toNamed('/logbook/lihat');
-              } else {
-                Get.snackbar(
-                  "Akses Ditolak",
-                  "Role Anda tidak memiliki izin untuk melihat logbook.",
-                  snackPosition: SnackPosition.TOP,
-                );
-              }
-            },
-          ),
         ],
       ),
     );
@@ -72,14 +48,41 @@ class AdminLogbookValidationSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      child: ListTile(
-        leading: const Icon(Icons.verified),
-        title: const Text("Validasi Logbook"),
-        onTap: () {
-          Navigator.pop(context);
-          Get.toNamed('/logbook/validasi');
-        },
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.verified, color: Colors.green, size: 28),
+            title: const Text(
+              "Validasi Logbook",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Get.toNamed('/logbook/validasi');
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(
+              Icons.remove_red_eye,
+              color: Colors.blue,
+              size: 28,
+            ),
+            title: const Text(
+              "Lihat Logbook Mahasiswa",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Get.toNamed('/lihatlogbookall');
+            },
+          ),
+        ],
       ),
     );
   }
@@ -162,7 +165,7 @@ class AdminLihatKelengkapanSheet extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              Get.toNamed('/pendaftaran/kelengkapan');
+              Get.toNamed('/lihatdataplpall');
             },
           ),
         ],

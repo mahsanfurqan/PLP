@@ -92,15 +92,15 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
               DropdownButtonFormField<int>(
                 value:
                     controller.smkList.any(
-                          (e) => e['id'] == controller.selectedSmk1Id.value,
+                          (e) => e.id == controller.selectedSmk1Id.value,
                         )
                         ? controller.selectedSmk1Id.value
                         : null,
                 items:
                     controller.smkList.map((smk) {
                       return DropdownMenuItem<int>(
-                        value: smk['id'],
-                        child: Text(smk['name']),
+                        value: smk.id,
+                        child: Text(smk.nama),
                       );
                     }).toList(),
                 onChanged: (val) => controller.selectedSmk1Id.value = val!,
@@ -114,15 +114,15 @@ class PendaftaranplpView extends GetView<PendaftaranplpController> {
               DropdownButtonFormField<int>(
                 value:
                     controller.smkList.any(
-                          (e) => e['id'] == controller.selectedSmk2Id.value,
+                          (e) => e.id == controller.selectedSmk2Id.value,
                         )
                         ? controller.selectedSmk2Id.value
                         : null,
                 items:
                     controller.smkList.map((smk) {
                       return DropdownMenuItem<int>(
-                        value: smk['id'],
-                        child: Text(smk['name']),
+                        value: smk.id,
+                        child: Text(smk.nama),
                       );
                     }).toList(),
                 onChanged: (val) => controller.selectedSmk2Id.value = val!,

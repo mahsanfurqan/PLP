@@ -138,4 +138,42 @@ class PendaftaranPlpService {
       rethrow;
     }
   }
+
+  /// 📋 Koordinator: Ambil semua pendaftaran PLP
+  static Future<List<PendaftaranPlpModel>> getAllPendaftaranPlp() async {
+    final token = getToken();
+    if (token == null) throw Exception("Token tidak ditemukan.");
+
+    try {
+      final response = await http.get(
+        Uri.parse("$_baseUrl/pendaftaran-plp/all"),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print("🟢 Status Code: ${response.statusCode}");
+      print("🟢 Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+
+        if (decoded is List) {
+          return decoded
+              .map((item) => PendaftaranPlpModel.fromJson(item))
+              .toList();
+        } else {
+          throw Exception("Format respons tidak sesuai (bukan List)");
+        }
+      } else {
+        throw Exception(
+          "Gagal mengambil semua pendaftaran. Status: ${response.statusCode}",
+        );
+      }
+    } catch (e) {
+      print("🛑 Error saat getAllPendaftaranPlp: $e");
+      rethrow;
+    }
+  }
 }

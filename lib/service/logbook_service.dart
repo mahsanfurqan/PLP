@@ -106,4 +106,33 @@ class LogbookService {
       print('Logbook berhasil dihapus');
     }
   }
+
+  /// 🔍 Ambil semua logbook mahasiswa untuk koordinator
+  static Future<List<LogbookModel>> getAllLogbooks() async {
+    final token = box.read('token');
+    if (token == null) throw Exception('Token tidak ditemukan.');
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/logbooks/all'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      print("Status Code (All Logbooks): ${response.statusCode}");
+      print("Response Body (All Logbooks): ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((e) => LogbookModel.fromJson(e)).toList();
+      } else {
+        throw Exception('Gagal memuat semua logbook mahasiswa');
+      }
+    } catch (e) {
+      print("🛑 Error saat mengambil semua logbook: $e");
+      rethrow;
+    }
+  }
 }

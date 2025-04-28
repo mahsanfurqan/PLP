@@ -75,6 +75,8 @@ flutter:
     - assets/icons/selengkapnya.png
     - assets/icons/daftargurupamong.png
     - assets/icons/kepalaorang.png
+    - assets/icons/smkicon.png
+    - assets/icons/keminatanicon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
