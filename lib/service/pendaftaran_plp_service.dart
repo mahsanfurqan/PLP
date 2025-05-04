@@ -176,4 +176,49 @@ class PendaftaranPlpService {
       rethrow;
     }
   }
+
+  /// 🧑‍🏫 Koordinator assign dosen pembimbing dan penempatan
+  static Future<PendaftaranPlpModel> assignDosenDanPenempatan({
+    required int pendaftaranPlpId,
+    required int idSmk,
+    required int idDosenPembimbing,
+  }) async {
+    final token = getToken();
+    if (token == null) throw Exception("Token tidak ditemukan.");
+
+    try {
+      final response = await http.patch(
+        Uri.parse("$_baseUrl/pendaftaran-plp/$pendaftaranPlpId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'penempatan': idSmk,
+          'dosen_pembimbing': idDosenPembimbing,
+        }),
+      );
+
+      final json = jsonDecode(response.body);
+      print("🟢 Status: ${response.statusCode}");
+      print("🟢 Response: $json");
+
+      if (response.statusCode == 200) {
+        final data = json['pendaftaran'];
+        if (data != null) {
+          return PendaftaranPlpModel.fromJson(data);
+        } else {
+          throw Exception("Data pendaftaran tidak ditemukan dalam respons.");
+        }
+      }
+
+      final message =
+          json['message'] ?? 'Gagal meng-assign dosen dan penempatan.';
+      throw Exception(message);
+    } catch (e) {
+      print("🛑 Error di assignDosenDanPenempatan: $e");
+      rethrow;
+    }
+  }
 }
