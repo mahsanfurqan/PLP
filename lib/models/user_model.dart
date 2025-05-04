@@ -2,26 +2,28 @@ class UserModel {
   final int id;
   final String name;
   final String email;
-  final String? role; // ubah ke nullable
+  final String? role;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
-    this.role, // tidak wajib di constructor
+    this.role,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    id: json['id'] ?? 0,
-    name: json['name'] ?? '',
-    email: json['email'] ?? '',
-    role: json['role'], // tidak ada fallback 'Observer'
-  );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      role: json['role'], // pastikan field "role" memang dikembalikan backend
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
     'email': email,
-    if (role != null) 'role': role,
+    'role': role,
   };
 }

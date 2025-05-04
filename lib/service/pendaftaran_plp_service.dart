@@ -177,48 +177,43 @@ class PendaftaranPlpService {
     }
   }
 
-  /// 🧑‍🏫 Koordinator assign dosen pembimbing dan penempatan
-  static Future<PendaftaranPlpModel> assignDosenDanPenempatan({
-    required int pendaftaranPlpId,
+  /// 📌 Assign penempatan dan dosen pembimbing oleh koordinator
+  static Future<Map<String, dynamic>> assignPenempatanDanDosen({
+    required int pendaftaranId,
     required int idSmk,
-    required int idDosenPembimbing,
+    required int idDosen,
   }) async {
     final token = getToken();
     if (token == null) throw Exception("Token tidak ditemukan.");
 
+    final url = Uri.parse('$_baseUrl/pendaftaran-plp/$pendaftaranId');
+
     try {
       final response = await http.patch(
-        Uri.parse("$_baseUrl/pendaftaran-plp/$pendaftaranPlpId"),
+        url,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'penempatan': idSmk,
-          'dosen_pembimbing': idDosenPembimbing,
-        }),
+        body: json.encode({'penempatan': idSmk, 'dosen_pembimbing': idDosen}),
       );
 
-      final json = jsonDecode(response.body);
-      print("🟢 Status: ${response.statusCode}");
-      print("🟢 Response: $json");
-
+      final data = json.decode(response.body);
       if (response.statusCode == 200) {
-        final data = json['pendaftaran'];
-        if (data != null) {
-          return PendaftaranPlpModel.fromJson(data);
-        } else {
-          throw Exception("Data pendaftaran tidak ditemukan dalam respons.");
-        }
+        return {
+          'success': true,
+          'message': data['message'],
+          'data': data['pendaftaran'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Terjadi kesalahan',
+        };
       }
-
-      final message =
-          json['message'] ?? 'Gagal meng-assign dosen dan penempatan.';
-      throw Exception(message);
     } catch (e) {
-      print("🛑 Error di assignDosenDanPenempatan: $e");
-      rethrow;
+      print("🛑 Error assignPenempatanDanDosen: $e");
+      return {'success': false, 'message': 'Gagal melakukan assign: $e'};
     }
   }
 }
