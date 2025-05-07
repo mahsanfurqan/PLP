@@ -6,8 +6,8 @@ class PendaftaranPlpModel {
   final String nilaiMicroTeaching;
   final int pilihanSmk1;
   final int pilihanSmk2;
-  final String? penempatan;
-  final String? dosenPembimbing;
+  final int? penempatan;
+  final int? dosenPembimbing;
   final String createdAt;
   final String updatedAt;
 
@@ -30,12 +30,12 @@ class PendaftaranPlpModel {
       id: json['id'],
       userId: json['user_id'],
       keminatanId: json['keminatan_id'],
-      nilaiPlp1: json['nilai_plp_1'] ?? '-', // Pastikan ada fallback jika null
-      nilaiMicroTeaching: json['nilai_micro_teaching'] ?? '-',
+      nilaiPlp1: json['nilai_plp_1'],
+      nilaiMicroTeaching: json['nilai_micro_teaching'],
       pilihanSmk1: json['pilihan_smk_1'],
       pilihanSmk2: json['pilihan_smk_2'],
-      penempatan: json['penempatan'] ?? '-', // Fallback jika null
-      dosenPembimbing: json['dosen_pembimbing'] ?? '-', // Fallback jika null
+      penempatan: json['penempatan'],
+      dosenPembimbing: json['dosen_pembimbing'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
     );

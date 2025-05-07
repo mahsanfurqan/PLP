@@ -77,14 +77,10 @@ class LihatdataplpController extends GetxController {
       }
 
       // Periksa data SMK
-      List smkData = responses[2] as List;
+      List<SmkModel> smkData = responses[2] as List<SmkModel>;
       if (smkData.isNotEmpty) {
         print("Data SMK: $smkData");
-        daftarSmk.assignAll(
-          smkData.map((e) {
-            return SmkModel.fromJson(e as Map<String, dynamic>);
-          }).toList(),
-        );
+        daftarSmk.assignAll(smkData);
       }
 
       // Print status final

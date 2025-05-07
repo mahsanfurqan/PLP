@@ -80,16 +80,11 @@ class PendaftaranPlpService {
       print("Status Code: ${response.statusCode}");
       print("Response Body: ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         final decoded = jsonDecode(response.body);
         print("Response JSON: $decoded");
 
-        // Karena response langsung berupa List
-        if (decoded is List && decoded.isNotEmpty) {
-          return true;
-        } else {
-          return false;
-        }
+        return decoded is List && decoded.isNotEmpty;
       } else {
         throw Exception(
           "Gagal mengecek status pendaftaran. Status: ${response.statusCode}, Body: ${response.body}",
@@ -118,7 +113,7 @@ class PendaftaranPlpService {
       print("Status Code: ${response.statusCode}");
       print("Response Body: ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body);
 
         if (decoded is List) {
@@ -156,7 +151,7 @@ class PendaftaranPlpService {
       print("🟢 Status Code: ${response.statusCode}");
       print("🟢 Response Body: ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body);
 
         if (decoded is List) {
@@ -178,42 +173,35 @@ class PendaftaranPlpService {
   }
 
   /// 📌 Assign penempatan dan dosen pembimbing oleh koordinator
-  static Future<Map<String, dynamic>> assignPenempatanDanDosen({
+  static Future<void> assignPenempatanDospem({
     required int pendaftaranId,
     required int idSmk,
-    required int idDosen,
+    required int idDospem,
+    int? idGuruPamong,
   }) async {
     final token = getToken();
     if (token == null) throw Exception("Token tidak ditemukan.");
 
-    final url = Uri.parse('$_baseUrl/pendaftaran-plp/$pendaftaranId');
+    final response = await http.patch(
+      Uri.parse("$_baseUrl/pendaftaran-plp/$pendaftaranId"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        "penempatan": idSmk,
+        "dosen_pembimbing": idDospem,
+        if (idGuruPamong != null) "guru_pamong": idGuruPamong,
+      }),
+    );
 
-    try {
-      final response = await http.patch(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({'penempatan': idSmk, 'dosen_pembimbing': idDosen}),
-      );
+    print('🟠 PATCH Assign: ${response.statusCode}');
+    print('🟠 Response: ${response.body}');
 
-      final data = json.decode(response.body);
-      if (response.statusCode == 200) {
-        return {
-          'success': true,
-          'message': data['message'],
-          'data': data['pendaftaran'],
-        };
-      } else {
-        return {
-          'success': false,
-          'message': data['message'] ?? 'Terjadi kesalahan',
-        };
-      }
-    } catch (e) {
-      print("🛑 Error assignPenempatanDanDosen: $e");
-      return {'success': false, 'message': 'Gagal melakukan assign: $e'};
+    final json = jsonDecode(response.body);
+    if (response.statusCode != 200) {
+      throw Exception(json['message'] ?? 'Gagal assign penempatan/dospem');
     }
   }
 }

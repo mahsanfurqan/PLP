@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plp/models/pendaftaranplp_model.dart';
+import 'package:plp/models/smk_model.dart';
+import 'package:plp/models/user_model.dart';
 import '../controllers/lihatdataplpall_controller.dart';
 
 class LihatdataplpallView extends GetView<LihatdataplpallController> {
@@ -69,38 +72,96 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
     );
   }
 
-  void _showDetailDialog(BuildContext context, var pendaftaran) {
+  void _showDetailDialog(
+    BuildContext context,
+    PendaftaranPlpModel pendaftaran,
+  ) {
+    final Rxn<SmkModel> selectedSmk = Rxn<SmkModel>();
+    final Rxn<UserModel> selectedDospem = Rxn<UserModel>();
+
+    controller.fetchDropdownData();
+
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (_) => AlertDialog(
             title: const Text('Detail Pendaftaran'),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("ID: ${pendaftaran.id}"),
-                  Text("User ID: ${pendaftaran.userId}"),
-                  Text("Keminatan ID: ${pendaftaran.keminatanId}"),
-                  Text("Nilai PLP 1: ${pendaftaran.nilaiPlp1}"),
-                  Text(
-                    "Nilai Micro Teaching: ${pendaftaran.nilaiMicroTeaching}",
-                  ),
-                  Text("Pilihan SMK 1: ${pendaftaran.pilihanSmk1}"),
-                  Text("Pilihan SMK 2: ${pendaftaran.pilihanSmk2}"),
-                  Text("Penempatan: ${pendaftaran.penempatan ?? '-'}"),
-                  Text(
-                    "Dosen Pembimbing: ${pendaftaran.dosenPembimbing ?? '-'}",
-                  ),
-                  Text("Created At: ${pendaftaran.createdAt}"),
-                  Text("Updated At: ${pendaftaran.updatedAt}"),
-                ],
+            content: Obx(
+              () => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("ID: ${pendaftaran.id}"),
+                    Text("User ID: ${pendaftaran.userId}"),
+                    Text("Keminatan ID: ${pendaftaran.keminatanId}"),
+                    Text("Nilai PLP 1: ${pendaftaran.nilaiPlp1}"),
+                    Text(
+                      "Nilai Micro Teaching: ${pendaftaran.nilaiMicroTeaching}",
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Penempatan Saat Ini: ${pendaftaran.penempatan ?? '-'}",
+                    ),
+                    Text(
+                      "Dosen Pembimbing: ${pendaftaran.dosenPembimbing ?? '-'}",
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<SmkModel>(
+                      value: selectedSmk.value,
+                      hint: const Text("Pilih SMK Penempatan"),
+                      items:
+                          controller.smkList.map((smk) {
+                            return DropdownMenuItem(
+                              value: smk,
+                              child: Text(smk.nama),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        selectedSmk.value = value;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<UserModel>(
+                      value: selectedDospem.value,
+                      hint: const Text("Pilih Dosen Pembimbing"),
+                      items:
+                          controller.dospems.map((user) {
+                            return DropdownMenuItem(
+                              value: user,
+                              child: Text(user.name),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        selectedDospem.value = value;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             actions: [
               TextButton(
-                child: const Text('Tutup'),
+                child: const Text('Batal'),
                 onPressed: () => Get.back(),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (selectedSmk.value == null ||
+                      selectedDospem.value == null) {
+                    Get.snackbar(
+                      "Validasi",
+                      "Mohon pilih SMK dan Dosen Pembimbing",
+                    );
+                    return;
+                  }
+                  await controller.assignPenempatanDanDospem(
+                    pendaftaranId: pendaftaran.id!,
+                    idSmk: selectedSmk.value!.id!,
+                    idDospem: selectedDospem.value!.id!,
+                  );
+                  Get.back(); // Tutup dialog
+                },
+                child: const Text('Assign'),
               ),
             ],
           ),
