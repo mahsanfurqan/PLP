@@ -78,6 +78,7 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
   ) {
     final Rxn<SmkModel> selectedSmk = Rxn<SmkModel>();
     final Rxn<UserModel> selectedDospem = Rxn<UserModel>();
+    final Rxn<UserModel> selectedGuruPamong = Rxn<UserModel>();
 
     controller.fetchDropdownData();
 
@@ -135,6 +136,21 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
                         selectedDospem.value = value;
                       },
                     ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<UserModel>(
+                      value: selectedGuruPamong.value,
+                      hint: const Text("Pilih Guru Pamong"),
+                      items:
+                          controller.guruPamongs.map((user) {
+                            return DropdownMenuItem(
+                              value: user,
+                              child: Text(user.name),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        selectedGuruPamong.value = value;
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -147,10 +163,11 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
               ElevatedButton(
                 onPressed: () async {
                   if (selectedSmk.value == null ||
-                      selectedDospem.value == null) {
+                      selectedDospem.value == null ||
+                      selectedGuruPamong.value == null) {
                     Get.snackbar(
                       "Validasi",
-                      "Mohon pilih SMK dan Dosen Pembimbing",
+                      "Mohon pilih SMK, Dosen Pembimbing, dan Guru Pamong",
                     );
                     return;
                   }
@@ -158,7 +175,9 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
                     pendaftaranId: pendaftaran.id!,
                     idSmk: selectedSmk.value!.id!,
                     idDospem: selectedDospem.value!.id!,
+                    idGuruPamong: selectedGuruPamong.value!.id!,
                   );
+
                   Get.back(); // Tutup dialog
                 },
                 child: const Text('Assign'),

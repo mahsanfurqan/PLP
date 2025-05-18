@@ -34,6 +34,8 @@ import '../modules/selengkapnya/bindings/selengkapnya_binding.dart';
 import '../modules/selengkapnya/views/selengkapnya_view.dart';
 import '../modules/smk/bindings/smk_binding.dart';
 import '../modules/smk/views/smk_view.dart';
+import '../modules/validasilogbook/bindings/validasilogbook_binding.dart';
+import '../modules/validasilogbook/views/validasilogbook_view.dart';
 
 part 'app_routes.dart';
 
@@ -127,6 +129,11 @@ class AppPages {
       name: _Paths.KEMINATAN,
       page: () => const KeminatanView(),
       binding: KeminatanBinding(),
+    ),
+    GetPage(
+      name: _Paths.VALIDASILOGBOOK,
+      page: () => const ValidasilogbookView(),
+      binding: ValidasilogbookBinding(),
     ),
   ];
 }

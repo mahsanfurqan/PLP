@@ -63,7 +63,7 @@ class AdminLogbookValidationSheet extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              Get.toNamed('/logbook/validasi');
+              Get.toNamed('/validasilogbook');
             },
           ),
           const Divider(),

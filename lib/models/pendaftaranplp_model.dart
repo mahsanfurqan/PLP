@@ -8,6 +8,7 @@ class PendaftaranPlpModel {
   final int pilihanSmk2;
   final int? penempatan;
   final int? dosenPembimbing;
+  final int? guruPamong; // ✅ Tambahan field guru_pamong
   final String createdAt;
   final String updatedAt;
 
@@ -21,6 +22,7 @@ class PendaftaranPlpModel {
     required this.pilihanSmk2,
     this.penempatan,
     this.dosenPembimbing,
+    this.guruPamong, // ✅ Tambahkan di constructor
     required this.createdAt,
     required this.updatedAt,
   });
@@ -36,6 +38,7 @@ class PendaftaranPlpModel {
       pilihanSmk2: json['pilihan_smk_2'],
       penempatan: json['penempatan'],
       dosenPembimbing: json['dosen_pembimbing'],
+      guruPamong: json['guru_pamong'], // ✅ Mapping dari JSON
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
     );

@@ -124,7 +124,7 @@ class LogbookService {
       print("Status Code (All Logbooks): ${response.statusCode}");
       print("Response Body (All Logbooks): ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         final List<dynamic> data = jsonDecode(response.body);
         return data.map((e) => LogbookModel.fromJson(e)).toList();
       } else {
@@ -133,6 +133,47 @@ class LogbookService {
     } catch (e) {
       print("🛑 Error saat mengambil semua logbook: $e");
       rethrow;
+    }
+  }
+
+  // Ambil list logbook untuk validasi khusus Guru & Dosen Pembimbing
+  static Future<List<LogbookModel>> getLogbooksForValidation() async {
+    final token = box.read('token');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/validasi'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    print("Status Code (Logbooks Validasi): ${response.statusCode}");
+    print("Response Body (Logbooks Validasi): ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((e) => LogbookModel.fromJson(e)).toList();
+    } else {
+      throw Exception('Gagal memuat logbook untuk validasi');
+    }
+  }
+
+  // PUT validasi logbook
+  static Future<bool> updateValidationStatus(int id, String status) async {
+    final token = box.read('token') ?? '';
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/validasi/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'status': status}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Gagal memperbarui status validasi');
     }
   }
 }

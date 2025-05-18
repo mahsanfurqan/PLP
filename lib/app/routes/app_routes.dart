@@ -21,6 +21,7 @@ abstract class Routes {
   static const SMK = _Paths.SMK;
   static const GURUPAMONG = _Paths.GURUPAMONG;
   static const KEMINATAN = _Paths.KEMINATAN;
+  static const VALIDASILOGBOOK = _Paths.VALIDASILOGBOOK;
 }
 
 abstract class _Paths {
@@ -43,4 +44,5 @@ abstract class _Paths {
   static const SMK = '/smk';
   static const GURUPAMONG = '/gurupamong';
   static const KEMINATAN = '/keminatan';
+  static const VALIDASILOGBOOK = '/validasilogbook';
 }

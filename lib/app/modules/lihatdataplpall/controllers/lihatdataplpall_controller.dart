@@ -5,14 +5,16 @@ import 'package:plp/models/user_model.dart';
 import 'package:plp/service/akun_service.dart';
 import 'package:plp/service/pendaftaran_plp_service.dart';
 import 'package:plp/service/smk_service.dart';
+import 'package:plp/service/guru_service.dart'; // tambahkan ini kalau service guru kamu pisah
 
 class LihatdataplpallController extends GetxController {
   // 📌 State untuk data pendaftaran PLP
   var pendaftaranList = <PendaftaranPlpModel>[].obs;
 
-  // 📌 State untuk data SMK dan Dosen Pembimbing
+  // 📌 State untuk data SMK, Dospem, dan Guru Pamong
   var smkList = <SmkModel>[].obs;
   var dospems = <UserModel>[].obs;
+  var guruPamongs = <UserModel>[].obs;
 
   // 📌 Loading states
   var isLoading = false.obs;
@@ -38,52 +40,53 @@ class LihatdataplpallController extends GetxController {
     }
   }
 
-  /// 🔄 Ambil data SMK & Dospem untuk dropdown
+  /// 🔄 Ambil data SMK, Dospem & Guru Pamong untuk dropdown
   Future<void> fetchDropdownData() async {
     try {
-      final smks = await SmkService.getSmks();
-      final dospems = await AkunService.getAllUsersByRole(
-        'Dosen Pembimbing',
-      ); // ambil dari AkunService
-      smkList.assignAll(smks);
+      smkList.assignAll(await SmkService.getSmks());
       dospems.assignAll(
         await AkunService.getAllUsersByRole("Dosen Pembimbing"),
       );
+      await fetchGuruPamong(); // panggil juga data guru pamong
     } catch (e) {
       Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
     }
   }
 
-  /// ✅ Assign SMK dan Dospem untuk pendaftar tertentu
+  /// 👨‍🏫 Fetch data Guru Pamong
+  Future<void> fetchGuruPamong() async {
+    try {
+      final result = await GuruPamongService.getAllGuruPamong();
+      guruPamongs.assignAll(result.map((e) => UserModel.fromJson(e)).toList());
+    } catch (e) {
+      Get.snackbar("Error", "Gagal memuat data guru pamong:\n${e.toString()}");
+    }
+  }
+
+  /// ✅ Assign SMK, Dospem, dan Guru Pamong untuk pendaftar tertentu
   Future<void> assignPenempatanDanDospem({
     required int pendaftaranId,
     required int idSmk,
     required int idDospem,
-    int? idGuruPamong, // optional
+    required int idGuruPamong,
   }) async {
-    isAssigning.value = true; // Show loading indicator
+    isAssigning.value = true;
     try {
-      // Call the service to assign the SMK and Dospem
       await PendaftaranPlpService.assignPenempatanDospem(
         pendaftaranId: pendaftaranId,
         idSmk: idSmk,
         idDospem: idDospem,
-        idGuruPamong: idGuruPamong, // Can be null, handled in the service
+        idGuruPamong: idGuruPamong,
       );
 
-      // Show success message
-      Get.snackbar("Sukses", "Berhasil meng-assign penempatan & dospem.");
-
-      // Refresh the list of pendaftar
-      fetchAllPendaftaran();
-    } catch (e) {
-      // Handle any errors by displaying the error message
       Get.snackbar(
-        "Error",
-        "Gagal meng-assign penempatan & dospem:\n${e.toString()}",
+        "Sukses",
+        "Berhasil meng-assign penempatan, dospem, dan guru.",
       );
+      fetchAllPendaftaran(); // refresh data setelah assign
+    } catch (e) {
+      Get.snackbar("Error", "Gagal meng-assign:\n${e.toString()}");
     } finally {
-      // Hide loading indicator
       isAssigning.value = false;
     }
   }
