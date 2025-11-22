@@ -74,12 +74,18 @@ class IsilogbookController extends GetxController {
 
   /// Hitung durasi kegiatan
   String calculateDuration(String mulai, String selesai) {
-    final start = DateFormat("HH:mm:ss").parse(mulai);
-    final end = DateFormat("HH:mm:ss").parse(selesai);
-    final durasiJam = end.difference(start).inHours;
-    final durasiMenit = end.difference(start).inMinutes % 60;
-    return durasiMenit == 0
-        ? "$durasiJam jam"
-        : "$durasiJam jam $durasiMenit menit";
+    try {
+      // Support both HH:mm and HH:mm:ss formats
+      final format = mulai.split(':').length == 3 ? "HH:mm:ss" : "HH:mm";
+      final start = DateFormat(format).parse(mulai);
+      final end = DateFormat(format).parse(selesai);
+      final durasiJam = end.difference(start).inHours;
+      final durasiMenit = end.difference(start).inMinutes % 60;
+      return durasiMenit == 0
+          ? "$durasiJam jam"
+          : "$durasiJam jam $durasiMenit menit";
+    } catch (e) {
+      return "0 jam";
+    }
   }
 }

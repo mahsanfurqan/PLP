@@ -109,9 +109,8 @@ class LogbookService {
     );
 
     if (response.statusCode == 200) {
-      print('✅ Logbook berhasil dihapus');
+      return;
     } else {
-      print('❌ Error response: ${response.body}');
       throw Exception('Gagal menghapus logbook');
     }
   }

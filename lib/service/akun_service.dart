@@ -61,7 +61,6 @@ class AkunService {
         throw Exception('Gagal mengambil data semua user');
       }
     } catch (e) {
-      print('Error getting all users: $e');
       return [];
     }
   }
@@ -112,8 +111,6 @@ class AkunService {
       if (details != null) "details": details,
     };
 
-    print('🟠 Create Account Request Body: ${jsonEncode(requestBody)}');
-
     try {
       final response = await http.post(
         Uri.parse("$_baseUrl/pembuatan-akun"),
@@ -125,21 +122,15 @@ class AkunService {
         body: jsonEncode(requestBody),
       );
 
-      print('🟠 Create Account Response Status: ${response.statusCode}');
-      print('🟠 Create Account Response: ${response.body}');
-
       final json = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Account created successfully');
         return json;
       } else {
         final message = json['message'] ?? 'Gagal membuat akun';
-        print('❌ Create account failed: $message');
         throw Exception(message);
       }
     } catch (e) {
-      print('🛑 Error creating account: $e');
       rethrow;
     }
   }

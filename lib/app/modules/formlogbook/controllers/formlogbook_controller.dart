@@ -20,7 +20,6 @@ class FormlogbookController extends GetxController {
 
     try {
       if (idLogbook.value != null) {
-        // Kalau ternyata ada id-nya, jangan submit karena ini bukan mode tambah
         Get.snackbar('Error', 'Form ini hanya untuk tambah logbook');
         return;
       }

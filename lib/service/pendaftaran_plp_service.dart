@@ -42,14 +42,11 @@ class PendaftaranPlpService {
       );
 
       final json = jsonDecode(response.body);
-      print("🟡 Status: ${response.statusCode}");
-      print("🟡 Response: $json");
 
       final isSuccess =
           response.statusCode == 200 || response.statusCode == 201;
 
       if (isSuccess) {
-        // Gunakan field yang tersedia di respons
         final data = json['data'] ?? json['pendaftaran_plp'];
         if (data != null) {
           return PendaftaranPlpModel.fromJson(data);
@@ -59,7 +56,6 @@ class PendaftaranPlpService {
       final message = json['message'] ?? 'Gagal mendaftar PLP.';
       throw Exception(message);
     } catch (e) {
-      print("🛑 Error di submitPendaftaranPlp: $e");
       rethrow;
     }
   }
@@ -78,13 +74,8 @@ class PendaftaranPlpService {
         },
       );
 
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final decoded = jsonDecode(response.body);
-        print("Response JSON: $decoded");
-
         return decoded is List && decoded.isNotEmpty;
       } else {
         throw Exception(
@@ -92,7 +83,6 @@ class PendaftaranPlpService {
         );
       }
     } catch (e) {
-      print("🛑 Error saat mengecek status pendaftaran: $e");
       throw Exception("Gagal mengecek status pendaftaran.");
     }
   }
@@ -111,9 +101,6 @@ class PendaftaranPlpService {
         },
       );
 
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body);
 
@@ -130,7 +117,6 @@ class PendaftaranPlpService {
         );
       }
     } catch (e) {
-      print("🛑 Error saat mengambil data pendaftaran: $e");
       rethrow;
     }
   }
@@ -149,29 +135,20 @@ class PendaftaranPlpService {
         },
       );
 
-      print("🟢 Status Code: ${response.statusCode}");
-      print("🟢 Response Body: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = jsonDecode(response.body);
 
         if (decoded is List) {
           // Debug: Analyze the first item in the list
           if (decoded.isNotEmpty) {
-            print('🔍 First registration item analysis:');
             final firstItem = decoded.first as Map<String, dynamic>;
-            firstItem.forEach((key, value) {
-              print('   - $key: $value');
-            });
+            firstItem.forEach((key, value) {});
 
             // Check if required fields exist
             final hasDosenPembimbing = firstItem.containsKey(
               'dosen_pembimbing',
             );
             final hasGuruPamong = firstItem.containsKey('guru_pamong');
-            print('🔍 Field check:');
-            print('   - dosen_pembimbing exists: $hasDosenPembimbing');
-            print('   - guru_pamong exists: $hasGuruPamong');
           }
 
           return decoded
@@ -186,7 +163,6 @@ class PendaftaranPlpService {
         );
       }
     } catch (e) {
-      print("🛑 Error saat getAllPendaftaranPlp: $e");
       rethrow;
     }
   }
@@ -205,14 +181,8 @@ class PendaftaranPlpService {
     final requestBody = {
       "penempatan": idSmk,
       "dosen_pembimbing": idDospem,
-      "guru_pamong": idGuruPamong, // Always send guru_pamong, even if null
+      "guru_pamong": idGuruPamong,
     };
-
-    print('🟠 Request Body: ${jsonEncode(requestBody)}');
-    print('🟠 Pendaftaran ID: $pendaftaranId');
-    print('🟠 SMK ID: $idSmk');
-    print('🟠 Dospem ID: $idDospem');
-    print('🟠 Guru ID: $idGuruPamong');
 
     final response = await http.patch(
       Uri.parse("$_baseUrl/pendaftaran-plp/$pendaftaranId"),
@@ -223,45 +193,28 @@ class PendaftaranPlpService {
       },
       body: jsonEncode(requestBody),
     );
-
-    print('🟠 PATCH Assign: ${response.statusCode}');
-    print('🟠 Response: ${response.body}');
-
     final json = jsonDecode(response.body);
+    json.forEach((key, value) {});
 
-    // Debug: Analyze the response JSON structure
-    print('🔍 Response JSON analysis:');
-    json.forEach((key, value) {
-      print('   - $key: $value');
-    });
-
-    // Check if response is successful (200, 201, or 202)
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      // Success - don't throw exception
-      print('✅ Assignment successful (status code: ${response.statusCode})');
-
       // Additional validation: check if the response contains updated data
       if (json.containsKey('data') || json.containsKey('pendaftaran_plp')) {
         final data = json['data'] ?? json['pendaftaran_plp'];
-        print('✅ Response contains updated data: $data');
       }
 
       return;
     } else {
       // Check if the response message indicates success despite non-200 status
       final message = json['message'] ?? '';
-      print('🟡 Response message: $message');
 
       if (message.toLowerCase().contains('berhasil') ||
           message.toLowerCase().contains('success')) {
-        print('✅ Assignment successful (based on message)');
         return;
       }
 
       // If not successful, throw exception
-      print('❌ Assignment failed: ${json['message']}');
       throw Exception(json['message'] ?? 'Gagal assign penempatan/dospem');
     }
   }

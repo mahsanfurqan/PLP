@@ -62,21 +62,49 @@ class FormlogbookView extends GetView<FormlogbookController> {
             ),
             const SizedBox(height: 16),
 
-            const Text('Jam mulai'),
+            const Text('Jam Mulai'),
             const SizedBox(height: 8),
-            CustomTextField(
-              controller: mulaiC,
-              hintText: 'HH:mm',
-              inputFormatters: [TimeInputFormatter()],
+            GestureDetector(
+              onTap: () async {
+                TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (pickedTime != null) {
+                  mulaiC.text =
+                      '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+                }
+              },
+              child: AbsorbPointer(
+                child: CustomTextField(
+                  controller: mulaiC,
+                  hintText: 'HH:mm',
+                  suffixIcon: const Icon(Icons.access_time, color: Colors.grey),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
 
             const Text('Jam Selesai'),
             const SizedBox(height: 8),
-            CustomTextField(
-              controller: selesaiC,
-              hintText: 'HH:mm',
-              inputFormatters: [TimeInputFormatter()],
+            GestureDetector(
+              onTap: () async {
+                TimeOfDay? pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (pickedTime != null) {
+                  selesaiC.text =
+                      '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+                }
+              },
+              child: AbsorbPointer(
+                child: CustomTextField(
+                  controller: selesaiC,
+                  hintText: 'HH:mm',
+                  suffixIcon: const Icon(Icons.access_time, color: Colors.grey),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
 

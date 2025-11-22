@@ -24,15 +24,11 @@ class SmkService {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
-    log('🔵 SMK Response Status: ${response.statusCode}');
-    log('🔵 SMK Response Body: ${response.body}');
-
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => SmkModel.fromJson(item)).toList();
     } else {
       final json = jsonDecode(response.body);
-      log('🔴 SMK Error Message: ${json['message']}');
       throw Exception(json['message'] ?? 'Gagal mengambil data SMK');
     }
   }
@@ -51,9 +47,6 @@ class SmkService {
       },
       body: jsonEncode({'name': name}),
     );
-
-    log('🟣 Tambah SMK Status: ${response.statusCode}');
-    log('🟣 Tambah SMK Response: ${response.body}');
 
     final json = jsonDecode(response.body);
 

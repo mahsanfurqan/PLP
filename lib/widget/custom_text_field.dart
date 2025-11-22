@@ -18,7 +18,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.controller,
     this.inputFormatters,
-    this.maxLines = 1, // ✅ Default tetap 1 agar tidak mengganggu file lain
+    this.maxLines = 1,
     this.keyboardType,
     this.textInputAction,
   }) : super(key: key);
@@ -29,7 +29,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       inputFormatters: inputFormatters,
-      maxLines: maxLines, // ✅ Digunakan di sini
+      maxLines: maxLines,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       style: const TextStyle(color: Colors.black87),

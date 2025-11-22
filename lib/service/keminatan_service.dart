@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer'; // Untuk log
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:plp/config/app_config.dart';
@@ -19,16 +18,12 @@ class KeminatanService {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
-    log('🔵 Response Status: ${response.statusCode}');
-    log('🔵 Response Body: ${response.body}');
-
     final json = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json;
       return data.map((item) => item as Map<String, dynamic>).toList();
     } else {
-      log('🔴 Error Message: ${json['message']}');
       throw Exception(
         json['message'] ?? 'Terjadi kesalahan saat mengambil data keminatan',
       );
@@ -52,13 +47,10 @@ class KeminatanService {
       body: jsonEncode({'name': namaKeminatan}),
     );
 
-    log('🟡 POST Response Status: ${response.statusCode}');
-    log('🟡 POST Response Body: ${response.body}');
-
     final json = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      log('✅ Keminatan berhasil ditambahkan: ${json['message']}');
+      return;
     } else {
       throw Exception(json['message'] ?? 'Gagal menambahkan keminatan');
     }
