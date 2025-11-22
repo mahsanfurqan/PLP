@@ -42,7 +42,7 @@ class LihatdataplpView extends GetView<LihatdataplpController> {
 
           return Container(
             width: double.infinity,
-            height: 410,
+            height: 320,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.indigo[900]!, width: 2),
               borderRadius: BorderRadius.circular(25),
@@ -52,13 +52,10 @@ class LihatdataplpView extends GetView<LihatdataplpController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildItem("Nama", controller.nama.value),
-                buildItem("NIM", controller.nim.value),
                 buildItem(
                   "BIDANG",
                   controller.getNamaKeminatan(data.keminatanId),
                 ),
-                buildItem("ANGKATAN", controller.angkatan.value),
                 buildItem("Nilai PLP 1", data.nilaiPlp1 ?? "-"),
                 buildItem("Nilai Micro", data.nilaiMicroTeaching ?? "-"),
                 buildItem("SMK 1", controller.getNamaSmk(data.pilihanSmk1)),

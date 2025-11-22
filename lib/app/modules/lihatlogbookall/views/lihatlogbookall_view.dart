@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/lihatlogbookall_controller.dart';
+import '../widget/logbook_card.dart';
+import '../widget/logbook_detail_bottom_sheet.dart';
 
 class LihatlogbookallView extends GetView<LihatlogbookallController> {
   const LihatlogbookallView({super.key});
@@ -29,60 +31,39 @@ class LihatlogbookallView extends GetView<LihatlogbookallController> {
             itemCount: controller.logbookList.length,
             itemBuilder: (context, index) {
               final logbook = controller.logbookList[index];
+              final userName = controller.getUserName(logbook.userId);
 
-              return GestureDetector(
+              return LogbookCard(
+                logbook: logbook,
+                userName: userName,
+                index: index,
                 onTap: () {
-                  // Saat item ditekan, tampilkan semua detail
-                  Get.defaultDialog(
-                    title: "Detail Logbook",
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('ID: ${logbook.id}'),
-                        Text('User ID: ${logbook.userId}'),
-                        Text('Tanggal: ${logbook.tanggal}'),
-                        Text('Keterangan: ${logbook.keterangan}'),
-                        Text('Mulai: ${logbook.mulai}'),
-                        Text('Selesai: ${logbook.selesai}'),
-                        Text('Dokumentasi: ${logbook.dokumentasi}'),
-                      ],
-                    ),
-                  );
+                  _showLogbookDetail(context, logbook, userName);
                 },
-                child: Card(
-                  color: Colors.blueGrey.shade300,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      backgroundColor: Colors.black54,
-                      child: Icon(Icons.person, color: Colors.white),
-                    ),
-                    title: Text(
-                      'User ID: ${logbook.userId}, Tanggal: ${logbook.tanggal}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Keterangan: ${logbook.keterangan.length > 30 ? logbook.keterangan.substring(0, 30) + '...' : logbook.keterangan}',
-                        ),
-                        Text('Mulai: ${logbook.mulai}'),
-                        Text('Selesai: ${logbook.selesai}'),
-                        Text('Dokumentasi: ${logbook.dokumentasi}'),
-                      ],
-                    ),
-                  ),
-                ),
               );
             },
           );
         }),
       ),
+    );
+  }
+
+  void _showLogbookDetail(BuildContext context, logbook, String userName) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.7,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder:
+                (context, scrollController) => LogbookDetailBottomSheet(
+                  logbook: logbook,
+                  userName: userName,
+                ),
+          ),
     );
   }
 }

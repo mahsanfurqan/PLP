@@ -47,14 +47,13 @@ class PendaftaranplpController extends GetxController {
       keminatanList.assignAll(keminatans);
 
       final smks = await SmkService.getSmks();
-      smkList.assignAll(smks); // ✅ assignAll pakai SmkModel
+      smkList.assignAll(smks);
     } catch (e) {
       Get.log("🔴 Error saat fetchDropdownData: $e", isError: true);
       Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
     }
   }
 
-  // Mengecek status pendaftaran apakah sudah pernah mendaftar
   Future<void> cekStatusPendaftaran() async {
     try {
       final status = await PendaftaranPlpService.cekSudahDaftar();

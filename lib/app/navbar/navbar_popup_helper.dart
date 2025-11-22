@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plp/app/navbar/navbar_controller.dart';
 
 // ==== LOGBOOK ====
 
@@ -47,6 +48,8 @@ class AdminLogbookValidationSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ambil role dari NavbarController
+    final role = Get.find<NavbarController>().role.value;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
@@ -55,33 +58,42 @@ class AdminLogbookValidationSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: const Icon(Icons.verified, color: Colors.green, size: 28),
-            title: const Text(
-              "Validasi Logbook",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          // Hanya tampilkan jika bukan Kaprodi atau Akademik
+          if (role != 'Kaprodi' && role != 'Akademik')
+            ListTile(
+              leading: const Icon(
+                Icons.verified,
+                color: Colors.green,
+                size: 28,
+              ),
+              title: const Text(
+                "Validasi Logbook",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Get.toNamed('/validasilogbook');
+              },
             ),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed('/validasilogbook');
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(
-              Icons.remove_red_eye,
-              color: Colors.blue,
-              size: 28,
+          // Divider hanya jika menu Validasi Logbook tampil
+          if (role != 'Kaprodi' && role != 'Akademik') const Divider(),
+          // Hanya tampilkan jika bukan Dosen Pembimbing
+          if (role != 'Dosen Pembimbing')
+            ListTile(
+              leading: const Icon(
+                Icons.remove_red_eye,
+                color: Colors.blue,
+                size: 28,
+              ),
+              title: const Text(
+                "Lihat Logbook Mahasiswa",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Get.toNamed('/lihatlogbookall');
+              },
             ),
-            title: const Text(
-              "Lihat Logbook Mahasiswa",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed('/lihatlogbookall');
-            },
-          ),
         ],
       ),
     );
@@ -145,6 +157,8 @@ class AdminLihatKelengkapanSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ambil role dari NavbarController
+    final role = Get.find<NavbarController>().role.value;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
@@ -153,21 +167,23 @@ class AdminLihatKelengkapanSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: Image.asset(
-              'assets/icons/lihatkelengkapandata.png',
-              width: 28,
-              height: 28,
+          // Hanya tampilkan jika bukan Dosen Pembimbing
+          if (role != 'Dosen Pembimbing')
+            ListTile(
+              leading: Image.asset(
+                'assets/icons/lihatkelengkapandata.png',
+                width: 28,
+                height: 28,
+              ),
+              title: const Text(
+                "Lihat Kelengkapan Data",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Get.toNamed('/lihatdataplpall');
+              },
             ),
-            title: const Text(
-              "Lihat Kelengkapan Data",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Get.toNamed('/lihatdataplpall');
-            },
-          ),
         ],
       ),
     );

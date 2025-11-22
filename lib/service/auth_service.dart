@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:plp/config/app_config.dart';
 
 class AuthService {
-  static const String baseUrl = "http://10.0.2.2:8000/api";
+  static const String baseUrl = AppConfig.baseUrl;
 
   static Future<http.Response> register({
     required String name,
@@ -42,6 +43,21 @@ class AuthService {
         'Accept': 'application/json',
       },
       body: jsonEncode({"email": email, "password": password}),
+    );
+  }
+
+  static Future<http.Response> requestPasswordReset({
+    required String email,
+  }) async {
+    final url = Uri.parse('$baseUrl/forgot-password');
+
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({'email': email}),
     );
   }
 }

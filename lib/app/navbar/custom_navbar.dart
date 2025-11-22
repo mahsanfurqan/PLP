@@ -43,6 +43,15 @@ class CustomNavbar extends StatelessWidget {
                         ),
                   );
                 } else if (index == 2) {
+                  // Tambahkan pengecekan role Dosen Pembimbing
+                  if (controller.role.value == 'Dosen Pembimbing') {
+                    Get.snackbar(
+                      'Akses Ditolak',
+                      'Anda tidak memiliki akses',
+                      snackPosition: SnackPosition.TOP,
+                    );
+                    return;
+                  }
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Colors.transparent,

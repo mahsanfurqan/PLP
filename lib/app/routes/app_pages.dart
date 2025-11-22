@@ -36,6 +36,8 @@ import '../modules/smk/bindings/smk_binding.dart';
 import '../modules/smk/views/smk_view.dart';
 import '../modules/validasilogbook/bindings/validasilogbook_binding.dart';
 import '../modules/validasilogbook/views/validasilogbook_view.dart';
+import '../modules/buatakun/bindings/buatakun_binding.dart';
+import '../modules/buatakun/views/buatakun_view.dart';
 
 part 'app_routes.dart';
 
@@ -134,6 +136,11 @@ class AppPages {
       name: _Paths.VALIDASILOGBOOK,
       page: () => const ValidasilogbookView(),
       binding: ValidasilogbookBinding(),
+    ),
+    GetPage(
+      name: _Paths.BUATAKUN,
+      page: () => const BuatakunView(),
+      binding: BuatakunBinding(),
     ),
   ];
 }

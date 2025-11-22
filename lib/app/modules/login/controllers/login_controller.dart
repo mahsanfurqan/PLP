@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,6 +28,15 @@ class LoginController extends GetxController {
       return;
     }
 
+    // Validate email format
+    if (!email.endsWith('ub.ac.id')) {
+      Get.snackbar(
+        "Error",
+        "Hanya email dengan domain .ub.ac.id yang diperbolehkan!",
+      );
+      return;
+    }
+
     isLoginPressed.value = true;
 
     try {
@@ -40,8 +48,6 @@ class LoginController extends GetxController {
       isLoginPressed.value = false;
 
       if (response.statusCode == 200) {
-        log("📥 Response Body Mentah: ${response.body}");
-
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         final result = SimpleLoginResponse.fromJson(jsonResponse);
 
@@ -56,9 +62,6 @@ class LoginController extends GetxController {
           'email': result.email,
           'role': role,
         });
-
-        log("✅ Token tersimpan: ${result.token}");
-        log("✅ Role tersimpan: $role");
 
         Get.snackbar("Berhasil", result.status);
         Get.toNamed('/home');

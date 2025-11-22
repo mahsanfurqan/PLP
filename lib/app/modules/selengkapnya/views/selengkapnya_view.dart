@@ -50,16 +50,21 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
 
             const SizedBox(height: 16),
 
-            // 👇 Hanya non-Mahasiswa & non-Observer yang bisa lihat 2 menu ini
-            if (role != 'Mahasiswa' && role != 'Observer') ...[
-              RoundedMenuItem(
-                icon: 'assets/icons/smkicon.png',
-                label: 'SMK',
-                onTap: () {
-                  Get.toNamed('/smk');
-                },
-              ),
-              const SizedBox(height: 16),
+            // 👇 Hanya non-Mahasiswa & non-Observer & non-Dosen Pembimbing yang bisa lihat 3 menu ini
+            if (role != 'Mahasiswa' &&
+                role != 'Observer' &&
+                role != 'Dosen Pembimbing') ...[
+              // Sembunyikan menu SMK jika role Admin atau Akademik
+              if (role != 'Admin' && role != 'Akademik')
+                RoundedMenuItem(
+                  icon: 'assets/icons/smkicon.png',
+                  label: 'SMK',
+                  onTap: () {
+                    Get.toNamed('/smk');
+                  },
+                ),
+              if (role != 'Admin' && role != 'Akademik')
+                const SizedBox(height: 16),
               RoundedMenuItem(
                 icon: 'assets/icons/keminatanicon.png',
                 label: 'Keminatan',
@@ -73,6 +78,18 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
                 label: 'Daftar Guru Pamong',
                 onTap: () {
                   Get.toNamed('/gurupamong');
+                },
+              ),
+            ],
+
+            // 👇 Hanya Akademik yang bisa lihat menu Buat Akun
+            if (role == 'Akademik') ...[
+              const SizedBox(height: 16),
+              RoundedMenuItem(
+                icon: 'assets/icons/pendaftaran.png',
+                label: 'Buat Akun',
+                onTap: () {
+                  Get.toNamed('/buatakun');
                 },
               ),
             ],

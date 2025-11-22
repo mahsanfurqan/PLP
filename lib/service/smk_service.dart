@@ -3,9 +3,10 @@ import 'dart:developer'; // Untuk logging
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:plp/models/smk_model.dart'; // Pastikan import modelnya
+import 'package:plp/config/app_config.dart';
 
 class SmkService {
-  static const String _baseUrl = "http://10.0.2.2:8000/api";
+  static const String _baseUrl = AppConfig.baseUrl;
   static final box = GetStorage();
 
   /// 🔐 Ambil token dari storage

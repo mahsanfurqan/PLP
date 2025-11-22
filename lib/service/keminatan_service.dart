@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:developer'; // Untuk log
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:plp/config/app_config.dart';
 
 class KeminatanService {
-  static const String _baseUrl = "http://10.0.2.2:8000/api";
+  static const String _baseUrl = AppConfig.baseUrl;
 
   /// Ambil semua keminatan (GET)
   static Future<List<Map<String, dynamic>>> getKeminatan() async {

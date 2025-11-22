@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/widget/custom_button_action.dart';
 import '../controllers/smk_controller.dart';
+import 'package:plp/app/navbar/navbar_controller.dart';
 
 class SmkView extends GetView<SmkController> {
   const SmkView({super.key});
@@ -10,6 +11,7 @@ class SmkView extends GetView<SmkController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(SmkController());
+    final role = Get.find<NavbarController>().role.value;
 
     return Scaffold(
       appBar: AppBar(title: const Text('List SMK'), centerTitle: true),
@@ -102,6 +104,10 @@ class SmkView extends GetView<SmkController> {
             ), // Akhir Expanded
             const Divider(height: 1, thickness: 1),
             Obx(() {
+              // Sembunyikan tombol tambah SMK jika role Dosen Pembimbing
+              if (role == 'Dosen Pembimbing') {
+                return const SizedBox.shrink();
+              }
               return controller.isSubmitting.value
                   // Tampilkan indikator loading *di tempat* tombol jika sedang submit
                   ? const Padding(
@@ -124,9 +130,6 @@ class SmkView extends GetView<SmkController> {
                       onPressed: () {
                         _showAddSmkDialog(context, controller);
                       },
-                      // 'isPressed' biasanya untuk efek visual saat ditekan,
-                      // bukan untuk menonaktifkan. State isSubmitting lebih cocok
-                      // digunakan untuk menonaktifkan tombol di dialog.
                       isPressed: false,
                     ),
                   );

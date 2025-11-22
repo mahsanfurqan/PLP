@@ -32,7 +32,8 @@ class LoginView extends GetView<LoginController> {
 
             CustomTextField(
               controller: controller.emailController,
-              hintText: "Email atau username",
+              hintText: "Email @...ub.ac.id",
+              keyboardType: TextInputType.emailAddress,
             ),
 
             const SizedBox(height: 20),

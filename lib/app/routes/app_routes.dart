@@ -22,6 +22,7 @@ abstract class Routes {
   static const GURUPAMONG = _Paths.GURUPAMONG;
   static const KEMINATAN = _Paths.KEMINATAN;
   static const VALIDASILOGBOOK = _Paths.VALIDASILOGBOOK;
+  static const BUATAKUN = _Paths.BUATAKUN;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const GURUPAMONG = '/gurupamong';
   static const KEMINATAN = '/keminatan';
   static const VALIDASILOGBOOK = '/validasilogbook';
+  static const BUATAKUN = '/buatakun';
 }

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:plp/config/app_config.dart';
 
 class GuruPamongService {
   static final box = GetStorage();
-  static const String baseUrl =
-      'http://10.0.2.2:8000/api'; // Ganti jika pakai device fisik
+  static const String baseUrl = AppConfig.baseUrl;
 
   static Future<List<Map<String, dynamic>>> getAllGuruPamong() async {
     final token = box.read('token');

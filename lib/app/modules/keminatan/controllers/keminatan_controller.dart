@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:plp/service/keminatan_service.dart';
+import 'package:plp/app/navbar/navbar_controller.dart';
 
 class KeminatanController extends GetxController {
   var keminatanList = <Map<String, dynamic>>[].obs;
@@ -28,6 +29,14 @@ class KeminatanController extends GetxController {
 
   /// Menambahkan keminatan baru ke server
   Future<void> tambahKeminatan() async {
+    final role = Get.find<NavbarController>().role.value;
+    if (role == 'Dosen Pembimbing') {
+      Get.snackbar(
+        'Akses Ditolak',
+        'Role Dosen Pembimbing tidak dapat menambah keminatan.',
+      );
+      return;
+    }
     if (namaKeminatanBaru.value.isEmpty) {
       Get.snackbar('Gagal', 'Nama keminatan tidak boleh kosong.');
       return;
