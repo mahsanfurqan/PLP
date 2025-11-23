@@ -64,7 +64,7 @@ class LoginController extends GetxController {
         });
 
         Get.snackbar("Berhasil", result.status);
-        Get.toNamed('/home');
+        Get.offAllNamed('/home');
       } else {
         final json = jsonDecode(response.body);
         final message = json['message'] ?? 'Login gagal';

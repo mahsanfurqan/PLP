@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:plp/widget/rounded_menu_item.dart';
 import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/app/navbar/navbar_controller.dart'; // import controller
@@ -99,6 +100,10 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
             // 👇 Tombol Logout untuk semua role
             InkWell(
               onTap: () {
+                // Hapus data login
+                final box = GetStorage();
+                box.remove('token');
+                box.remove('user');
                 Get.offAllNamed('/login');
               },
               borderRadius: BorderRadius.circular(25),
