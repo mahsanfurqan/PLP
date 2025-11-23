@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plp/models/pendaftaranplp_model.dart';
-import 'package:plp/models/smk_model.dart';
-import 'package:plp/models/user_model.dart';
 import '../controllers/lihatdataplpall_controller.dart';
 import '../widget/registration_card.dart';
 import '../widget/registration_detail_bottom_sheet.dart';
@@ -55,7 +53,6 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
     if (controller.smkList.isEmpty ||
         controller.dospems.isEmpty ||
         controller.guruPamongs.isEmpty) {
-      print('🔄 Fetching dropdown data before showing bottom sheet...');
       await controller.fetchDropdownData();
     }
 

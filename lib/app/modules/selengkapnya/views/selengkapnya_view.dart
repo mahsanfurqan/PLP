@@ -93,6 +93,56 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
                 },
               ),
             ],
+
+            const SizedBox(height: 16),
+
+            // 👇 Tombol Logout untuk semua role
+            InkWell(
+              onTap: () {
+                Get.offAllNamed('/login');
+              },
+              borderRadius: BorderRadius.circular(25),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF4B4B),
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(color: const Color(0xFFCC3C3C), width: 2),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0xFFCC3C3C),
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Image.asset(
+                        'assets/icons/logout.png',
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Logout',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
