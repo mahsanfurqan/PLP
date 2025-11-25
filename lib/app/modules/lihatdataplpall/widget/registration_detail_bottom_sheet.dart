@@ -265,27 +265,31 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        DropdownButtonFormField<SmkModel>(
-                          value: selectedSmk.value,
-                          hint: const Text('Pilih SMK'),
-                          items:
-                              smkList.map((smk) {
-                                return DropdownMenuItem<SmkModel>(
-                                  value: smk,
-                                  child: Text(smk.nama),
-                                );
-                              }).toList(),
-                          onChanged: (value) => selectedSmk.value = value,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                        Obx(
+                          () => DropdownButtonFormField<SmkModel>(
+                            value: selectedSmk.value,
+                            hint: const Text('Pilih SMK'),
+                            items:
+                                smkList.map((smk) {
+                                  return DropdownMenuItem<SmkModel>(
+                                    value: smk,
+                                    child: Text(smk.nama),
+                                  );
+                                }).toList(),
+                            onChanged: (value) => selectedSmk.value = value,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.grey[300]!,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                             ),
                           ),
                         ),
@@ -326,27 +330,31 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        DropdownButtonFormField<UserModel>(
-                          value: selectedDospem.value,
-                          hint: const Text('Pilih Dosen'),
-                          items:
-                              dospems.map((user) {
-                                return DropdownMenuItem<UserModel>(
-                                  value: user,
-                                  child: Text(user.name),
-                                );
-                              }).toList(),
-                          onChanged: (value) => selectedDospem.value = value,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                        Obx(
+                          () => DropdownButtonFormField<UserModel>(
+                            value: selectedDospem.value,
+                            hint: const Text('Pilih Dosen'),
+                            items:
+                                dospems.map((user) {
+                                  return DropdownMenuItem<UserModel>(
+                                    value: user,
+                                    child: Text(user.name),
+                                  );
+                                }).toList(),
+                            onChanged: (value) => selectedDospem.value = value,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.grey[300]!,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                             ),
                           ),
                         ),
@@ -387,28 +395,32 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        DropdownButtonFormField<UserModel>(
-                          value: selectedGuruPamong.value,
-                          hint: const Text('Pilih Guru'),
-                          items:
-                              guruPamongs.map((user) {
-                                return DropdownMenuItem<UserModel>(
-                                  value: user,
-                                  child: Text(user.name),
-                                );
-                              }).toList(),
-                          onChanged:
-                              (value) => selectedGuruPamong.value = value,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                        Obx(
+                          () => DropdownButtonFormField<UserModel>(
+                            value: selectedGuruPamong.value,
+                            hint: const Text('Pilih Guru'),
+                            items:
+                                guruPamongs.map((user) {
+                                  return DropdownMenuItem<UserModel>(
+                                    value: user,
+                                    child: Text(user.name),
+                                  );
+                                }).toList(),
+                            onChanged:
+                                (value) => selectedGuruPamong.value = value,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[50],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Colors.grey[300]!,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                             ),
                           ),
                         ),
