@@ -55,8 +55,8 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
             if (role != 'Mahasiswa' &&
                 role != 'Observer' &&
                 role != 'Dosen Pembimbing') ...[
-              // Sembunyikan menu SMK jika role Admin atau Akademik
-              if (role != 'Admin' && role != 'Akademik')
+              // Sembunyikan menu SMK jika role Admin
+              if (role != 'Admin')
                 RoundedMenuItem(
                   icon: 'assets/icons/smkicon.png',
                   label: 'SMK',
@@ -64,8 +64,7 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
                     Get.toNamed('/smk');
                   },
                 ),
-              if (role != 'Admin' && role != 'Akademik')
-                const SizedBox(height: 16),
+              if (role != 'Admin') const SizedBox(height: 16),
               RoundedMenuItem(
                 icon: 'assets/icons/keminatanicon.png',
                 label: 'Keminatan',

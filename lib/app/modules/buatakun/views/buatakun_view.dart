@@ -25,7 +25,6 @@ class BuatakunView extends GetView<BuatakunController> {
               TextFormField(
                 onChanged: (value) {
                   controller.name.value = value;
-                  print('📝 Name updated: "$value"');
                 },
                 decoration: _inputDecoration("Masukkan nama"),
               ),
@@ -37,7 +36,6 @@ class BuatakunView extends GetView<BuatakunController> {
               TextFormField(
                 onChanged: (value) {
                   controller.email.value = value;
-                  print('📧 Email updated: "$value"');
                 },
                 keyboardType: TextInputType.emailAddress,
                 decoration: _inputDecoration("Masukkan email"),
@@ -50,7 +48,6 @@ class BuatakunView extends GetView<BuatakunController> {
               TextFormField(
                 onChanged: (value) {
                   controller.password.value = value;
-                  print('🔐 Password updated: "${"*" * value.length}"');
                 },
                 obscureText: true,
                 decoration: _inputDecoration("Masukkan password"),
@@ -63,9 +60,6 @@ class BuatakunView extends GetView<BuatakunController> {
               TextFormField(
                 onChanged: (value) {
                   controller.passwordConfirmation.value = value;
-                  print(
-                    '🔐 Password confirmation updated: "${"*" * value.length}"',
-                  );
                 },
                 obscureText: true,
                 decoration: _inputDecoration("Konfirmasi password"),
@@ -86,7 +80,6 @@ class BuatakunView extends GetView<BuatakunController> {
                     }).toList(),
                 onChanged: (val) {
                   controller.selectedRole.value = val!;
-                  print('🔐 Role updated: "$val"');
                 },
                 decoration: _dropdownDecoration(),
               ),
@@ -136,26 +129,7 @@ class BuatakunView extends GetView<BuatakunController> {
                 ),
               ),
 
-              const SizedBox(height: 24),
-
-              /// --- Debug Button (temporary) ---
-              OutlinedButton(
-                onPressed: () {
-                  print('🔍 Debug: Testing form validation');
-                  print('📊 Current form values:');
-                  print('   - Name: "${controller.name.value}"');
-                  print('   - Email: "${controller.email.value}"');
-                  print('   - Password: "${controller.password.value}"');
-                  print(
-                    '   - Password Confirmation: "${controller.passwordConfirmation.value}"',
-                  );
-                  print('   - Role: "${controller.selectedRole.value}"');
-                  print('   - Is Form Valid: ${controller.isFormValid}');
-                },
-                child: const Text('Debug: Check Form Values'),
-              ),
-
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               /// --- Tombol Buat Akun ---
               CustomButton(

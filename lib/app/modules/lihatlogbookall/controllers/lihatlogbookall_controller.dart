@@ -37,14 +37,19 @@ class LihatlogbookallController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Fetch logbooks and users simultaneously
-      final results = await Future.wait([
-        LogbookService.getAllLogbooks(),
-        AkunService.getAllUsers(),
-      ]);
+      // Try to fetch all logbooks, fallback to validation endpoint if unauthorized
+      List<LogbookModel> logbooks;
+      try {
+        logbooks = await LogbookService.getAllLogbooks();
+      } catch (e) {
+        // If getAllLogbooks fails (unauthorized), try validation endpoint
+        logbooks = await LogbookService.getLogbooksForValidation();
+      }
 
-      logbookList.assignAll(results[0] as List<LogbookModel>);
-      allUsers.assignAll(results[1] as List<UserModel>);
+      final users = await AkunService.getAllUsers();
+
+      logbookList.assignAll(logbooks);
+      allUsers.assignAll(users);
 
       // Create user name map
       _createUserNameMap();

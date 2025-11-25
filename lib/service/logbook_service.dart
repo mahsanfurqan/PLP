@@ -120,16 +120,29 @@ class LogbookService {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
-    final response = await http.get(
-      Uri.parse('$_baseUrl/logbooks/all'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/logbooks/all'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((e) => LogbookModel.fromJson(e)).toList();
-    } else {
-      throw Exception('Gagal memuat semua logbook mahasiswa');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((e) => LogbookModel.fromJson(e)).toList();
+      } else if (response.statusCode == 403) {
+        // Unauthorized - throw specific error to trigger fallback
+        throw Exception('Unauthorized access');
+      } else {
+        final errorMsg =
+            jsonDecode(response.body)['message'] ??
+            'Gagal memuat semua logbook mahasiswa';
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 

@@ -187,9 +187,8 @@ class BuatakunController extends GetxController {
       // Reset form
       resetForm();
 
-      // Add a short delay so the user sees the snackbar, then navigate back
-      await Future.delayed(const Duration(milliseconds: 700));
-      Get.back();
+      // Navigate back to home
+      Get.offAllNamed('/home');
     } catch (e) {
       print('❌ Error creating account: $e');
       Get.snackbar(

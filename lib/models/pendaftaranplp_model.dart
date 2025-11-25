@@ -29,18 +29,34 @@ class PendaftaranPlpModel {
 
   factory PendaftaranPlpModel.fromJson(Map<String, dynamic> json) {
     return PendaftaranPlpModel(
-      id: json['id'],
-      userId: json['user_id'],
-      keminatanId: json['keminatan_id'],
-      nilaiPlp1: json['nilai_plp_1'],
-      nilaiMicroTeaching: json['nilai_micro_teaching'],
-      pilihanSmk1: json['pilihan_smk_1'],
-      pilihanSmk2: json['pilihan_smk_2'],
-      penempatan: json['penempatan'],
-      dosenPembimbing: json['dosen_pembimbing'],
-      guruPamong: json['guru_pamong'], // ✅ Mapping dari JSON
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      id: _parseInt(json['id']),
+      userId: _parseInt(json['user_id']),
+      keminatanId: _parseInt(json['keminatan_id']),
+      nilaiPlp1: json['nilai_plp_1']?.toString() ?? '',
+      nilaiMicroTeaching: json['nilai_micro_teaching']?.toString() ?? '',
+      pilihanSmk1: _parseInt(json['pilihan_smk_1']),
+      pilihanSmk2: _parseInt(json['pilihan_smk_2']),
+      penempatan: _parseIntNullable(json['penempatan']),
+      dosenPembimbing: _parseIntNullable(json['dosen_pembimbing']),
+      guruPamong: _parseIntNullable(json['guru_pamong']),
+      createdAt: json['created_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
     );
+  }
+
+  /// Helper untuk parse int dari dynamic (bisa String atau int)
+  static int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  /// Helper untuk parse nullable int dari dynamic
+  static int? _parseIntNullable(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 }
