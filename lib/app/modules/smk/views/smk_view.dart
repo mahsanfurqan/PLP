@@ -34,7 +34,6 @@ class SmkView extends GetView<SmkController> {
                         itemCount: controller.smkList.length,
                         itemBuilder: (context, index) {
                           final smk = controller.smkList[index];
-                          // --- Widget Item List Anda ---
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
@@ -101,23 +100,17 @@ class SmkView extends GetView<SmkController> {
                           );
                         },
                       ),
-            ), // Akhir Expanded
+            ),
             const Divider(height: 1, thickness: 1),
             Obx(() {
-              // Sembunyikan tombol tambah SMK jika role Dosen Pembimbing
               if (role == 'Dosen Pembimbing') {
                 return const SizedBox.shrink();
               }
               return controller.isSubmitting.value
-                  // Tampilkan indikator loading *di tempat* tombol jika sedang submit
                   ? const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ), // Beri padding agar konsisten
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Center(child: CircularProgressIndicator()),
                   )
-                  // Tampilkan tombol jika tidak sedang submit
                   : Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -133,18 +126,13 @@ class SmkView extends GetView<SmkController> {
                       isPressed: false,
                     ),
                   );
-            }), // Akhir Obx Tombol
-            const SizedBox(
-              height: 8,
-            ), // Beri sedikit jarak tambahan dari bottom edge jika perlu
-          ], // Akhir children Column Body
-        ); // Akhir Column Body
-      }), // Akhir Obx Body
-      // Bottom Navbar tetap di tempatnya
+            }),
+            const SizedBox(height: 8),
+          ],
+        );
+      }),
       bottomNavigationBar: CustomNavbar(),
-      // floatingActionButton dihapus karena tombol sudah menjadi bagian dari body
-      // floatingActionButton: ... ,
-    ); // Akhir Scaffold
+    );
   }
 
   void _showAddSmkDialog(BuildContext context, SmkController controller) {
@@ -176,13 +164,12 @@ class SmkView extends GetView<SmkController> {
 
                 controller.namaSmkBaru.value = namaSmkC.text.trim();
 
-                Get.back(); // Tutup dialog langsung
+                Get.back();
 
-                // Tunggu 1 frame, baru tambah SMK
                 Future.delayed(Duration.zero, () async {
-                  controller.isSubmitting(true); // Tunjukkan loading
+                  controller.isSubmitting(true);
                   await controller.tambahSmk();
-                  controller.isSubmitting(false); // Selesai loading
+                  controller.isSubmitting(false);
                 });
               },
               isPressed: controller.isSubmitting.value,

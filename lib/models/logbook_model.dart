@@ -8,6 +8,7 @@ class LogbookModel {
   final String dokumentasi;
   final String status;
   final String yourApprovalStatus;
+  final String? userName;
 
   LogbookModel({
     required this.id,
@@ -19,9 +20,29 @@ class LogbookModel {
     required this.dokumentasi,
     required this.status,
     required this.yourApprovalStatus,
+    this.userName,
   });
 
   factory LogbookModel.fromJson(Map<String, dynamic> json) {
+    // Extract user name - backend sends "user" field as string (nama mahasiswa)
+    String? extractedUserName;
+
+    if (json['user'] is String) {
+      // Backend sends: "user": "Mahasiswa Name"
+      extractedUserName = json['user'];
+      print('✅ Extracted userName from "user" field: $extractedUserName');
+    } else if (json['user'] is Map) {
+      // If user is an object: {"user": {"name": "..."}}
+      extractedUserName = json['user']['name'];
+      print('✅ Extracted userName from "user.name" field: $extractedUserName');
+    }
+
+    // Fallback to other possible field names
+    extractedUserName ??=
+        json['user_name'] ?? json['userName'] ?? json['nama_mahasiswa'];
+
+    print('🔍 Final userName value: $extractedUserName');
+
     return LogbookModel(
       id: _safeInt(json['id']),
       userId: _safeInt(json['user_id'] ?? json['userId']),
@@ -32,6 +53,7 @@ class LogbookModel {
       dokumentasi: _safeString(json['dokumentasi']),
       status: _safeString(json['status'], 'pending'),
       yourApprovalStatus: _safeString(json['your_approval_status'], 'pending'),
+      userName: extractedUserName,
     );
   }
 
@@ -77,6 +99,7 @@ class LogbookModel {
       'dokumentasi': dokumentasi,
       'status': status,
       'your_approval_status': yourApprovalStatus,
+      'user_name': userName,
     };
   }
 }

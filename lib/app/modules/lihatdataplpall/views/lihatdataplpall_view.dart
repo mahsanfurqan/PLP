@@ -49,7 +49,6 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
     BuildContext context,
     PendaftaranPlpModel pendaftaran,
   ) async {
-    // Ensure dropdown data is available
     if (controller.smkList.isEmpty ||
         controller.dospems.isEmpty ||
         controller.guruPamongs.isEmpty) {

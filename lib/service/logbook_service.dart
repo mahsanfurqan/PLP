@@ -156,8 +156,16 @@ class LogbookService {
       headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
+    print('🔍 DEBUG /logbooks/validasi response:');
+    print('Status: ${response.statusCode}');
+    print('Body: ${response.body}');
+
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
+      if (data.isNotEmpty) {
+        print('🔍 DEBUG First logbook raw data:');
+        print(data[0]);
+      }
       return data.map((e) => LogbookModel.fromJson(e)).toList();
     } else {
       throw Exception('Gagal memuat logbook untuk validasi');

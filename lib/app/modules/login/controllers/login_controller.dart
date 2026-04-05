@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plp/models/simple_login_response.dart';
 import 'package:plp/service/auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginController extends GetxController {
   var isPasswordVisible = false.obs;
@@ -80,7 +81,12 @@ class LoginController extends GetxController {
     Get.toNamed('/createprofile');
   }
 
-  void forgotPassword() {
-    Get.toNamed('/lupapassword');
+  Future<void> forgotPassword() async {
+    final url = Uri.parse('http://plp.divisigurutugasduba.com/forgot-password');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      Get.snackbar('Error', 'Tidak dapat membuka halaman lupa password');
+    }
   }
 }

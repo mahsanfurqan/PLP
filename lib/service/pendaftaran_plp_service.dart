@@ -193,20 +193,22 @@ class PendaftaranPlpService {
       },
       body: jsonEncode(requestBody),
     );
+
+    if (response.statusCode == 403) {
+      throw Exception(
+        'Akses ditolak. Role Anda tidak memiliki izin untuk assign penempatan. '
+        'Silakan gunakan akun Kaprodi atau hubungi administrator.',
+      );
+    }
+
     final json = jsonDecode(response.body);
     json.forEach((key, value) {});
 
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      // Additional validation: check if the response contains updated data
-      if (json.containsKey('data') || json.containsKey('pendaftaran_plp')) {
-        final data = json['data'] ?? json['pendaftaran_plp'];
-      }
-
       return;
     } else {
-      // Check if the response message indicates success despite non-200 status
       final message = json['message'] ?? '';
 
       if (message.toLowerCase().contains('berhasil') ||
@@ -214,7 +216,6 @@ class PendaftaranPlpService {
         return;
       }
 
-      // If not successful, throw exception
       throw Exception(json['message'] ?? 'Gagal assign penempatan/dospem');
     }
   }

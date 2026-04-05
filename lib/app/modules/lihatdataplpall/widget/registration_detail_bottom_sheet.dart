@@ -5,6 +5,7 @@ import 'package:plp/models/smk_model.dart';
 import 'package:plp/models/user_model.dart';
 import '../controllers/lihatdataplpall_controller.dart';
 import 'package:collection/collection.dart';
+import 'package:plp/app/navbar/navbar_controller.dart';
 
 class RegistrationDetailBottomSheet extends StatelessWidget {
   final PendaftaranPlpModel registration;
@@ -24,6 +25,10 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navbarController = Get.find<NavbarController>();
+    final userRole = navbarController.role.value;
+    final isAkademik = userRole == 'Akademik';
+
     final Rxn<SmkModel> selectedSmk = Rxn<SmkModel>();
     final Rxn<UserModel> selectedDospem = Rxn<UserModel>();
     final Rxn<UserModel> selectedGuruPamong = Rxn<UserModel>();
@@ -227,262 +232,289 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
                   const Divider(),
                   const SizedBox(height: 10),
 
-                  // Assignment Section
                   const Text(
                     'Penempatan & Pembimbing',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
 
-                  // SMK Dropdown
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.school,
-                                color: Colors.blue,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Pilih SMK Penempatan',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<SmkModel>(
-                            value: selectedSmk.value,
-                            hint: const Text('Pilih SMK'),
-                            items:
-                                smkList.map((smk) {
-                                  return DropdownMenuItem<SmkModel>(
-                                    value: smk,
-                                    child: Text(smk.nama),
-                                  );
-                                }).toList(),
-                            onChanged: (value) => selectedSmk.value = value,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[50],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Dosen Pembimbing Dropdown
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.green,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Pilih Dosen Pembimbing',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<UserModel>(
-                            value: selectedDospem.value,
-                            hint: const Text('Pilih Dosen'),
-                            items:
-                                dospems.map((user) {
-                                  return DropdownMenuItem<UserModel>(
-                                    value: user,
-                                    child: Text(user.name),
-                                  );
-                                }).toList(),
-                            onChanged: (value) => selectedDospem.value = value,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[50],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Guru Pamong Dropdown
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.person_outline,
-                                color: Colors.orange,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Pilih Guru Pamong',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<UserModel>(
-                            value: selectedGuruPamong.value,
-                            hint: const Text('Pilih Guru'),
-                            items:
-                                guruPamongs.map((user) {
-                                  return DropdownMenuItem<UserModel>(
-                                    value: user,
-                                    child: Text(user.name),
-                                  );
-                                }).toList(),
-                            onChanged:
-                                (value) => selectedGuruPamong.value = value,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[50],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Batal'),
-                        ),
+                  if (isAkademik) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.orange.shade200),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (selectedSmk.value == null ||
-                                selectedDospem.value == null ||
-                                selectedGuruPamong.value == null) {
-                              Get.snackbar(
-                                "Validasi",
-                                "Mohon pilih SMK, Dosen Pembimbing, dan Guru Pamong",
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.orange.shade700,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Anda tidak memiliki akses untuk assign mahasiswa',
+                              style: TextStyle(
+                                color: Colors.orange.shade900,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.school,
+                                  color: Colors.blue,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Pilih SMK Penempatan',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(
+                            () => DropdownButtonFormField<SmkModel>(
+                              value: selectedSmk.value,
+                              hint: const Text('Pilih SMK'),
+                              items:
+                                  smkList.map((smk) {
+                                    return DropdownMenuItem<SmkModel>(
+                                      value: smk,
+                                      child: Text(smk.nama),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) => selectedSmk.value = value,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Pilih Dosen Pembimbing',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(
+                            () => DropdownButtonFormField<UserModel>(
+                              value: selectedDospem.value,
+                              hint: const Text('Pilih Dosen'),
+                              items:
+                                  dospems.map((user) {
+                                    return DropdownMenuItem<UserModel>(
+                                      value: user,
+                                      child: Text(user.name),
+                                    );
+                                  }).toList(),
+                              onChanged:
+                                  (value) => selectedDospem.value = value,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.person_outline,
+                                  color: Colors.orange,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Pilih Guru Pamong',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(
+                            () => DropdownButtonFormField<UserModel>(
+                              value: selectedGuruPamong.value,
+                              hint: const Text('Pilih Guru'),
+                              items:
+                                  guruPamongs.map((user) {
+                                    return DropdownMenuItem<UserModel>(
+                                      value: user,
+                                      child: Text(user.name),
+                                    );
+                                  }).toList(),
+                              onChanged:
+                                  (value) => selectedGuruPamong.value = value,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text('Batal'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (selectedSmk.value == null ||
+                                  selectedDospem.value == null ||
+                                  selectedGuruPamong.value == null) {
+                                Get.snackbar(
+                                  "Validasi",
+                                  "Mohon pilih SMK, Dosen Pembimbing, dan Guru Pamong",
+                                );
+                                return;
+                              }
+
+                              onAssign(
+                                registration.id,
+                                selectedSmk.value!.id,
+                                selectedDospem.value!.id,
+                                selectedGuruPamong.value!.id,
                               );
-                              return;
-                            }
 
-                            onAssign(
-                              registration.id!,
-                              selectedSmk.value!.id!,
-                              selectedDospem.value!.id!,
-                              selectedGuruPamong.value!.id!,
-                            );
-
-                            Navigator.of(context).pop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Assign',
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
-                          child: const Text(
-                            'Assign',
-                            style: TextStyle(color: Colors.white),
-                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

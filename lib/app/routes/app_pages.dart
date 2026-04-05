@@ -1,7 +1,11 @@
 import 'package:get/get.dart';
 
+import '../modules/buatakun/bindings/buatakun_binding.dart';
+import '../modules/buatakun/views/buatakun_view.dart';
 import '../modules/createprofile/bindings/createprofile_binding.dart';
 import '../modules/createprofile/views/createprofile_view.dart';
+import '../modules/daftarujianplp/bindings/daftarujianplp_binding.dart';
+import '../modules/daftarujianplp/views/daftarujianplp_view.dart';
 import '../modules/formlogbook/bindings/formlogbook_binding.dart';
 import '../modules/formlogbook/views/formlogbook_view.dart';
 import '../modules/gantipassword/bindings/gantipassword_binding.dart';
@@ -36,8 +40,6 @@ import '../modules/smk/bindings/smk_binding.dart';
 import '../modules/smk/views/smk_view.dart';
 import '../modules/validasilogbook/bindings/validasilogbook_binding.dart';
 import '../modules/validasilogbook/views/validasilogbook_view.dart';
-import '../modules/buatakun/bindings/buatakun_binding.dart';
-import '../modules/buatakun/views/buatakun_view.dart';
 
 part 'app_routes.dart';
 
@@ -141,6 +143,11 @@ class AppPages {
       name: _Paths.BUATAKUN,
       page: () => const BuatakunView(),
       binding: BuatakunBinding(),
+    ),
+    GetPage(
+      name: _Paths.DAFTARUJIANPLP,
+      page: () => const DaftarujianplpView(),
+      binding: DaftarujianplpBinding(),
     ),
   ];
 }

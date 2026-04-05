@@ -18,15 +18,12 @@ class ValidasilogbookController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final result = await LogbookService.getLogbooksForValidation();
+      final logbooksResult = await LogbookService.getLogbooksForValidation();
 
-      // Debug print jumlah data yang diterima
-      print('Jumlah logbook yang diterima: ${result.length}');
-
-      if (result.isEmpty) {
+      if (logbooksResult.isEmpty) {
         errorMessage.value = 'Tidak ada logbook untuk divalidasi.';
       }
-      logbooks.value = result;
+      logbooks.value = logbooksResult;
     } catch (e) {
       errorMessage.value = 'Gagal memuat data logbook: $e';
       logbooks.clear();

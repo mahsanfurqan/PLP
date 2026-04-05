@@ -4,10 +4,11 @@ import 'package:plp/app/navbar/navbar_popup_helper.dart';
 import 'navbar_controller.dart';
 
 class CustomNavbar extends StatelessWidget {
-  final NavbarController controller = Get.put(NavbarController());
+  const CustomNavbar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NavbarController());
     return Obx(
       () => Container(
         color: Colors.white,

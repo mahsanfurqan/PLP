@@ -9,19 +9,11 @@ import 'package:plp/service/smk_service.dart';
 class LihatdataplpController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-
-  // Data user
   final nama = ''.obs;
   final nim = ''.obs;
   final angkatan = ''.obs;
-
-  // Data pendaftaran
   var dataPendaftaran = <PendaftaranPlpModel>[].obs;
-
-  // Data keminatan sebagai Map (tanpa model)
   var daftarKeminatan = <Map<String, dynamic>>[].obs;
-
-  // Data SMK tetap pakai model
   var daftarSmk = <SmkModel>[].obs;
 
   @override
@@ -49,7 +41,6 @@ class LihatdataplpController extends GetxController {
     print("Fetching all data...");
 
     try {
-      // Panggil semua service secara bersamaan
       final responses = await Future.wait([
         PendaftaranPlpService.getPendaftaranPlpData(),
         KeminatanService.getKeminatan(),
@@ -96,15 +87,12 @@ class LihatdataplpController extends GetxController {
     }
   }
 
-  // Ambil nama keminatan dari Map (menggunakan firstWhere biasa dengan penanganan null)
   String getNamaKeminatan(int? id) {
     try {
       final keminatan = daftarKeminatan.firstWhere(
         (e) => e['id'] == id,
-        orElse: () => {}, // Jika tidak ditemukan, kembalikan Map kosong
+        orElse: () => {},
       );
-
-      // Memastikan keminatan tidak null dan mengembalikan nama jika ada, jika tidak kembalikan '-'
       return keminatan.isNotEmpty ? keminatan['name'] ?? '-' : '-';
     } catch (e) {
       print("Error getting nama keminatan: $e");
@@ -112,19 +100,12 @@ class LihatdataplpController extends GetxController {
     }
   }
 
-  // Ambil nama SMK dari model (menggunakan firstWhere biasa dengan penanganan null)
   String getNamaSmk(int? id) {
     try {
       final smk = daftarSmk.firstWhere(
         (e) => e.id == id,
-        orElse:
-            () => SmkModel(
-              id: 0,
-              nama: '-',
-            ), // Kembalikan objek SmkModel dengan nilai default
+        orElse: () => SmkModel(id: 0, nama: '-'),
       );
-
-      // Menggunakan properti nama di SmkModel
       return smk.nama ?? '-';
     } catch (e) {
       print("Error getting nama smk: $e");

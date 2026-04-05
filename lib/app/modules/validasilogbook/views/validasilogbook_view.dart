@@ -56,14 +56,24 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
                   horizontal: 16,
                 ),
                 title: Text(
-                  logbook.keterangan,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  logbook.userName ?? 'Mahasiswa',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(top: 6),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        logbook.keterangan,
+                        style: const TextStyle(fontSize: 14),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
                       Text('Tanggal: ${logbook.tanggal}'),
                       const SizedBox(height: 4),
                       _buildStatusRow(

@@ -8,10 +8,10 @@ Berikut adalah implementasi fitur-fitur utama pada aplikasi mobile PLP menggunak
 
 | No | Kode |
 |----|------|
-| 13 | ```dart<br>final controller = Get.put(LoginController());``` |
-| 33-38 | ```dart<br>CustomTextField(<br>  controller: controller.emailController,<br>  hintText: "Email @...ub.ac.id",<br>  keyboardType: TextInputType.emailAddress,<br>),``` |
-| 42-80 | ```dart<br>Obx(<br>  () => TextField(<br>    controller: controller.passwordController,<br>    obscureText: !controller.isPasswordVisible.value,<br>    style: const TextStyle(color: Colors.black87),<br>    decoration: InputDecoration(<br>      hintText: "Password",<br>      hintStyle: const TextStyle(color: Colors.black12),<br>      filled: true,<br>      fillColor: Colors.grey[200],<br>      suffixIcon: IconButton(<br>        icon: Icon(<br>          controller.isPasswordVisible.value<br>              ? Icons.visibility<br>              : Icons.visibility_off,<br>          color: Colors.blue,<br>        ),<br>        onPressed: controller.togglePasswordVisibility,<br>      ),<br>    ),<br>  ),<br>)``` |
-| 102-111 | ```dart<br>Obx(<br>  () => CustomButton(<br>    text: "MASUK",<br>    color: Colors.blue,<br>    shadowColor: Colors.blue.shade700,<br>    onTap: controller.login,<br>    isPressed: controller.isLoginPressed.value,<br>  ),<br>)``` |
+| 13 | `final controller = Get.put(LoginController());` |
+| 33-38 | `CustomTextField(controller: controller.emailController, hintText: "Email @...ub.ac.id", keyboardType: TextInputType.emailAddress)` |
+| 42-80 | `Obx(() => TextField(controller: controller.passwordController, obscureText: !controller.isPasswordVisible.value, decoration: InputDecoration(hintText: "Password", suffixIcon: IconButton(icon: Icon(controller.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off), onPressed: controller.togglePasswordVisibility))))` |
+| 102-111 | `Obx(() => CustomButton(text: "MASUK", color: Colors.blue, shadowColor: Colors.blue.shade700, onTap: controller.login, isPressed: controller.isLoginPressed.value))` |
 
 Untuk menginisialisasi komponen yang akan digunakan pada halaman login, maka digunakan `Get.put(LoginController())` yang merupakan controller dari GetX untuk mengelola state dan logika bisnis. Controller ini mencakup data `emailController` dan `passwordController` untuk mengelola input field, serta `isPasswordVisible` untuk mengatur visibilitas password. Ketika user mengisi form dan menekan tombol "MASUK", maka akan menjalankan method `controller.login()` yang akan mengirim data ke backend API melalui service `AuthService.login()` dengan method POST.
 
@@ -23,11 +23,11 @@ Untuk menginisialisasi komponen yang akan digunakan pada halaman login, maka dig
 
 | No | Kode |
 |----|------|
-| 13 | ```dart<br>final controller = Get.put(CreateprofileController());``` |
-| 33-37 | ```dart<br>CustomTextField(<br>  hintText: "Nama Lengkap",<br>  controller: controller.nameController,<br>),``` |
-| 41-45 | ```dart<br>CustomTextField(<br>  hintText: "Email",<br>  controller: controller.emailController,<br>),``` |
-| 49-79 | ```dart<br>Obx(<br>  () => TextField(<br>    controller: controller.passwordController,<br>    obscureText: !controller.isPasswordVisible.value,<br>    style: const TextStyle(color: Colors.black87),<br>    decoration: InputDecoration(<br>      hintText: "Password",<br>      hintStyle: const TextStyle(color: Colors.black12),<br>      filled: true,<br>      fillColor: Colors.grey[200],<br>      suffixIcon: IconButton(<br>        icon: Icon(<br>          controller.isPasswordVisible.value<br>              ? Icons.visibility<br>              : Icons.visibility_off,<br>          color: Colors.blue,<br>        ),<br>        onPressed: controller.togglePasswordVisibility,<br>      ),<br>    ),<br>  ),<br>)``` |
-| 125-136 | ```dart<br>Obx(<br>  () => CustomButton(<br>    text: "CREATE ACCOUNT",<br>    color: Colors.blue,<br>    shadowColor: Colors.blue.shade700,<br>    onTap: () {<br>      controller.createAccount();<br>    },<br>    isPressed: controller.isCreateAccountPressed.value,<br>  ),<br>)``` |
+| 13 | `final controller = Get.put(CreateprofileController());` |
+| 33-37 | `CustomTextField(hintText: "Nama Lengkap", controller: controller.nameController)` |
+| 41-45 | `CustomTextField(hintText: "Email", controller: controller.emailController)` |
+| 49-79 | `Obx(() => TextField(controller: controller.passwordController, obscureText: !controller.isPasswordVisible.value, decoration: InputDecoration(...)))` |
+| 125-136 | `Obx(() => CustomButton(text: "CREATE ACCOUNT", color: Colors.blue, onTap: () { controller.createAccount(); }, isPressed: controller.isCreateAccountPressed.value))` |
 
 Fitur pendaftaran akun digunakan untuk mendaftar sebagai mahasiswa PLP. Saat membuat objek `CreateprofileController`, maka data yang perlu dimasukkan adalah nama lengkap, email, password, dan konfirmasi password. Controller menggunakan reactive state dari GetX (Obx) untuk mengelola perubahan nilai input secara real-time. Setelah selesai mengisi form dan diklik submit, maka data akan dikirimkan ke backend API melalui method `controller.createAccount()` yang memanggil service `AuthService.register()` dengan method POST.
 
@@ -39,10 +39,10 @@ Fitur pendaftaran akun digunakan untuk mendaftar sebagai mahasiswa PLP. Saat mem
 
 | No | Kode |
 |----|------|
-| 13 | ```dart<br>final controller = Get.put(PendaftaranplpController());``` |
-| 24-38 | ```dart<br>DropdownButtonFormField<int>(<br>  value: controller.keminatanList.any(<br>    (e) => e['id'] == controller.selectedKeminatanId.value,<br>  ) ? controller.selectedKeminatanId.value : null,<br>  items: controller.keminatanList.map((keminatan) {<br>    return DropdownMenuItem<int>(<br>      value: keminatan['id'],<br>      child: Text(keminatan['name']),<br>    );<br>  }).toList(),<br>  onChanged: (val) => controller.selectedKeminatanId.value = val!,<br>  decoration: _dropdownDecoration(),<br>)``` |
-| 43-55 | ```dart<br>DropdownButtonFormField<String>(<br>  value: controller.nilaiOptions.contains(<br>    controller.selectedNilaiPlp1.value,<br>  ) ? controller.selectedNilaiPlp1.value : null,<br>  items: controller.nilaiOptions.map((nilai) {<br>    return DropdownMenuItem<String>(<br>      value: nilai,<br>      child: Text(nilai),<br>    );<br>  }).toList(),<br>  onChanged: (val) => controller.selectedNilaiPlp1.value = val!,<br>)``` |
-| 127-135 | ```dart<br>CustomButton(<br>  text: "DAFTAR",<br>  color: Colors.blue,<br>  shadowColor: Colors.blue.shade700,<br>  onTap: controller.submitPendaftaran,<br>  isPressed: controller.isSubmitting.value,<br>)``` |
+| 13 | `final controller = Get.put(PendaftaranplpController());` |
+| 24-38 | `DropdownButtonFormField<int>(value: controller.selectedKeminatanId.value, items: controller.keminatanList.map((k) => DropdownMenuItem(value: k['id'], child: Text(k['name']))).toList(), onChanged: (val) => controller.selectedKeminatanId.value = val!)` |
+| 43-55 | `DropdownButtonFormField<String>(value: controller.selectedNilaiPlp1.value, items: controller.nilaiOptions.map((nilai) => DropdownMenuItem(value: nilai, child: Text(nilai))).toList(), onChanged: (val) => controller.selectedNilaiPlp1.value = val!)` |
+| 127-135 | `CustomButton(text: "DAFTAR", color: Colors.blue, shadowColor: Colors.blue.shade700, onTap: controller.submitPendaftaran, isPressed: controller.isSubmitting.value)` |
 
 Pada halaman ini, data keminatan dan SMK yang tersedia di database diambil melalui API dan disimpan dalam controller sebagai reactive state. Dropdown menggunakan `DropdownButtonFormField` dengan value yang di-bind ke controller menggunakan reactive variable (`.value`). Setiap perubahan pada dropdown akan langsung mengupdate state di controller. Setelah divalidasi bahwa semua data terisi, saat di-submit akan menjalankan method `controller.submitPendaftaran()` yang mengirimkan data keminatan, nilai PLP 1, nilai micro teaching, dan pilihan SMK ke backend API melalui service `PendaftaranPlpService.submitPendaftaranPlp()` dengan method POST.
 
@@ -54,9 +54,9 @@ Pada halaman ini, data keminatan dan SMK yang tersedia di database diambil melal
 
 | No | Kode |
 |----|------|
-| 32-44 | ```dart<br>final Rxn<SmkModel> selectedSmk = Rxn<SmkModel>();<br>final Rxn<UserModel> selectedDospem = Rxn<UserModel>();<br>final Rxn<UserModel> selectedGuruPamong = Rxn<UserModel>();<br>``` |
-| 250-267 | ```dart<br>Obx(() => DropdownButtonFormField<SmkModel>(<br>  value: selectedSmk.value,<br>  hint: const Text('Pilih SMK'),<br>  items: smkList.map((smk) {<br>    return DropdownMenuItem<SmkModel>(<br>      value: smk,<br>      child: Text(smk.nama),<br>    );<br>  }).toList(),<br>  onChanged: (value) => selectedSmk.value = value,<br>))``` |
-| 420-445 | ```dart<br>ElevatedButton(<br>  onPressed: () {<br>    if (selectedSmk.value == null ||<br>        selectedDospem.value == null ||<br>        selectedGuruPamong.value == null) {<br>      Get.snackbar(<br>        "Validasi",<br>        "Mohon pilih SMK, Dosen Pembimbing, dan Guru Pamong",<br>      );<br>      return;<br>    }<br>    onAssign(<br>      registration.id!,<br>      selectedSmk.value!.id!,<br>      selectedDospem.value!.id!,<br>      selectedGuruPamong.value!.id!,<br>    );<br>    Navigator.of(context).pop();<br>  },<br>)``` |
+| 32-44 | `final Rxn<SmkModel> selectedSmk = Rxn<SmkModel>(); final Rxn<UserModel> selectedDospem = Rxn<UserModel>(); final Rxn<UserModel> selectedGuruPamong = Rxn<UserModel>();` |
+| 250-267 | `Obx(() => DropdownButtonFormField<SmkModel>(value: selectedSmk.value, hint: const Text('Pilih SMK'), items: smkList.map((smk) => DropdownMenuItem(value: smk, child: Text(smk.nama))).toList(), onChanged: (value) => selectedSmk.value = value))` |
+| 420-445 | `ElevatedButton(onPressed: () { if (selectedSmk.value == null ...) }, child: Text('Assign'))` |
 
 Pada halaman penentuan penempatan PLP, menggunakan `Rxn` (Reactive Nullable) dari GetX untuk mengelola state dropdown yang bersifat nullable. Setiap dropdown (SMK, Dosen Pembimbing, dan Guru Pamong) dibungkus dengan `Obx()` agar perubahan nilai reactive. Saat pengguna memilih dari dropdown, nilai akan tersimpan ke reactive variable. Ketika diklik tombol "Assign", sistem akan memvalidasi terlebih dahulu apakah semua dropdown telah dipilih. Jika ya, maka data akan dikirim ke backend melalui callback `onAssign()` yang memanggil service `PendaftaranPlpService.assignPenempatanDospem()` dengan method PATCH untuk mengupdate data penempatan mahasiswa.
 
@@ -68,10 +68,10 @@ Pada halaman penentuan penempatan PLP, menggunakan `Rxn` (Reactive Nullable) dar
 
 | No | Kode |
 |----|------|
-| 23-30 | ```dart<br>Obx(() {<br>  if (controller.isLoading.value) {<br>    return const Center(child: CircularProgressIndicator());<br>  }<br>  if (controller.logbookList.isEmpty) {<br>    return const Center(child: Text("Belum ada logbook"));<br>  }``` |
-| 32-42 | ```dart<br>return ListView.builder(<br>  padding: const EdgeInsets.only(bottom: 100),<br>  itemCount: controller.logbookList.length,<br>  itemBuilder: (context, index) {<br>    final logbook = controller.logbookList[index];``` |
-| 53-72 | ```dart<br>Column(<br>  children: [<br>    IconButton(<br>      icon: const Icon(Icons.delete, color: Colors.red),<br>      onPressed: () {<br>        Get.defaultDialog(<br>          title: "Konfirmasi",<br>          middleText: "Hapus logbook ini?",<br>          onConfirm: () {<br>            Get.back();<br>            controller.deleteLogbook(logbook.id);<br>          },<br>        );<br>      },<br>    ),<br>    IconButton(<br>      icon: const Icon(Icons.edit, color: Colors.blue),<br>      onPressed: () {<br>        controller.goToEditLogbook(logbook);<br>      },<br>    ),<br>  ],<br>)``` |
-| 126-139 | ```dart<br>Obx(<br>  () => CustomButton(<br>    text: "TAMBAH LOGBOOK",<br>    color: const Color(0xFF58CC02),<br>    shadowColor: Colors.green.shade700,<br>    onTap: () {<br>      controller.isStartButtonPressed.value = true;<br>      controller.goToTambahLogbook();<br>    },<br>    isPressed: controller.isStartButtonPressed.value,<br>  ),<br>)``` |
+| 23-30 | `Obx(() { if (controller.isLoading.value) { return const Center(child: CircularProgressIndicator()); } if (controller.logbookList.isEmpty) { return const Center(child: Text("Belum ada logbook")); } })` |
+| 32-42 | `return ListView.builder(padding: const EdgeInsets.only(bottom: 100), itemCount: controller.logbookList.length, itemBuilder: (context, index) { final logbook = controller.logbookList[index]; ... })` |
+| 53-72 | `Column(children: [IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () { Get.defaultDialog(title: "Konfirmasi", onConfirm: () { controller.deleteLogbook(logbook.id); }); }), IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () { controller.goToEditLogbook(logbook); })])` |
+| 126-139 | `Obx(() => CustomButton(text: "TAMBAH LOGBOOK", color: const Color(0xFF58CC02), shadowColor: Colors.green.shade700, onTap: () { controller.goToTambahLogbook(); }, isPressed: controller.isStartButtonPressed.value))` |
 
 Ketika halaman ini dibuka, sistem akan mengambil data semua logbook mahasiswa dari API melalui method `controller.fetchLogbooks()` dan menyimpannya dalam reactive list `logbookList`. State loading dan empty state dikelola menggunakan `Obx()` untuk menampilkan UI yang sesuai. Setiap item logbook dilengkapi dengan tombol delete yang akan menjalankan method `controller.deleteLogbook(id)` untuk menghapus logbook dengan method DELETE ke API endpoint `/logbooks/{id}`. Tombol edit akan membuka halaman form edit dengan data logbook yang sudah terisi. Tombol "TAMBAH LOGBOOK" akan navigasi ke halaman form logbook baru.
 
@@ -85,9 +85,9 @@ Ketika halaman ini dibuka, sistem akan mengambil data semua logbook mahasiswa da
 
 | No | Kode |
 |----|------|
-| 16-35 | ```dart<br>Obx(() {<br>  if (controller.isLoading.value) {<br>    return const Center(child: CircularProgressIndicator());<br>  }<br>  if (controller.errorMessage.isNotEmpty) {<br>    return Center(<br>      child: Text(<br>        controller.errorMessage.value,<br>        style: const TextStyle(color: Colors.red, fontSize: 16),<br>      ),<br>    );<br>  }<br>  if (controller.logbooks.isEmpty) {<br>    return const Center(<br>      child: Text('Tidak ada logbook untuk divalidasi.'),<br>    );<br>  }``` |
-| 37-44 | ```dart<br>return ListView.separated(<br>  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),<br>  itemCount: controller.logbooks.length,<br>  separatorBuilder: (_, __) => const Divider(height: 1),<br>  itemBuilder: (context, index) {<br>    final logbook = controller.logbooks[index];``` |
-| 70-85 | ```dart<br>trailing: Wrap(<br>  spacing: 4,<br>  children: [<br>    IconButton(<br>      tooltip: 'Setujui logbook',<br>      icon: const Icon(Icons.check_circle, color: Colors.green),<br>      onPressed: () => _onValidatePressed(<br>        context,<br>        logbook.id,<br>        'approved',<br>      ),<br>    ),<br>    IconButton(<br>      tooltip: 'Tolak logbook',<br>      icon: const Icon(Icons.cancel, color: Colors.red),<br>      onPressed: () => _onValidatePressed(<br>        context,<br>        logbook.id,<br>        'rejected',<br>      ),<br>    ),<br>  ],<br>)``` |
+| 16-35 | `Obx(() { if (controller.isLoading.value) { return const Center(child: CircularProgressIndicator()); } if (controller.errorMessage.isNotEmpty) { return Center(child: Text(controller.errorMessage.value)); } if (controller.logbooks.isEmpty) { return const Center(child: Text('Tidak ada logbook untuk divalidasi.')); } })` |
+| 37-44 | `return ListView.separated(padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), itemCount: controller.logbooks.length, separatorBuilder: (_, __) => const Divider(height: 1), itemBuilder: (context, index) { final logbook = controller.logbooks[index]; ... })` |
+| 70-85 | `trailing: Wrap(spacing: 4, children: [IconButton(tooltip: 'Setujui logbook', icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => _onValidatePressed(context, logbook.id, 'approved')), IconButton(tooltip: 'Tolak logbook', icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () => _onValidatePressed(context, logbook.id, 'rejected'))])` |
 
 Saat halaman ini diakses oleh dosen pembimbing maupun guru pamong, sistem akan mengambil data logbook dari mahasiswa yang dibimbing melalui API endpoint `/logbooks/validasi` dan menyimpannya dalam reactive list menggunakan controller. State management menggunakan `Obx()` untuk menampilkan loading indicator, error message, atau empty state sesuai kondisi. Setiap logbook ditampilkan dalam Card dengan dua tombol aksi: approve (ikon centang hijau) dan reject (ikon silang merah). Saat tombol validasi diklik, akan muncul dialog konfirmasi terlebih dahulu. Setelah dikonfirmasi, method `controller.validateLogbook(id, action)` akan dipanggil yang mengirim data ke backend melalui service `LogbookService.updateValidationStatus()` dengan method PUT ke endpoint `/logbooks/validasi/{id}`.
 
@@ -99,11 +99,9 @@ Saat halaman ini diakses oleh dosen pembimbing maupun guru pamong, sistem akan m
 
 | No | Kode |
 |----|------|
-| 12 | ```dart<br>final controller = Get.put(BuatakunController());``` |
-| 25-30 | ```dart<br>TextFormField(<br>  onChanged: (value) {<br>    controller.name.value = value;<br>  },<br>  decoration: _inputDecoration("Masukkan nama"),<br>)``` |
-| 36-42 | ```dart<br>TextFormField(<br>  onChanged: (value) {<br>    controller.email.value = value;<br>  },<br>  keyboardType: TextInputType.emailAddress,<br>  decoration: _inputDecoration("Masukkan email"),<br>)``` |
-| 75-88 | ```dart<br>DropdownButtonFormField<String>(<br>  value: controller.selectedRole.value,<br>  items: controller.roleOptions.map((role) {<br>    return DropdownMenuItem<String>(<br>      value: role,<br>      child: Text(role),<br>    );<br>  }).toList(),<br>  onChanged: (val) {<br>    controller.selectedRole.value = val!;<br>  },<br>  decoration: _dropdownDecoration(),<br>)``` |
-| 147-155 | ```dart<br>CustomButton(<br>  text: "BUAT AKUN",<br>  color: Colors.green,<br>  shadowColor: Colors.green.shade700,<br>  onTap: controller.submitBuatAkun,<br>  isPressed: controller.isSubmitting.value,<br>)``` |
+| 20-42 | `TextFormField(onChanged: (value) { controller.name.value = value; }, decoration: _inputDecoration("Masukkan nama")) ... TextFormField(onChanged: (value) { controller.email.value = value; }, keyboardType: TextInputType.emailAddress, decoration: _inputDecoration("Masukkan email"))` |
+| 73-86 | `DropdownButtonFormField<String>(value: controller.selectedRole.value, items: controller.roleOptions.map((role) => DropdownMenuItem(value: role, child: Text(role))).toList(), onChanged: (val) { controller.selectedRole.value = val!; })` |
+| 157-172 | `CustomButton(text: "BUAT AKUN", color: Colors.green, shadowColor: Colors.green.shade700, onTap: controller.submitBuatAkun, isPressed: controller.isSubmitting.value)` |
 
 CRUD data dapat dilakukan oleh akademik terhadap berbagai tabel meliputi akun guru, akun dosen, data SMK, data guru pamong, dan data keminatan. Pada halaman pembuatan akun, setiap field input menggunakan callback `onChanged` yang mengupdate reactive variable di controller secara real-time. Field role menggunakan dropdown dengan pilihan yang telah ditentukan dalam `controller.roleOptions`. Terdapat juga fitur dynamic detail fields yang memungkinkan akademik menambah field tambahan seperti NIK, tanggal lahir, dll. Ketika tombol "BUAT AKUN" diklik, method `controller.submitBuatAkun()` akan melakukan validasi terlebih dahulu (cek email format, password match, dll). Jika valid, data akan dikirim ke backend melalui service `AkunService.createAccount()` dengan method POST. Password untuk akun baru akan di-generate otomatis jika diperlukan.
 
@@ -124,6 +122,7 @@ Proses pengujian diawali dengan penyusunan berbagai skenario penggunaan yang mer
 ### State Management dengan GetX
 
 Aplikasi ini menggunakan GetX sebagai state management yang menyediakan:
+
 - **Reactive Programming**: Menggunakan `.obs` dan `Obx()` untuk membuat UI yang reaktif terhadap perubahan data
 - **Dependency Injection**: Menggunakan `Get.put()` dan `Get.find()` untuk mengelola controller
 - **Navigation**: Menggunakan `Get.toNamed()` dan `Get.back()` untuk navigasi antar halaman
@@ -132,6 +131,7 @@ Aplikasi ini menggunakan GetX sebagai state management yang menyediakan:
 ### Komunikasi dengan Backend
 
 Aplikasi berkomunikasi dengan backend Laravel melalui REST API:
+
 - **HTTP Client**: Menggunakan package `http` untuk melakukan request ke API
 - **Service Layer**: Setiap fitur memiliki service class (AuthService, LogbookService, dll) yang menangani komunikasi dengan API
 - **Token Authentication**: Menggunakan Bearer token yang disimpan di GetStorage untuk autentikasi

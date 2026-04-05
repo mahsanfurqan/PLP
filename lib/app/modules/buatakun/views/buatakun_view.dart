@@ -19,7 +19,6 @@ class BuatakunView extends GetView<BuatakunController> {
           () => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// --- Nama ---
               const Text("Nama"),
               const SizedBox(height: 8),
               TextFormField(
@@ -29,8 +28,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 decoration: _inputDecoration("Masukkan nama"),
               ),
               const SizedBox(height: 12),
-
-              /// --- Email ---
               const Text("Email"),
               const SizedBox(height: 8),
               TextFormField(
@@ -41,8 +38,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 decoration: _inputDecoration("Masukkan email"),
               ),
               const SizedBox(height: 12),
-
-              /// --- Password ---
               const Text("Password"),
               const SizedBox(height: 8),
               TextFormField(
@@ -53,8 +48,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 decoration: _inputDecoration("Masukkan password"),
               ),
               const SizedBox(height: 12),
-
-              /// --- Konfirmasi Password ---
               const Text("Konfirmasi Password"),
               const SizedBox(height: 8),
               TextFormField(
@@ -65,8 +58,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 decoration: _inputDecoration("Konfirmasi password"),
               ),
               const SizedBox(height: 12),
-
-              /// --- Role ---
               const Text("Role"),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -84,8 +75,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 decoration: _dropdownDecoration(),
               ),
               const SizedBox(height: 24),
-
-              /// --- Detail Fields (Optional) ---
               const Text(
                 "Detail Tambahan (Opsional)",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -96,8 +85,6 @@ class BuatakunView extends GetView<BuatakunController> {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
               const SizedBox(height: 12),
-
-              // Dynamic detail fields
               ...controller.details.entries.map(
                 (entry) => _buildDetailField(
                   key: entry.key,
@@ -113,8 +100,6 @@ class BuatakunView extends GetView<BuatakunController> {
                   onRemove: () => controller.removeDetail(entry.key),
                 ),
               ),
-
-              // Add new detail field button
               OutlinedButton.icon(
                 onPressed: () {
                   final key = "detail_${controller.details.length + 1}";
@@ -128,10 +113,7 @@ class BuatakunView extends GetView<BuatakunController> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
-
-              /// --- Tombol Buat Akun ---
               CustomButton(
                 text: "BUAT AKUN",
                 color: Colors.green,
