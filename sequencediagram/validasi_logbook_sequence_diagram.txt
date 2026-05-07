@@ -1,0 +1,27 @@
+title Alur Validasi Logbook Sederhana
+
+participant Pembimbing as Dosen/Guru
+participant Aplikasi
+participant Server
+
+Pembimbing->Aplikasi: Buka menu Validasi Logbook
+Aplikasi->Server: Minta daftar logbook untuk divalidasi
+
+alt Data berhasil dimuat
+  Server-->Aplikasi: Kirim daftar logbook
+  Aplikasi->Pembimbing: Tampilkan daftar logbook
+  Pembimbing->Aplikasi: Pilih logbook lalu setujui/tolak
+  Aplikasi->Server: Kirim status validasi (approved/rejected)
+
+  alt Validasi berhasil
+    Server-->Aplikasi: Status berhasil
+    Aplikasi->Pembimbing: Tampilkan pesan validasi berhasil
+    Aplikasi->Pembimbing: Perbarui daftar logbook
+  else Validasi gagal
+    Server-->Aplikasi: Status gagal + pesan error
+    Aplikasi->Pembimbing: Tampilkan pesan gagal validasi
+  end
+else Data gagal dimuat
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pembimbing: Tampilkan pesan gagal memuat logbook
+end

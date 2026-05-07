@@ -1,37 +1,83 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 import 'package:get_storage/get_storage.dart';
-import 'package:plp/models/logbook_model.dart';
+import 'package:http/http.dart' as http;
 import 'package:plp/config/app_config.dart';
+import 'package:plp/models/logbook_group_model.dart';
+import 'package:plp/models/logbook_model.dart';
 
 class LogbookService {
   static const String _baseUrl = AppConfig.baseUrl;
-  static final box = GetStorage();
+  static final GetStorage _box = GetStorage();
 
-  /// 🔐 Ambil token dari storage
-  static String? _getToken() {
-    return box.read('token');
+  static String? _getToken() => _box.read('token');
+
+  static Map<String, String> _headers(String token) {
+    return {
+      'Authorization': 'Bearer $token',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
   }
 
-  /// 📋 GET - Ambil semua logbook user
   static Future<List<LogbookModel>> getLogbooks() async {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
     final response = await http.get(
       Uri.parse('$_baseUrl/logbooks'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      headers: _headers(token),
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((e) => LogbookModel.fromJson(e)).toList();
-    } else {
-      throw Exception('Gagal memuat logbook');
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(LogbookModel.fromJson)
+          .toList();
+    }
+
+    throw Exception('Gagal memuat logbook');
+  }
+
+  static Future<Map<String, dynamic>> getIntegrityPactStatus() async {
+    final token = _getToken();
+    if (token == null) throw Exception('Token tidak ditemukan.');
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl/logbooks/integrity-pact'),
+      headers: _headers(token),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+
+    throw Exception('Gagal memuat status pakta integritas');
+  }
+
+  static Future<void> acceptIntegrityPact() async {
+    final token = _getToken();
+    if (token == null) throw Exception('Token tidak ditemukan.');
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/logbooks/integrity-pact'),
+      headers: _headers(token),
+      body: jsonEncode({'accepted': true}),
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(response.body) as Map<String, dynamic>?;
+      } catch (_) {}
+
+      throw Exception(
+        data?['message'] ?? 'Gagal menyetujui pakta integritas',
+      );
     }
   }
 
-  /// ➕ POST - Tambah logbook baru
   static Future<void> createLogbookRaw({
     required String tanggal,
     required String keterangan,
@@ -44,11 +90,7 @@ class LogbookService {
 
     final response = await http.post(
       Uri.parse('$_baseUrl/logbooks'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers(token),
       body: jsonEncode({
         'tanggal': tanggal,
         'keterangan': keterangan,
@@ -59,12 +101,12 @@ class LogbookService {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      final data = jsonDecode(response.body);
-      throw Exception(data['message'] ?? 'Gagal menambahkan logbook');
+      final Map<String, dynamic>? data =
+          jsonDecode(response.body) as Map<String, dynamic>?;
+      throw Exception(data?['message'] ?? 'Gagal menambahkan logbook');
     }
   }
 
-  /// ✏️ PUT - Update logbook
   static Future<void> updateLogbook(
     int id, {
     required String tanggal,
@@ -78,11 +120,7 @@ class LogbookService {
 
     final response = await http.put(
       Uri.parse('$_baseUrl/logbooks/$id'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers(token),
       body: jsonEncode({
         'tanggal': tanggal,
         'keterangan': keterangan,
@@ -93,104 +131,135 @@ class LogbookService {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      final data = jsonDecode(response.body);
-      throw Exception(data['message'] ?? 'Gagal memperbarui logbook');
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(response.body) as Map<String, dynamic>?;
+      } catch (_) {}
+
+      throw Exception(
+        data?['message'] ??
+            'Gagal memperbarui logbook (HTTP ${response.statusCode})',
+      );
     }
   }
 
-  /// 🗑️ DELETE - Hapus logbook
   static Future<void> deleteLogbook(int id) async {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
     final response = await http.delete(
       Uri.parse('$_baseUrl/logbooks/$id'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      headers: _headers(token),
     );
 
-    if (response.statusCode == 200) {
-      return;
-    } else {
-      throw Exception('Gagal menghapus logbook');
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(response.body) as Map<String, dynamic>?;
+      } catch (_) {}
+
+      throw Exception(
+        data?['message'] ??
+            'Gagal menghapus logbook (HTTP ${response.statusCode})',
+      );
     }
   }
 
-  /// 📚 GET - Ambil semua logbook mahasiswa (untuk koordinator)
   static Future<List<LogbookModel>> getAllLogbooks() async {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
-    try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/logbooks/all'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-        },
-      );
+    final response = await http.get(
+      Uri.parse('$_baseUrl/logbooks/all'),
+      headers: _headers(token),
+    );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((e) => LogbookModel.fromJson(e)).toList();
-      } else if (response.statusCode == 403) {
-        // Unauthorized - throw specific error to trigger fallback
-        throw Exception('Unauthorized access');
-      } else {
-        final errorMsg =
-            jsonDecode(response.body)['message'] ??
-            'Gagal memuat semua logbook mahasiswa';
-        throw Exception(errorMsg);
-      }
-    } catch (e) {
-      rethrow;
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(LogbookModel.fromJson)
+          .toList();
     }
+
+    if (response.statusCode == 403) {
+      throw Exception('Unauthorized access');
+    }
+
+    final Map<String, dynamic>? errorBody =
+        jsonDecode(response.body) as Map<String, dynamic>?;
+    throw Exception(
+      errorBody?['message'] ?? 'Gagal memuat semua logbook mahasiswa',
+    );
   }
 
-  /// ✅ GET - Ambil logbook untuk validasi (Guru & Dosen Pembimbing)
+  static Future<List<LogbookGroupModel>> getLogbookGroups() async {
+    final token = _getToken();
+    if (token == null) throw Exception('Token tidak ditemukan.');
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl/logbooks/groups'),
+      headers: _headers(token),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(LogbookGroupModel.fromJson)
+          .toList();
+    }
+
+    final Map<String, dynamic>? errorBody =
+        jsonDecode(response.body) as Map<String, dynamic>?;
+    throw Exception(
+      errorBody?['message'] ?? 'Gagal memuat kelompok logbook mahasiswa',
+    );
+  }
+
   static Future<List<LogbookModel>> getLogbooksForValidation() async {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
     final response = await http.get(
       Uri.parse('$_baseUrl/logbooks/validasi'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      headers: _headers(token),
     );
 
-    print('🔍 DEBUG /logbooks/validasi response:');
-    print('Status: ${response.statusCode}');
-    print('Body: ${response.body}');
-
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      if (data.isNotEmpty) {
-        print('🔍 DEBUG First logbook raw data:');
-        print(data[0]);
-      }
-      return data.map((e) => LogbookModel.fromJson(e)).toList();
-    } else {
-      throw Exception('Gagal memuat logbook untuk validasi');
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(LogbookModel.fromJson)
+          .toList();
     }
+
+    throw Exception('Gagal memuat logbook untuk validasi');
   }
 
-  /// ✔️ PUT - Update status validasi logbook
-  static Future<bool> updateValidationStatus(int id, String status) async {
+  static Future<bool> updateValidationStatus(
+    int id,
+    String status, {
+    String? note,
+  }) async {
     final token = _getToken();
     if (token == null) throw Exception('Token tidak ditemukan.');
 
     final response = await http.put(
       Uri.parse('$_baseUrl/logbooks/validasi/$id'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'status': status}),
+      headers: _headers(token),
+      body: jsonEncode({
+        'status': status,
+        'note': note,
+      }),
     );
 
     if (response.statusCode == 200) {
       return true;
-    } else {
-      throw Exception('Gagal memperbarui status validasi');
     }
+
+    final Map<String, dynamic>? data =
+        jsonDecode(response.body) as Map<String, dynamic>?;
+    throw Exception(data?['message'] ?? 'Gagal memperbarui status validasi');
   }
 }

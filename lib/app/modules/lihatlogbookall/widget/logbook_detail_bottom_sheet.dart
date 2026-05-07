@@ -40,7 +40,7 @@ class LogbookDetailBottomSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.book, color: Colors.blue, size: 24),
@@ -118,17 +118,17 @@ class LogbookDetailBottomSheet extends StatelessWidget {
                       iconColor: Colors.teal,
                       isLink: true,
                     ),
-                  _buildStatusItem(
-                    icon: Icons.verified,
-                    title: 'Status Guru',
-                    status: logbook.status,
-                    iconColor: _getStatusColor(logbook.status),
-                  ),
-                  _buildStatusItem(
-                    icon: Icons.school,
-                    title: 'Status Dosen Pembimbing',
-                    status: logbook.yourApprovalStatus,
-                    iconColor: _getStatusColor(logbook.yourApprovalStatus),
+                  ...logbook.approvers.map(
+                    (approval) => _buildStatusItem(
+                      icon:
+                          approval.role.toLowerCase().contains('guru')
+                              ? Icons.badge_outlined
+                              : Icons.school_outlined,
+                      title: approval.role,
+                      status: approval.status,
+                      iconColor: _getStatusColor(approval.status),
+                      note: approval.note,
+                    ),
                   ),
                 ],
               ),
@@ -164,7 +164,7 @@ class LogbookDetailBottomSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: iconColor, size: 20),
@@ -220,21 +220,23 @@ class LogbookDetailBottomSheet extends StatelessWidget {
     required String title,
     required String status,
     required Color iconColor,
+    String? note,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.05),
+        color: iconColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: iconColor.withOpacity(0.2)),
+        border: Border.all(color: iconColor.withValues(alpha: 0.2)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: iconColor, size: 20),
@@ -259,7 +261,7 @@ class LogbookDetailBottomSheet extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.2),
+                    color: iconColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -270,7 +272,18 @@ class LogbookDetailBottomSheet extends StatelessWidget {
                       color: iconColor,
                     ),
                   ),
-                ),
+                  ),
+                if (note != null && note.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Catatan: $note',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xFF475569),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

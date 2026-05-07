@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/models/pendaftaranplp_model.dart';
 import '../controllers/lihatdataplpall_controller.dart';
 import '../widget/registration_card.dart';
@@ -42,6 +43,7 @@ class LihatdataplpallView extends GetView<LihatdataplpallController> {
           );
         }),
       ),
+      bottomNavigationBar: const CustomNavbar(),
     );
   }
 

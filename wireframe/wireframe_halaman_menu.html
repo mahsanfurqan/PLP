@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Halaman Menu</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    background: #fff;
+    padding: 40px;
+    color: #000;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .wireframe-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .phone-outer {
+    width: 192px;
+    height: 458px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .phone {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #555;
+    border-radius: 18px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px 0;
+    overflow: hidden;
+  }
+
+  .c-status {
+    height: 12px;
+    background: #e0e0e0;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+  }
+
+  .c-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+
+  .c-back-btn {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #555;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .c-page-title-bar {
+    height: 8px;
+    background: #555;
+    border-radius: 2px;
+    flex: 1;
+    margin-right: 16px;
+  }
+
+  .c-content {
+    flex: 1;
+    background: transparent;
+    margin: 0 -10px;
+    padding: 12px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-group {
+    background: #f9f9f9;
+    border: 1.6px solid #777;
+    border-radius: 14px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .menu-item {
+    height: 32px;
+    border: 1.4px solid #b8b8b8;
+    border-radius: 12px;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .menu-item.main-action {
+    margin-top: 2px;
+    height: 36px;
+    border-color: #999;
+    background: #e9e9e9;
+  }
+
+  .item-icon {
+    width: 14px;
+    height: 14px;
+    border: 1.4px solid #666;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    height: 6px;
+    border-radius: 2px;
+    background: #666;
+  }
+
+  .c-bottomnav {
+    height: 40px;
+    border-top: 1.5px solid #ccc;
+    background: #f6f6f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+    margin: 0 -10px;
+    padding: 0 10px;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    background: #ddd;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+  }
+
+  .gesture-bar {
+    width: 54px;
+    height: 4px;
+    background: #b6b6b6;
+    border-radius: 999px;
+    margin: 5px auto 4px;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #c0392b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    z-index: 30;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .table-title {
+    text-align: center;
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-size: 10pt;
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  th, td {
+    border: 1px solid #333;
+    padding: 5px 9px;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th {
+    background: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  td:first-child { text-align: center; width: 38px; }
+  td:nth-child(2) { width: 220px; }
+  em { font-style: italic; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Gambar X Iterasi 1 <em>Wireframe</em> Halaman Menu (POV Mahasiswa)</p>
+
+<div class="wireframe-container">
+
+  <div class="phone-outer">
+
+    <div class="phone">
+      <div class="c-status"></div>
+
+      <div class="c-topbar">
+        <div class="c-back-btn">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round">
+            <polyline points="7,2 3,5 7,8"/>
+          </svg>
+        </div>
+        <div class="c-page-title-bar"></div>
+      </div>
+
+      <div class="c-content">
+        <div class="menu-group">
+          <div class="menu-item">
+            <div class="item-icon"></div>
+            <div class="item-text" style="width: 92px;"></div>
+          </div>
+
+          <div class="menu-item">
+            <div class="item-icon"></div>
+            <div class="item-text" style="width: 84px;"></div>
+          </div>
+
+          <div class="menu-item">
+            <div class="item-icon"></div>
+            <div class="item-text" style="width: 86px;"></div>
+          </div>
+
+          <div class="menu-item">
+            <div class="item-icon"></div>
+            <div class="item-text" style="width: 88px;"></div>
+          </div>
+        </div>
+
+        <div class="menu-item main-action">
+          <div class="item-icon"></div>
+          <div class="item-text" style="width: 98px;"></div>
+        </div>
+      </div>
+
+      <div class="c-bottomnav">
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+      </div>
+
+      <div class="gesture-bar"></div>
+    </div>
+
+    <!-- BADGES -->
+    <span class="badge" style="top:3px;   left:-22px;">1</span>
+    <span class="badge" style="top:25px;  left:-22px;">2</span>
+    <span class="badge" style="top:25px;  right:-22px;">3</span>
+    <span class="badge" style="top:72px;  right:-22px;">4</span>
+
+    <span class="badge" style="top:88px;  left:16px; background:#555;">5</span>
+    <span class="badge" style="top:90px;  right:-22px;">6</span>
+
+    <span class="badge" style="top:128px; left:16px; background:#555;">7</span>
+    <span class="badge" style="top:130px; right:-22px;">8</span>
+
+    <span class="badge" style="top:168px; left:16px; background:#555;">9</span>
+    <span class="badge" style="top:170px; right:-22px;">10</span>
+
+    <span class="badge" style="top:208px; left:16px; background:#555;">11</span>
+    <span class="badge" style="top:210px; right:-22px;">12</span>
+
+    <span class="badge" style="top:258px; left:-22px;">13</span>
+    <span class="badge" style="top:268px; left:16px; background:#555;">14</span>
+    <span class="badge" style="top:270px; right:-22px;">15</span>
+
+    <span class="badge" style="bottom:51px; left:-22px;">16</span>
+    <span class="badge" style="bottom:27px; left:16px; background:#555;">17</span>
+    <span class="badge" style="bottom:27px; left:56px; background:#555;">18</span>
+    <span class="badge" style="bottom:27px; right:56px; background:#555;">19</span>
+    <span class="badge" style="bottom:27px; right:16px; background:#555;">20</span>
+    <span class="badge" style="bottom:4px; left:50%; transform:translateX(-50%);">21</span>
+
+  </div>
+
+</div>
+
+<p class="table-title">Tabel X Penjelasan Komponen <em>Wireframe</em> Halaman Menu (General Berbasis Role)</p>
+<table>
+  <thead>
+    <tr><th>No.</th><th>Nama Komponen</th><th>Keterangan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><em>Status bar</em></td><td>Menampilkan informasi perangkat seperti waktu, sinyal, dan baterai.</td></tr>
+    <tr><td>2</td><td>Tombol kembali</td><td>Mengembalikan pengguna ke halaman sebelumnya.</td></tr>
+    <tr><td>3</td><td>Judul halaman</td><td>Menandai bahwa layar ini merupakan halaman menu.</td></tr>
+    <tr><td>4</td><td>Kelompok menu berbasis role</td><td>Kartu berisi beberapa opsi menu yang ditampilkan dinamis sesuai hak akses role pengguna.</td></tr>
+    <tr><td>5</td><td>Ikon menu role 1</td><td>Ikon visual untuk item menu pertama.</td></tr>
+    <tr><td>6</td><td>Label menu role 1</td><td>Teks menu pertama yang bersifat kontekstual sesuai role.</td></tr>
+    <tr><td>7</td><td>Ikon menu role 2</td><td>Ikon visual untuk item menu kedua.</td></tr>
+    <tr><td>8</td><td>Label menu role 2</td><td>Teks menu kedua yang bersifat kontekstual sesuai role.</td></tr>
+    <tr><td>9</td><td>Ikon menu role 3</td><td>Ikon visual untuk item menu ketiga.</td></tr>
+    <tr><td>10</td><td>Label menu role 3</td><td>Teks menu ketiga yang bersifat kontekstual sesuai role.</td></tr>
+    <tr><td>11</td><td>Ikon menu role 4</td><td>Ikon visual untuk item menu keempat.</td></tr>
+    <tr><td>12</td><td>Label menu role 4</td><td>Teks menu keempat yang bersifat kontekstual sesuai role.</td></tr>
+    <tr><td>13</td><td>Tombol <em>Log out</em></td><td>Tombol aksi untuk mengakhiri sesi pengguna dan keluar dari akun pada aplikasi.</td></tr>
+    <tr><td>14</td><td>Ikon <em>Log out</em></td><td>Ikon visual yang merepresentasikan aksi keluar pada tombol <em>Log out</em>.</td></tr>
+    <tr><td>15</td><td>Label <em>Log out</em></td><td>Teks "Log out" yang ditampilkan sebagai label pada tombol aksi keluar.</td></tr>
+    <tr><td>16</td><td>Navigasi bawah (<em>bottom navigation</em>)</td><td>Bilah navigasi untuk berpindah antar halaman utama aplikasi.</td></tr>
+    <tr><td>17</td><td>Ikon navigasi 1</td><td>Ikon pintasan ke salah satu halaman utama aplikasi.</td></tr>
+    <tr><td>18</td><td>Ikon navigasi 2</td><td>Ikon pintasan ke salah satu halaman utama aplikasi.</td></tr>
+    <tr><td>19</td><td>Ikon navigasi 3</td><td>Ikon pintasan ke salah satu halaman utama aplikasi.</td></tr>
+    <tr><td>20</td><td>Ikon navigasi 4</td><td>Ikon pintasan ke salah satu halaman utama aplikasi.</td></tr>
+    <tr><td>21</td><td>Indikator gesture</td><td>Indikator navigasi sistem pada bagian paling bawah perangkat.</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

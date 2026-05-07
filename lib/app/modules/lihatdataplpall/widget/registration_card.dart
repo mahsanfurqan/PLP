@@ -73,20 +73,23 @@ class RegistrationCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Pendaftaran #${registration.id}',
+                          registration.namaMahasiswa.isNotEmpty
+                              ? registration.namaMahasiswa
+                              : 'Mahasiswa ID: ${registration.userId}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                             color: Colors.black87,
                           ),
                         ),
-                        Text(
-                          'User ID: ${registration.userId}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                        if (registration.namaMahasiswa.isNotEmpty)
+                          Text(
+                            'User ID: ${registration.userId}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

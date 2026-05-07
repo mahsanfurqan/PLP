@@ -5,6 +5,7 @@ class HomeController extends GetxController {
   final box = GetStorage();
   final namaAkun = 'Pengguna'.obs;
   final emailAkun = '-'.obs;
+  final roleAkun = 'Observer'.obs;
 
   @override
   void onInit() {
@@ -19,8 +20,10 @@ class HomeController extends GetxController {
       final rawName =
           _asCleanString(user['name']) ?? _asCleanString(user['nama']);
       final rawEmail = _asCleanString(user['email']);
+      final rawRole = _asCleanString(user['role']);
 
       emailAkun.value = rawEmail ?? '-';
+      roleAkun.value = rawRole ?? 'Observer';
 
       if (rawName != null) {
         namaAkun.value = rawName;
@@ -32,6 +35,7 @@ class HomeController extends GetxController {
     } else {
       namaAkun.value = 'Pengguna';
       emailAkun.value = '-';
+      roleAkun.value = 'Observer';
     }
   }
 

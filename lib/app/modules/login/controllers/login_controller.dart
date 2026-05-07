@@ -62,6 +62,10 @@ class LoginController extends GetxController {
           'name': name,
           'email': result.email,
           'role': role,
+          'integrity_pact_accepted':
+              jsonResponse['integrity_pact_accepted'] == true,
+          'integrity_pact_accepted_at':
+              jsonResponse['integrity_pact_accepted_at'],
         });
 
         Get.snackbar("Berhasil", result.status);

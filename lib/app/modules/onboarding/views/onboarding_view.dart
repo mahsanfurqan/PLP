@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:plp/widget/custom_button.dart';
+import 'package:plp/widget/animation/welcoming_cat_animation.dart';
 
 import '../controllers/onboarding_controller.dart';
 
@@ -10,7 +11,7 @@ class OnboardingView extends GetView<OnboardingController> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double imageSize = screenWidth > 600 ? 350 : 450;
+    double imageSize = screenWidth > 600 ? 470 : 410;
 
     return Scaffold(
       body: Center(
@@ -19,8 +20,8 @@ class OnboardingView extends GetView<OnboardingController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/neko.png', height: imageSize),
-              const SizedBox(height: 20),
+              WelcomingCatAnimation(size: imageSize),
+              const SizedBox(height: 8),
               Text(
                 "Mengajar dengan aksi, belajar dengan hati!",
                 textAlign: TextAlign.center,
@@ -48,15 +49,30 @@ class OnboardingView extends GetView<OnboardingController> {
               Obx(
                 () => CustomButton(
                   text: "SUDAH PUNYA AKUN",
-                  color: Colors.white,
-                  shadowColor: Colors.black12,
-                  borderColor: Colors.black12,
-                  textColor: Colors.lightBlue,
+                  color: Colors.blue,
+                  shadowColor: Colors.blue.shade700,
+                  textColor: Colors.white,
                   onTap: () {
                     controller.triggerLoginButton();
                     controller.goToLogin();
                   },
                   isPressed: controller.isLoginButtonPressed.value,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+              Obx(
+                () => CustomButton(
+                  text: "LAPORAN (ANONIM)",
+                  color: Colors.white,
+                  shadowColor: Colors.black12,
+                  borderColor: Colors.black12,
+                  textColor: Colors.deepOrange,
+                  onTap: () {
+                    controller.triggerReportButton();
+                    controller.goToAnonymousReport();
+                  },
+                  isPressed: controller.isReportButtonPressed.value,
                   borderWidth: 3.0,
                 ),
               ),

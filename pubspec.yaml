@@ -42,6 +42,8 @@ dependencies:
   collection: ^1.15.0
   mailer: ^6.5.0
   url_launcher: ^6.3.1
+  image_picker: ^1.1.2
+  flutter_svg: ^2.0.10+1
 
 
 dev_dependencies:
@@ -96,3 +98,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  

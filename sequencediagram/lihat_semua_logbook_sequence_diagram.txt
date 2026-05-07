@@ -1,0 +1,18 @@
+title Alur Lihat Semua Logbook Sederhana
+
+participant Pengguna
+participant Aplikasi
+participant Server
+
+Pengguna->Aplikasi: Buka menu Lihat Logbook Semua
+Aplikasi->Server: Minta data semua logbook
+
+alt Data berhasil dimuat
+  Server-->Aplikasi: Kirim daftar logbook
+  Aplikasi->Pengguna: Tampilkan daftar logbook semua mahasiswa
+  Pengguna->Aplikasi: Pilih salah satu logbook
+  Aplikasi->Pengguna: Tampilkan detail logbook
+else Data gagal dimuat
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pengguna: Tampilkan pesan gagal memuat data
+end

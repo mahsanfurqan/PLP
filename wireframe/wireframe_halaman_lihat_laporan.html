@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe Halaman Lihat Laporan</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    background: #fff;
+    color: #000;
+    padding: 40px;
+  }
+
+  .page-title {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .wireframe-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .phone-outer {
+    position: relative;
+    width: 220px;
+    height: 520px;
+    flex-shrink: 0;
+  }
+
+  .phone {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #555;
+    border-radius: 18px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status-bar {
+    height: 12px;
+    margin: 8px 10px 6px;
+    background: #e0e0e0;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .app-bar {
+    height: 36px;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    width: 20px;
+    height: 20px;
+    border: 1.4px solid #555;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .title-bar {
+    flex: 1;
+    height: 8px;
+    background: #555;
+    border-radius: 2px;
+    margin-right: 12px;
+  }
+
+  .content-area {
+    flex: 1;
+    background: #ece8ef;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .report-card {
+    background: #f8f8f8;
+    border: 1.5px solid #777;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .report-icon {
+    width: 14px;
+    height: 14px;
+    border: 1.2px solid #666;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .name-line {
+    flex: 1;
+    height: 7px;
+    border-radius: 2px;
+    background: #666;
+  }
+
+  .status-chip {
+    width: 34px;
+    height: 12px;
+    border-radius: 10px;
+    background: #9a9a9a;
+    flex-shrink: 0;
+  }
+
+  .date-line,
+  .desc-line,
+  .meta-line {
+    height: 5px;
+    border-radius: 2px;
+    background: #7c7c7c;
+  }
+
+  .date-line { width: 92px; }
+  .desc-line { width: 130px; }
+  .meta-line { width: 74px; background: #8c8c8c; }
+
+  .action-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .read-btn {
+    width: 78px;
+    height: 20px;
+    border: 1.2px solid #888;
+    border-radius: 8px;
+    background: #dfdfdf;
+  }
+
+  .bottom-nav {
+    height: 48px;
+    border-top: 1.4px solid #ccc;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    background: #ddd;
+  }
+
+  .gesture-bar {
+    width: 56px;
+    height: 4px;
+    background: #b6b6b6;
+    border-radius: 999px;
+    margin: 5px auto 4px;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #c0392b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: bold;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    z-index: 30;
+  }
+
+  .table-title {
+    text-align: center;
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-size: 10pt;
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  th, td {
+    border: 1px solid #333;
+    padding: 5px 9px;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th {
+    text-align: center;
+    font-weight: bold;
+    background: #f0f0f0;
+  }
+
+  td:first-child { width: 38px; text-align: center; }
+  td:nth-child(2) { width: 220px; }
+  em { font-style: italic; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Gambar X Iterasi 1 <em>Wireframe</em> Halaman Lihat Laporan</p>
+
+<div class="wireframe-container">
+  <div class="phone-outer">
+    <div class="phone">
+      <div class="status-bar"></div>
+
+      <div class="app-bar">
+        <div class="back-btn">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#555" stroke-width="1.6" stroke-linecap="round">
+            <polyline points="7,2 3,5 7,8"/>
+          </svg>
+        </div>
+        <div class="title-bar"></div>
+      </div>
+
+      <div class="content-area">
+        <div class="report-card">
+          <div class="card-header">
+            <div class="report-icon"></div>
+            <div class="name-line"></div>
+            <div class="status-chip"></div>
+          </div>
+          <div class="date-line"></div>
+          <div class="desc-line"></div>
+          <div class="meta-line"></div>
+          <div class="action-row">
+            <div class="read-btn"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+        <div class="nav-icon"></div>
+      </div>
+
+      <div class="gesture-bar"></div>
+    </div>
+
+    <span class="badge" style="top:3px; left:-22px;">1</span>
+    <span class="badge" style="top:26px; left:-22px;">2</span>
+    <span class="badge" style="top:26px; right:-22px;">3</span>
+    <span class="badge" style="top:62px; left:-22px;">4</span>
+    <span class="badge" style="top:84px; right:-22px;">5</span>
+    <span class="badge" style="top:102px; left:-22px;">6</span>
+    <span class="badge" style="top:116px; right:-22px;">7</span>
+    <span class="badge" style="top:132px; left:-22px;">8</span>
+    <span class="badge" style="top:146px; right:-22px;">9</span>
+    <span class="badge" style="top:160px; left:-22px;">10</span>
+    <span class="badge" style="top:176px; right:-22px;">11</span>
+    <span class="badge" style="bottom:58px; left:-22px;">12</span>
+    <span class="badge" style="bottom:34px; left:16px; background:#555;">13</span>
+    <span class="badge" style="bottom:34px; left:60px; background:#555;">14</span>
+    <span class="badge" style="bottom:34px; right:60px; background:#555;">15</span>
+    <span class="badge" style="bottom:34px; right:16px; background:#555;">16</span>
+    <span class="badge" style="bottom:8px; left:50%; transform:translateX(-50%);">17</span>
+  </div>
+</div>
+
+<p class="table-title">Tabel X Penjelasan Komponen <em>Wireframe</em> Halaman Lihat Laporan</p>
+<table>
+  <thead>
+    <tr><th>No.</th><th>Nama Komponen</th><th>Keterangan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><em>Status bar</em></td><td>Area informasi perangkat (waktu, sinyal, baterai).</td></tr>
+    <tr><td>2</td><td>Tombol kembali</td><td>Tombol untuk kembali ke halaman sebelumnya.</td></tr>
+    <tr><td>3</td><td>Judul halaman</td><td>Menampilkan konteks halaman lihat laporan.</td></tr>
+    <tr><td>4</td><td>Area konten daftar</td><td>Wadah utama berisi daftar laporan yang masuk.</td></tr>
+    <tr><td>5</td><td>Kartu laporan</td><td>Komponen utama untuk menampilkan satu data laporan.</td></tr>
+    <tr><td>6</td><td>Ikon laporan</td><td>Penanda visual bahwa data pada kartu adalah laporan.</td></tr>
+    <tr><td>7</td><td>Nama mahasiswa</td><td>Nama mahasiswa yang terkait dengan laporan.</td></tr>
+    <tr><td>8</td><td>Status laporan</td><td>Label status laporan, misalnya "Baru" atau "Dibaca".</td></tr>
+    <tr><td>9</td><td>Tanggal kejadian</td><td>Menampilkan tanggal kejadian yang dilaporkan.</td></tr>
+    <tr><td>10</td><td>Deskripsi kejadian</td><td>Ringkasan isi laporan pada kartu.</td></tr>
+    <tr><td>11</td><td>Waktu laporan masuk</td><td>Informasi waktu data laporan diterima sistem.</td></tr>
+    <tr><td>12</td><td>Tombol tandai dibaca</td><td>Aksi untuk mengubah status laporan menjadi sudah dibaca.</td></tr>
+    <tr><td>13</td><td>Navigasi bawah</td><td>Bilah navigasi utama aplikasi.</td></tr>
+    <tr><td>14</td><td>Ikon navigasi 1</td><td>Pintasan ke halaman utama pertama.</td></tr>
+    <tr><td>15</td><td>Ikon navigasi 2</td><td>Pintasan ke halaman utama kedua.</td></tr>
+    <tr><td>16</td><td>Ikon navigasi 3</td><td>Pintasan ke halaman utama ketiga.</td></tr>
+    <tr><td>17</td><td>Indikator gesture</td><td>Indikator navigasi sistem pada bagian paling bawah layar.</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

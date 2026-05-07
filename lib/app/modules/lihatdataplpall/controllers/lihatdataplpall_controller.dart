@@ -44,26 +44,19 @@ class LihatdataplpallController extends GetxController {
   /// 🔄 Ambil data SMK, Dospem & Guru Pamong untuk dropdown
   Future<void> fetchDropdownData() async {
     try {
-      print('🔄 Fetching dropdown data...');
-
       // Fetch SMK data
       final smkData = await SmkService.getSmks();
       smkList.assignAll(smkData);
-      print('📚 SMK data loaded: ${smkList.length} items');
 
       // Fetch Dosen Pembimbing data
       final dospemData = await AkunService.getAllUsersByRole(
         "Dosen Pembimbing",
       );
       dospems.assignAll(dospemData);
-      print('👨‍🏫 Dosen Pembimbing data loaded: ${dospems.length} items');
 
       // Fetch Guru Pamong data
       await fetchGuruPamong();
-
-      print('✅ All dropdown data loaded successfully');
     } catch (e) {
-      print('❌ Error fetching dropdown data: $e');
       Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
     }
   }
@@ -73,9 +66,7 @@ class LihatdataplpallController extends GetxController {
     try {
       final result = await GuruPamongService.getAllGuruPamong();
       guruPamongs.assignAll(result.map((e) => UserModel.fromJson(e)).toList());
-      print('👨‍🏫 Guru Pamong data loaded: ${guruPamongs.length} items');
     } catch (e) {
-      print('❌ Error fetching guru pamong: $e');
       Get.snackbar("Error", "Gagal memuat data guru pamong:\n${e.toString()}");
     }
   }
@@ -122,132 +113,167 @@ class LihatdataplpallController extends GetxController {
     required int idDospem,
     required int idGuruPamong,
   }) async {
+    if (isAssigning.value) return;
+
     isAssigning.value = true;
     try {
-      print('🔄 Starting assignment for pendaftaran ID: $pendaftaranId');
-      print('🔄 Assigning SMK: $idSmk, Dospem: $idDospem, Guru: $idGuruPamong');
+      final beforeRegistration = _findRegistrationById(pendaftaranId);
 
-      await PendaftaranPlpService.assignPenempatanDospem(
+      // Gunakan assign fleksibel agar kompatibel dengan variasi key backend.
+      await PendaftaranPlpService.assignPenempatanDospemFlexible(
         pendaftaranId: pendaftaranId,
         idSmk: idSmk,
         idDospem: idDospem,
         idGuruPamong: idGuruPamong,
       );
 
-      print('✅ Assignment successful, refreshing data...');
-
-      // Temporary fix: Update the local data manually since API doesn't return the fields
-      final registrationIndex = pendaftaranList.indexWhere(
-        (item) => item.id == pendaftaranId,
+      var updatedRegistration = await _refreshAndFindRegistration(
+        pendaftaranId,
       );
-      if (registrationIndex != -1) {
-        final currentRegistration = pendaftaranList[registrationIndex];
 
-        // Create updated registration with assignment data
-        final updatedRegistration = PendaftaranPlpModel(
-          id: currentRegistration.id,
-          userId: currentRegistration.userId,
-          keminatanId: currentRegistration.keminatanId,
-          nilaiPlp1: currentRegistration.nilaiPlp1,
-          nilaiMicroTeaching: currentRegistration.nilaiMicroTeaching,
-          pilihanSmk1: currentRegistration.pilihanSmk1,
-          pilihanSmk2: currentRegistration.pilihanSmk2,
-          penempatan: idSmk, // Use the assigned SMK
-          dosenPembimbing: idDospem, // Use the assigned Dospem
-          guruPamong: idGuruPamong, // Use the assigned Guru
-          createdAt: currentRegistration.createdAt,
-          updatedAt: currentRegistration.updatedAt,
+      var isReflected = _isAssignmentReflected(
+        before: beforeRegistration,
+        after: updatedRegistration,
+        requestedSmk: idSmk,
+        requestedDospem: idDospem,
+        requestedGuruPamong: idGuruPamong,
+      );
+
+      if (!isReflected) {
+        // Fallback tampilan agar user tidak mendapat false error merah.
+        _applyLocalAssignmentFallback(
+          pendaftaranId: pendaftaranId,
+          idSmk: idSmk,
+          idDospem: idDospem,
+          idGuruPamong: idGuruPamong,
         );
 
-        // Update the list
-        pendaftaranList[registrationIndex] = updatedRegistration;
-
-        print('✅ Manually updated local data with assignment');
-        print('🔍 Updated registration details:');
-        print('   - ID: ${updatedRegistration.id}');
-        print('   - SMK: ${updatedRegistration.penempatan}');
-        print('   - Dospem: ${updatedRegistration.dosenPembimbing}');
-        print('   - Guru: ${updatedRegistration.guruPamong}');
-
-        // Show success message with details
         Get.snackbar(
           "Sukses",
-          "Berhasil meng-assign:\n• SMK: ${getNamaSmk(idSmk)}\n• Dosen: ${getNamaDospem(idDospem)}\n• Guru: ${getNamaGuruPamong(idGuruPamong)}",
-          backgroundColor: Colors.green,
+          "Assign berhasil dikirim. Data server belum sinkron di respons terbaru, tampilan diperbarui sementara.",
+          backgroundColor: Colors.orange,
           colorText: Colors.white,
           duration: const Duration(seconds: 4),
         );
+        return;
       }
 
-      print('✅ Data refreshed after assignment');
-      print('📊 Current pendaftaran list length: ${pendaftaranList.length}');
+      Get.snackbar(
+        "Sukses",
+        "Berhasil meng-assign:\n• SMK: ${getNamaSmk(idSmk)}\n• Dosen: ${getNamaDospem(idDospem)}\n• Guru: ${getNamaGuruPamong(idGuruPamong)}",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
     } catch (e) {
-      print('❌ Assignment error: $e');
-
-      // Check if the error message actually indicates success
-      final errorMessage = e.toString().toLowerCase();
-      if (errorMessage.contains('berhasil') ||
-          errorMessage.contains('success')) {
-        print('✅ Detected success message in error, treating as success');
-
-        Get.snackbar(
-          "Sukses",
-          "Berhasil meng-assign penempatan, dospem, dan guru.",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-
-        // Refresh data setelah assign
-        await fetchAllPendaftaran();
-
-        // Apply the same temporary fix for error case
-        final registrationIndex = pendaftaranList.indexWhere(
-          (item) => item.id == pendaftaranId,
-        );
-        if (registrationIndex != -1) {
-          final currentRegistration = pendaftaranList[registrationIndex];
-
-          final updatedRegistration = PendaftaranPlpModel(
-            id: currentRegistration.id,
-            userId: currentRegistration.userId,
-            keminatanId: currentRegistration.keminatanId,
-            nilaiPlp1: currentRegistration.nilaiPlp1,
-            nilaiMicroTeaching: currentRegistration.nilaiMicroTeaching,
-            pilihanSmk1: currentRegistration.pilihanSmk1,
-            pilihanSmk2: currentRegistration.pilihanSmk2,
-            penempatan: idSmk,
-            dosenPembimbing: idDospem,
-            guruPamong: idGuruPamong,
-            createdAt: currentRegistration.createdAt,
-            updatedAt: currentRegistration.updatedAt,
-          );
-
-          pendaftaranList[registrationIndex] = updatedRegistration;
-
-          print('✅ Manually updated local data with assignment (from error)');
-
-          // Show success message with details
-          Get.snackbar(
-            "Sukses",
-            "Berhasil meng-assign:\n• SMK: ${getNamaSmk(idSmk)}\n• Dosen: ${getNamaDospem(idDospem)}\n• Guru: ${getNamaGuruPamong(idGuruPamong)}",
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 4),
-          );
-        }
-
-        print('✅ Data refreshed after assignment (success from error)');
-      } else {
-        Get.snackbar(
-          "Error",
-          "Gagal meng-assign:\n${e.toString()}",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
+      Get.snackbar(
+        "Error",
+        "Gagal meng-assign:\n${_normalizeErrorMessage(e)}",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isAssigning.value = false;
     }
+  }
+
+  PendaftaranPlpModel? _findRegistrationById(int pendaftaranId) {
+    final index = pendaftaranList.indexWhere(
+      (item) => item.id == pendaftaranId,
+    );
+    if (index == -1) return null;
+    return pendaftaranList[index];
+  }
+
+  Future<PendaftaranPlpModel?> _refreshAndFindRegistration(
+    int pendaftaranId,
+  ) async {
+    final refreshedData = await PendaftaranPlpService.getAllPendaftaranPlp();
+    pendaftaranList.assignAll(refreshedData);
+    return _findRegistrationById(pendaftaranId);
+  }
+
+  bool _isAssignmentReflected({
+    required PendaftaranPlpModel? before,
+    required PendaftaranPlpModel? after,
+    required int requestedSmk,
+    required int requestedDospem,
+    required int requestedGuruPamong,
+  }) {
+    if (after == null) return false;
+
+    final smkOk = _isFieldReflected(
+      beforeValue: before?.penempatan,
+      afterValue: after.penempatan,
+      requestedValue: requestedSmk,
+    );
+
+    final dospemOk = _isFieldReflected(
+      beforeValue: before?.dosenPembimbing,
+      afterValue: after.dosenPembimbing,
+      requestedValue: requestedDospem,
+    );
+
+    final guruOk = _isFieldReflected(
+      beforeValue: before?.guruPamong,
+      afterValue: after.guruPamong,
+      requestedValue: requestedGuruPamong,
+    );
+
+    return smkOk && dospemOk && guruOk;
+  }
+
+  bool _isFieldReflected({
+    required int? beforeValue,
+    required int? afterValue,
+    required int requestedValue,
+  }) {
+    if (afterValue == null) return false;
+
+    // Case ideal: ID sama dengan yang dipilih user.
+    if (afterValue == requestedValue) return true;
+
+    // Antisipasi backend mengembalikan ID relasi berbeda namespace.
+    if (beforeValue == null) return true;
+    if (afterValue != beforeValue) return true;
+
+    return false;
+  }
+
+  void _applyLocalAssignmentFallback({
+    required int pendaftaranId,
+    required int idSmk,
+    required int idDospem,
+    required int idGuruPamong,
+  }) {
+    final index = pendaftaranList.indexWhere(
+      (item) => item.id == pendaftaranId,
+    );
+    if (index == -1) return;
+
+    final current = pendaftaranList[index];
+    pendaftaranList[index] = PendaftaranPlpModel(
+      id: current.id,
+      userId: current.userId,
+      namaMahasiswa: current.namaMahasiswa,
+      keminatanId: current.keminatanId,
+      nilaiPlp1: current.nilaiPlp1,
+      nilaiMicroTeaching: current.nilaiMicroTeaching,
+      pilihanSmk1: current.pilihanSmk1,
+      pilihanSmk2: current.pilihanSmk2,
+      penempatan: idSmk,
+      dosenPembimbing: idDospem,
+      guruPamong: idGuruPamong,
+      createdAt: current.createdAt,
+      updatedAt: current.updatedAt,
+    );
+  }
+
+  String _normalizeErrorMessage(Object error) {
+    final rawMessage = error.toString();
+    if (rawMessage.startsWith('Exception: ')) {
+      return rawMessage.replaceFirst('Exception: ', '');
+    }
+    return rawMessage;
   }
 }

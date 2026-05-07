@@ -139,18 +139,6 @@ class PendaftaranPlpService {
         final decoded = jsonDecode(response.body);
 
         if (decoded is List) {
-          // Debug: Analyze the first item in the list
-          if (decoded.isNotEmpty) {
-            final firstItem = decoded.first as Map<String, dynamic>;
-            firstItem.forEach((key, value) {});
-
-            // Check if required fields exist
-            final hasDosenPembimbing = firstItem.containsKey(
-              'dosen_pembimbing',
-            );
-            final hasGuruPamong = firstItem.containsKey('guru_pamong');
-          }
-
           return decoded
               .map((item) => PendaftaranPlpModel.fromJson(item))
               .toList();
@@ -174,15 +162,97 @@ class PendaftaranPlpService {
     required int idDospem,
     int? idGuruPamong,
   }) async {
+    await _sendAssignRequest(
+      pendaftaranId: pendaftaranId,
+      requestBody: {
+        "penempatan": idSmk,
+        "dosen_pembimbing": idDospem,
+        "guru_pamong": idGuruPamong,
+      },
+    );
+  }
+
+  static Future<void> assignPenempatanDospemWithIdKeys({
+    required int pendaftaranId,
+    required int idSmk,
+    required int idDospem,
+    int? idGuruPamong,
+  }) async {
+    await _sendAssignRequest(
+      pendaftaranId: pendaftaranId,
+      requestBody: {
+        "penempatan_id": idSmk,
+        "dosen_pembimbing_id": idDospem,
+        "guru_pamong_id": idGuruPamong,
+      },
+    );
+  }
+
+  static Future<void> assignPenempatanDospemWithLegacyKeys({
+    required int pendaftaranId,
+    required int idSmk,
+    required int idDospem,
+    int? idGuruPamong,
+  }) async {
+    await _sendAssignRequest(
+      pendaftaranId: pendaftaranId,
+      requestBody: {
+        "id_smk": idSmk,
+        "id_dosen_pembimbing": idDospem,
+        "id_guru_pamong": idGuruPamong,
+      },
+    );
+  }
+
+  /// 📌 Assign fleksibel untuk kompatibilitas variasi key backend
+  static Future<void> assignPenempatanDospemFlexible({
+    required int pendaftaranId,
+    required int idSmk,
+    required int idDospem,
+    int? idGuruPamong,
+  }) async {
+    final strategies = [
+      {
+        "penempatan": idSmk,
+        "dosen_pembimbing": idDospem,
+        "guru_pamong": idGuruPamong,
+      },
+      {
+        "penempatan_id": idSmk,
+        "dosen_pembimbing_id": idDospem,
+        "guru_pamong_id": idGuruPamong,
+      },
+      {
+        "id_smk": idSmk,
+        "id_dosen_pembimbing": idDospem,
+        "id_guru_pamong": idGuruPamong,
+      },
+    ];
+
+    Exception? lastError;
+
+    for (final payload in strategies) {
+      try {
+        await _sendAssignRequest(
+          pendaftaranId: pendaftaranId,
+          requestBody: payload,
+        );
+        return;
+      } catch (e) {
+        final message = e.toString().replaceFirst('Exception: ', '');
+        lastError = Exception(message);
+      }
+    }
+
+    throw lastError ?? Exception('Gagal assign penempatan/dospem/guru pamong');
+  }
+
+  static Future<void> _sendAssignRequest({
+    required int pendaftaranId,
+    required Map<String, dynamic> requestBody,
+  }) async {
     final token = getToken();
     if (token == null) throw Exception("Token tidak ditemukan.");
-
-    // Prepare request body
-    final requestBody = {
-      "penempatan": idSmk,
-      "dosen_pembimbing": idDospem,
-      "guru_pamong": idGuruPamong,
-    };
 
     final response = await http.patch(
       Uri.parse("$_baseUrl/pendaftaran-plp/$pendaftaranId"),
@@ -201,22 +271,64 @@ class PendaftaranPlpService {
       );
     }
 
-    final json = jsonDecode(response.body);
-    json.forEach((key, value) {});
-
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 202) {
+    final isSuccessStatus =
+        response.statusCode >= 200 && response.statusCode < 300;
+    if (isSuccessStatus) {
       return;
-    } else {
-      final message = json['message'] ?? '';
+    }
 
-      if (message.toLowerCase().contains('berhasil') ||
-          message.toLowerCase().contains('success')) {
-        return;
+    final json = _safeDecodeToMap(response.body);
+    final message = _extractErrorMessage(
+      json,
+      fallback: 'Gagal assign penempatan/dospem/guru pamong',
+    );
+
+    throw Exception(message);
+  }
+
+  static Map<String, dynamic> _safeDecodeToMap(String body) {
+    if (body.trim().isEmpty) return {};
+
+    try {
+      final decoded = jsonDecode(body);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      return {'data': decoded};
+    } catch (_) {
+      return {'message': body};
+    }
+  }
+
+  static String _extractErrorMessage(
+    Map<String, dynamic> json, {
+    required String fallback,
+  }) {
+    final errors = json['errors'];
+    if (errors is Map) {
+      final details = <String>[];
+
+      for (final entry in errors.entries) {
+        final value = entry.value;
+        if (value is List && value.isNotEmpty) {
+          details.add(value.first.toString());
+        } else if (value != null) {
+          details.add(value.toString());
+        }
       }
 
-      throw Exception(json['message'] ?? 'Gagal assign penempatan/dospem');
+      if (details.isNotEmpty) {
+        return details.join('\n');
+      }
     }
+
+    final rawMessage = json['message'] ?? json['error'] ?? json['detail'];
+    final message = rawMessage?.toString().trim();
+
+    if (message == null || message.isEmpty) {
+      return fallback;
+    }
+
+    return message;
   }
 }

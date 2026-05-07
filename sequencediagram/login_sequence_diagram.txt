@@ -1,0 +1,18 @@
+title Alur Login Sederhana
+
+participant Pengguna
+participant Aplikasi
+participant Server
+
+Pengguna->Aplikasi: Isi email & password
+Pengguna->Aplikasi: Tekan tombol Masuk
+Aplikasi->Server: Kirim data login
+
+alt Login berhasil
+  Server-->Aplikasi: Status berhasil + data akun
+  Aplikasi->Pengguna: Tampilkan pesan "Berhasil login"
+  Aplikasi->Pengguna: Pindah ke halaman Home
+else Login gagal
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pengguna: Tampilkan pesan gagal login
+end

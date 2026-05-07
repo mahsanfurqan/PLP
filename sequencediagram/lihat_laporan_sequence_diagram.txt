@@ -1,0 +1,18 @@
+title Alur Lihat Laporan Sederhana
+
+participant Pengguna
+participant Aplikasi
+participant Server
+
+Pengguna->Aplikasi: Buka menu Lihat Laporan
+Aplikasi->Server: Minta data laporan
+
+alt Data berhasil dimuat
+  Server-->Aplikasi: Kirim daftar laporan
+  Aplikasi->Pengguna: Tampilkan daftar laporan
+  Pengguna->Aplikasi: Pilih laporan
+  Aplikasi->Pengguna: Tampilkan detail laporan
+else Data gagal dimuat
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pengguna: Tampilkan pesan gagal memuat laporan
+end

@@ -24,6 +24,8 @@ abstract class Routes {
   static const VALIDASILOGBOOK = _Paths.VALIDASILOGBOOK;
   static const BUATAKUN = _Paths.BUATAKUN;
   static const DAFTARUJIANPLP = _Paths.DAFTARUJIANPLP;
+  static const LAPORANANONIM = _Paths.LAPORANANONIM;
+  static const LIHATPELAPORAN = _Paths.LIHATPELAPORAN;
 }
 
 abstract class _Paths {
@@ -49,4 +51,6 @@ abstract class _Paths {
   static const VALIDASILOGBOOK = '/validasilogbook';
   static const BUATAKUN = '/buatakun';
   static const DAFTARUJIANPLP = '/daftarujianplp';
+  static const LAPORANANONIM = '/laporananonim';
+  static const LIHATPELAPORAN = '/lihatpelaporan';
 }

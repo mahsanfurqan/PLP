@@ -1,6 +1,12 @@
 class AppConfig {
-  // Base URL untuk API
-  static const String baseUrl = "http://plp.divisigurutugasduba.com/api";
+  // true = backend lokal emulator Android, false = backend server
+  static const bool useLocalBackend = true;
+
+  // Untuk Android Emulator gunakan 10.0.2.2 ke host Windows
+  static const String localBaseUrl = "http://10.0.2.2:8000/api";
+  static const String productionBaseUrl = "http://plp.divisigurutugasduba.com/api";
+  static const String baseUrl =
+      useLocalBackend ? localBaseUrl : productionBaseUrl;
 
   // Timeout untuk request (dalam detik)
   static const int requestTimeout = 30;
@@ -14,4 +20,5 @@ class AppConfig {
   static const String smkEndpoint = "$baseUrl/smks";
   static const String keminatanEndpoint = "$baseUrl/keminatan";
   static const String akunEndpoint = "$baseUrl/akun";
+  static const String laporanAnonimEndpoint = "$baseUrl/laporan-anonim";
 }

@@ -16,7 +16,6 @@ class SmkController extends GetxController {
     fetchSmkList();
   }
 
-  // 🔵 Ambil semua data SMK
   Future<void> fetchSmkList() async {
     try {
       isLoading.value = true;
@@ -29,7 +28,6 @@ class SmkController extends GetxController {
     }
   }
 
-  // 🟢 Tambahkan SMK baru
   Future<void> tambahSmk() async {
     if (namaSmkBaru.value.isEmpty) {
       Get.snackbar('Error', 'Nama SMK tidak boleh kosong.');
@@ -43,7 +41,7 @@ class SmkController extends GetxController {
       Get.snackbar('Sukses', 'SMK berhasil ditambahkan.');
       namaSmkBaru.value = '';
 
-      fetchSmkList(); // Refresh daftar SMK setelah tambah
+      fetchSmkList();
     } catch (e) {
       Get.snackbar('Gagal', 'Gagal menambahkan SMK:\n${e.toString()}');
     } finally {

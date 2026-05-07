@@ -103,7 +103,7 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
                 final box = GetStorage();
                 box.remove('token');
                 box.remove('user');
-                Get.offAllNamed('/login');
+                Get.offAllNamed('/onboarding');
               },
               borderRadius: BorderRadius.circular(25),
               child: Container(

@@ -24,8 +24,12 @@ import '../modules/lihatdataplpall/bindings/lihatdataplpall_binding.dart';
 import '../modules/lihatdataplpall/views/lihatdataplpall_view.dart';
 import '../modules/lihatlogbookall/bindings/lihatlogbookall_binding.dart';
 import '../modules/lihatlogbookall/views/lihatlogbookall_view.dart';
+import '../modules/lihatpelaporan/bindings/lihatpelaporan_binding.dart';
+import '../modules/lihatpelaporan/views/lihatpelaporan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/laporananonim/bindings/laporananonim_binding.dart';
+import '../modules/laporananonim/views/laporananonim_view.dart';
 import '../modules/lupapassword/bindings/lupapassword_binding.dart';
 import '../modules/lupapassword/views/lupapassword_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -148,6 +152,16 @@ class AppPages {
       name: _Paths.DAFTARUJIANPLP,
       page: () => const DaftarujianplpView(),
       binding: DaftarujianplpBinding(),
+    ),
+    GetPage(
+      name: _Paths.LAPORANANONIM,
+      page: () => const LaporananonimView(),
+      binding: LaporananonimBinding(),
+    ),
+    GetPage(
+      name: _Paths.LIHATPELAPORAN,
+      page: () => const LihatpelaporanView(),
+      binding: LihatpelaporanBinding(),
     ),
   ];
 }

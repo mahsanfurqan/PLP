@@ -58,8 +58,10 @@ class AdminLogbookValidationSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Hanya tampilkan jika bukan Kaprodi atau Akademik
-          if (role != 'Kaprodi' && role != 'Akademik')
+          // Validasi logbook hanya untuk Dosen Pembimbing dan Guru
+          if (role != 'Kaprodi' &&
+              role != 'Akademik' &&
+              role != 'Dosen Koordinator')
             ListTile(
               leading: const Icon(
                 Icons.verified,
@@ -76,9 +78,12 @@ class AdminLogbookValidationSheet extends StatelessWidget {
               },
             ),
           // Divider hanya jika menu Validasi Logbook tampil
-          if (role != 'Kaprodi' && role != 'Akademik') const Divider(),
-          // Hanya tampilkan jika bukan Dosen Pembimbing
-          if (role != 'Dosen Pembimbing')
+          if (role != 'Kaprodi' &&
+              role != 'Akademik' &&
+              role != 'Dosen Koordinator')
+            const Divider(),
+          // Hanya tampilkan untuk role yang memang boleh melihat semua logbook mahasiswa
+          if (role != 'Dosen Pembimbing' && role != 'Guru')
             ListTile(
               leading: const Icon(
                 Icons.remove_red_eye,
@@ -92,6 +97,24 @@ class AdminLogbookValidationSheet extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 Get.toNamed('/lihatlogbookall');
+              },
+            ),
+
+          if (role == 'Dosen Koordinator') const Divider(),
+          if (role == 'Dosen Koordinator')
+            ListTile(
+              leading: const Icon(
+                Icons.assignment,
+                color: Colors.deepOrange,
+                size: 28,
+              ),
+              title: const Text(
+                "Lihat Pelaporan",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Get.toNamed('/lihatpelaporan');
               },
             ),
         ],

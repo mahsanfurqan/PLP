@@ -1,0 +1,20 @@
+title Alur Hapus Logbook Sederhana
+
+participant Pengguna
+participant Aplikasi
+participant Server
+
+Pengguna->Aplikasi: Buka daftar logbook
+Pengguna->Aplikasi: Pilih logbook lalu tekan Hapus
+Aplikasi->Pengguna: Tampilkan konfirmasi hapus
+Pengguna->Aplikasi: Konfirmasi "Ya"
+Aplikasi->Server: Kirim permintaan hapus logbook
+
+alt Hapus berhasil
+  Server-->Aplikasi: Status berhasil
+  Aplikasi->Pengguna: Tampilkan pesan "Logbook berhasil dihapus"
+  Aplikasi->Pengguna: Perbarui daftar logbook
+else Hapus gagal
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pengguna: Tampilkan pesan gagal hapus logbook
+end

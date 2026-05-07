@@ -1,0 +1,19 @@
+title Alur Logbook Sederhana
+
+participant Pengguna
+participant Aplikasi
+participant Server
+
+Pengguna->Aplikasi: Buka menu Logbook
+Pengguna->Aplikasi: Isi form logbook (tanggal, jam, keterangan, dokumentasi)
+Pengguna->Aplikasi: Tekan tombol Simpan
+Aplikasi->Server: Kirim data logbook
+
+alt Simpan berhasil
+  Server-->Aplikasi: Status berhasil
+  Aplikasi->Pengguna: Tampilkan pesan "Logbook berhasil disimpan"
+  Aplikasi->Pengguna: Tampilkan daftar logbook terbaru
+else Simpan gagal
+  Server-->Aplikasi: Status gagal + pesan error
+  Aplikasi->Pengguna: Tampilkan pesan gagal simpan logbook
+end

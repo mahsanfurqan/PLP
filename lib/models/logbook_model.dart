@@ -1,3 +1,39 @@
+class LogbookApprovalModel {
+  final int id;
+  final int approverId;
+  final String name;
+  final String role;
+  final String status;
+  final String note;
+  final String updatedAt;
+
+  const LogbookApprovalModel({
+    required this.id,
+    required this.approverId,
+    required this.name,
+    required this.role,
+    required this.status,
+    required this.note,
+    required this.updatedAt,
+  });
+
+  factory LogbookApprovalModel.fromJson(Map<String, dynamic> json) {
+    return LogbookApprovalModel(
+      id: LogbookModel._safeInt(json['id']),
+      approverId: LogbookModel._safeInt(
+        json['approver_id'] ?? json['approverId'],
+      ),
+      name: LogbookModel._safeString(json['name'], 'Approver'),
+      role: LogbookModel._safeString(json['role']),
+      status: LogbookModel._safeString(json['status'], 'pending'),
+      note: LogbookModel._safeString(json['note']),
+      updatedAt: LogbookModel._safeString(
+        json['updated_at'] ?? json['updatedAt'],
+      ),
+    );
+  }
+}
+
 class LogbookModel {
   final int id;
   final int userId;
@@ -8,9 +44,12 @@ class LogbookModel {
   final String dokumentasi;
   final String status;
   final String yourApprovalStatus;
+  final String yourNote;
   final String? userName;
+  final bool canEdit;
+  final List<LogbookApprovalModel> approvers;
 
-  LogbookModel({
+  const LogbookModel({
     required this.id,
     required this.userId,
     required this.tanggal,
@@ -20,47 +59,63 @@ class LogbookModel {
     required this.dokumentasi,
     required this.status,
     required this.yourApprovalStatus,
+    required this.yourNote,
+    required this.canEdit,
+    required this.approvers,
     this.userName,
   });
 
   factory LogbookModel.fromJson(Map<String, dynamic> json) {
-    // Extract user name - backend sends "user" field as string (nama mahasiswa)
     String? extractedUserName;
 
     if (json['user'] is String) {
-      // Backend sends: "user": "Mahasiswa Name"
-      extractedUserName = json['user'];
-      print('✅ Extracted userName from "user" field: $extractedUserName');
-    } else if (json['user'] is Map) {
-      // If user is an object: {"user": {"name": "..."}}
-      extractedUserName = json['user']['name'];
-      print('✅ Extracted userName from "user.name" field: $extractedUserName');
+      extractedUserName = json['user'] as String;
+    } else if (json['user'] is Map<String, dynamic>) {
+      extractedUserName = json['user']['name'] as String?;
     }
 
-    // Fallback to other possible field names
     extractedUserName ??=
-        json['user_name'] ?? json['userName'] ?? json['nama_mahasiswa'];
+        json['user_name'] as String? ??
+        json['userName'] as String? ??
+        json['nama_mahasiswa'] as String?;
 
-    print('🔍 Final userName value: $extractedUserName');
+    final approverList =
+        (json['approvers'] as List<dynamic>? ?? const [])
+            .whereType<Map<String, dynamic>>()
+            .map(LogbookApprovalModel.fromJson)
+            .toList();
 
     return LogbookModel(
       id: _safeInt(json['id']),
       userId: _safeInt(json['user_id'] ?? json['userId']),
       tanggal: _safeString(json['tanggal']),
       keterangan: _safeString(json['keterangan']),
-      mulai: _convertToString(json['mulai']),
-      selesai: _convertToString(json['selesai']),
+      mulai: _convertTime(json['mulai']),
+      selesai: _convertTime(json['selesai']),
       dokumentasi: _safeString(json['dokumentasi']),
       status: _safeString(json['status'], 'pending'),
       yourApprovalStatus: _safeString(json['your_approval_status'], 'pending'),
+      yourNote: _safeString(json['your_note']),
       userName: extractedUserName,
+      canEdit:
+          json['can_edit'] == true ||
+          approverList.any((approval) => approval.status == 'rejected'),
+      approvers: approverList,
     );
+  }
+
+  LogbookApprovalModel? get rejectedApproval {
+    for (final approval in approvers) {
+      if (approval.status.toLowerCase() == 'rejected') {
+        return approval;
+      }
+    }
+    return null;
   }
 
   static int _safeInt(dynamic value) {
     if (value is int) return value;
     if (value is String) return int.tryParse(value) ?? 0;
-    if (value == null) return 0;
     return 0;
   }
 
@@ -70,36 +125,17 @@ class LogbookModel {
     return value.toString();
   }
 
-  static String _convertToString(dynamic value) {
+  static String _convertTime(dynamic value) {
     if (value is String) {
       if (value.isEmpty) return '00:00';
-      if (value.contains(':') && value.split(':').length == 3) {
-        List<String> parts = value.split(':');
-        return '${parts[0]}:${parts[1]}';
+      final parts = value.split(':');
+      if (parts.length >= 2) {
+        return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
       }
       return value;
     }
-    if (value is int) {
-      if (value == 0) return '00:00';
-      String str = value.toString().padLeft(4, '0');
-      return '${str.substring(0, 2)}:${str.substring(2, 4)}';
-    }
+
     if (value == null) return '00:00';
     return value.toString();
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'tanggal': tanggal,
-      'keterangan': keterangan,
-      'mulai': mulai,
-      'selesai': selesai,
-      'dokumentasi': dokumentasi,
-      'status': status,
-      'your_approval_status': yourApprovalStatus,
-      'user_name': userName,
-    };
   }
 }

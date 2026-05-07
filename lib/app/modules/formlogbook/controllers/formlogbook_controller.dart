@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:plp/app/modules/isilogbook/controllers/isilogbook_controller.dart';
 import 'package:plp/service/logbook_service.dart';
 
 class FormlogbookController extends GetxController {
@@ -15,25 +16,61 @@ class FormlogbookController extends GetxController {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
+  bool _isMissingLogbookError(Object error) {
+    final message = error.toString().toLowerCase();
+    return message.contains('no query results for model') ||
+        message.contains('404') ||
+        message.contains('tidak ditemukan');
+  }
+
+  String formatTanggalForField(String rawDate) {
+    if (rawDate.contains('-')) {
+      final parts = rawDate.split('-');
+      if (parts.length == 3) {
+        return '${parts[2].padLeft(2, '0')}/${parts[1].padLeft(2, '0')}/${parts[0]}';
+      }
+    }
+    return rawDate;
+  }
+
   Future<void> submitLogbook() async {
     isLoading.value = true;
 
     try {
       if (idLogbook.value != null) {
-        Get.snackbar('Error', 'Form ini hanya untuk tambah logbook');
-        return;
+        await LogbookService.updateLogbook(
+          idLogbook.value!,
+          tanggal: tanggal.value,
+          keterangan: keterangan.value,
+          mulai: mulai.value,
+          selesai: selesai.value,
+          dokumentasi: dokumentasi.value,
+        );
+      } else {
+        await LogbookService.createLogbookRaw(
+          tanggal: tanggal.value,
+          keterangan: keterangan.value,
+          mulai: mulai.value,
+          selesai: selesai.value,
+          dokumentasi: dokumentasi.value,
+        );
       }
-
-      await LogbookService.createLogbookRaw(
-        tanggal: tanggal.value,
-        keterangan: keterangan.value,
-        mulai: mulai.value,
-        selesai: selesai.value,
-        dokumentasi: dokumentasi.value,
-      );
 
       Get.back(result: true);
     } catch (e) {
+      if (_isMissingLogbookError(e)) {
+        if (Get.isRegistered<IsilogbookController>()) {
+          await Get.find<IsilogbookController>().fetchLogbookData();
+        }
+
+        Get.back();
+        Get.snackbar(
+          'Info',
+          'Logbook yang ingin diedit sudah berubah atau tidak ada lagi. Daftar logbook dimuat ulang.',
+        );
+        return;
+      }
+
       Get.snackbar('Gagal', e.toString());
     } finally {
       isLoading.value = false;

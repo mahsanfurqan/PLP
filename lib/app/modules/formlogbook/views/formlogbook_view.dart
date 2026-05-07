@@ -10,12 +10,18 @@ class FormlogbookView extends GetView<FormlogbookController> {
 
   @override
   Widget build(BuildContext context) {
-    // Controller Text Field
     final tanggalC = TextEditingController();
     final mulaiC = TextEditingController();
     final selesaiC = TextEditingController();
     final keteranganC = TextEditingController();
     final dokumentasiC = TextEditingController();
+    final isEditMode = controller.idLogbook.value != null;
+
+    tanggalC.text = controller.formatTanggalForField(controller.tanggal.value);
+    mulaiC.text = controller.mulai.value;
+    selesaiC.text = controller.selesai.value;
+    keteranganC.text = controller.keterangan.value;
+    dokumentasiC.text = controller.dokumentasi.value;
 
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +30,7 @@ class FormlogbookView extends GetView<FormlogbookController> {
           onPressed: () => Get.back(),
         ),
         title: const Text(
-          'Logbook Anda',
+          'Form Logbook',
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -125,12 +131,27 @@ class FormlogbookView extends GetView<FormlogbookController> {
             ),
             const SizedBox(height: 32),
 
+            if (isEditMode)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF4E5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'Setelah logbook diperbaiki, status validasi akan kembali menunggu pembimbing dan guru.',
+                  style: TextStyle(color: Color(0xFF8A5A00)),
+                ),
+              ),
+
             Obx(
               () =>
                   controller.isLoading.value
                       ? const Center(child: CircularProgressIndicator())
                       : CustomButtonAction(
-                        text: 'SIMPAN',
+                        text: isEditMode ? 'SIMPAN PERBAIKAN' : 'SIMPAN',
                         color: const Color(0xFFF6AA1C),
                         shadowColor: const Color(0xFFD68718),
                         onPressed: () {
