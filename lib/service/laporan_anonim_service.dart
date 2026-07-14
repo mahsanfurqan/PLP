@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
@@ -102,21 +101,15 @@ class LaporanAnonimService {
     throw Exception(_extractErrorMessage(decoded));
   }
 
-  static String normalizeEvidenceImageUrl(String imageUrl) {
-    final uri = Uri.tryParse(imageUrl);
-    if (uri == null) return imageUrl;
+  static Future<Uint8List> fetchEvidenceImageBytes(int reportId) async {
+    final token = _getToken();
+    if (token == null) throw Exception('Token tidak ditemukan.');
 
-    if (Platform.isAndroid &&
-        (uri.host == 'localhost' || uri.host == '127.0.0.1')) {
-      return uri.replace(host: '10.0.2.2').toString();
-    }
-
-    return imageUrl;
-  }
-
-  static Future<Uint8List> fetchEvidenceImageBytes(String imageUrl) async {
     final response = await http
-        .get(Uri.parse(normalizeEvidenceImageUrl(imageUrl)))
+        .get(
+          Uri.parse('$_baseUrl/laporan-anonim/$reportId/evidence'),
+          headers: {'Accept': 'image/*', 'Authorization': 'Bearer $token'},
+        )
         .timeout(Duration(seconds: AppConfig.requestTimeout));
 
     if (response.statusCode == 200) {

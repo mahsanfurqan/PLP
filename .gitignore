@@ -47,5 +47,35 @@ app.*.map.json
 # FVM Version Cache
 .fvm/
 
+# Local development environments and temporary extraction files
+.venv/
+.docx_extract/
+.vscode/
+
+# Local Android/Gradle state
+android/.gradle/
+android/local.properties
+
+# Generated application packages and delivery archives
+*.apk
+*.aab
+*.zip
+*.rar
+
+# Research documents and design artifacts (not application source)
+/activitydiagram/
+/classdiagram/
+/image/
+/sequencediagram/
+/skripsi/
+/use_case_scenario/
+/wireframe/
+/backend_laporan_files/
+/DOKUMENTASI_FITUR.md
+/LAPORAN_PKL.md
+/PENJELASAN_FITUR_CRUD.md
+/ProposalSkripsi_*.pdf
+/flutter_01.png
+
 # Ignore backend project folder
 /Sistem-PLP/

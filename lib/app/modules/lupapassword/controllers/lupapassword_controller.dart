@@ -6,6 +6,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:plp/service/auth_service.dart';
 import 'package:plp/config/email_config.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class LupapasswordController extends GetxController {
   var emailController = TextEditingController();
@@ -53,12 +54,12 @@ class LupapasswordController extends GetxController {
 
   void sendOTP() async {
     if (emailController.text.isEmpty) {
-      Get.snackbar("Error", "Email tidak boleh kosong");
+      AppSnackbar.show("Error", "Email tidak boleh kosong");
       return;
     }
 
     if (!emailController.text.endsWith('ub.ac.id')) {
-      Get.snackbar(
+      AppSnackbar.show(
         "Error",
         "Hanya email dengan domain .ub.ac.id yang diperbolehkan!",
       );
@@ -83,7 +84,7 @@ class LupapasswordController extends GetxController {
         // If API call is successful, send OTP via email
         await _sendOTPEmail(email.value, otp.value);
 
-        Get.snackbar("Berhasil", "Kode OTP telah dikirim ke email Anda");
+        AppSnackbar.show("Berhasil", "Kode OTP telah dikirim ke email Anda");
 
         // Navigate to OTP verification screen with email and OTP
         Get.toNamed(
@@ -96,13 +97,13 @@ class LupapasswordController extends GetxController {
         );
       } else {
         final error = jsonDecode(response.body);
-        Get.snackbar(
+        AppSnackbar.show(
           "Gagal",
           error['message'] ?? 'Terjadi kesalahan saat mengirim OTP',
         );
       }
     } catch (e) {
-      Get.snackbar("Error", "Gagal mengirim OTP. Silakan coba lagi nanti.");
+      AppSnackbar.show("Error", "Gagal mengirim OTP. Silakan coba lagi nanti.");
     } finally {
       isSendingOTP.value = false;
     }

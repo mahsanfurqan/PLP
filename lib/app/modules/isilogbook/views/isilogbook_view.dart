@@ -5,6 +5,7 @@ import 'package:plp/models/logbook_model.dart';
 import 'package:plp/widget/custom_button.dart';
 
 import '../controllers/isilogbook_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class IsilogbookView extends GetView<IsilogbookController> {
   const IsilogbookView({super.key});
@@ -46,37 +47,45 @@ class IsilogbookView extends GetView<IsilogbookController> {
               return const Center(child: Text('Belum ada logbook'));
             }
 
+            final filteredLogbooks = controller.filteredLogbookList;
+
             return RefreshIndicator(
               onRefresh: controller.fetchLogbookData,
-              child: ListView.builder(
+              child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
-                itemCount: controller.logbookList.length,
-                itemBuilder: (context, index) {
-                  final logbook = controller.logbookList[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _LogbookCard(
-                      logbook: logbook,
-                      durationText: controller.calculateDuration(
-                        logbook.mulai,
-                        logbook.selesai,
-                      ),
-                      onDelete: () {
-                        Get.defaultDialog(
-                          title: 'Konfirmasi',
-                          middleText: 'Hapus logbook ini?',
-                          textConfirm: 'Ya',
-                          textCancel: 'Tidak',
-                          onConfirm: () {
-                            Get.back();
-                            controller.deleteLogbook(logbook.id);
+                children: [
+                  _SearchBar(controller: controller),
+                  const SizedBox(height: 14),
+                  if (filteredLogbooks.isEmpty)
+                    const _EmptySearchState()
+                  else
+                    ...List.generate(filteredLogbooks.length, (index) {
+                      final logbook = filteredLogbooks[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _LogbookCard(
+                          logbook: logbook,
+                          durationText: controller.calculateDuration(
+                            logbook.mulai,
+                            logbook.selesai,
+                          ),
+                          onDelete: () {
+                            Get.defaultDialog(
+                              title: 'Konfirmasi',
+                              middleText: 'Hapus logbook ini?',
+                              textConfirm: 'Ya',
+                              textCancel: 'Tidak',
+                              onConfirm: () {
+                                Get.back();
+                                controller.deleteLogbook(logbook.id);
+                              },
+                            );
                           },
-                        );
-                      },
-                      onEdit: () => controller.goToEditLogbook(logbook),
-                    ),
-                  );
-                },
+                          onEdit: () => controller.goToEditLogbook(logbook),
+                        ),
+                      );
+                    }),
+                ],
               ),
             );
           }),
@@ -107,7 +116,8 @@ class IsilogbookView extends GetView<IsilogbookController> {
                                   color: const Color(0xFF58CC02),
                                   shadowColor: Colors.green.shade700,
                                   onTap: () {
-                                    controller.isStartButtonPressed.value = true;
+                                    controller.isStartButtonPressed.value =
+                                        true;
                                     controller.goToTambahLogbook();
                                   },
                                   isPressed:
@@ -124,6 +134,96 @@ class IsilogbookView extends GetView<IsilogbookController> {
         ],
       ),
       bottomNavigationBar: CustomNavbar(),
+    );
+  }
+}
+
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.controller});
+
+  final IsilogbookController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller.searchController,
+      decoration: InputDecoration(
+        hintText: 'Cari kegiatan, tanggal, status, atau catatan...',
+        prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B)),
+        suffixIcon: Obx(
+          () =>
+              controller.searchQuery.value.isNotEmpty
+                  ? IconButton(
+                    onPressed: () {
+                      controller.searchController.clear();
+                      controller.searchQuery.value = '';
+                    },
+                    icon: const Icon(Icons.close, color: Color(0xFF64748B)),
+                  )
+                  : const SizedBox.shrink(),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptySearchState extends StatelessWidget {
+  const _EmptySearchState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.search_off_rounded, size: 40, color: Color(0xFF94A3B8)),
+          SizedBox(height: 12),
+          Text(
+            'Logbook tidak ditemukan',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            'Coba gunakan kata kunci lain seperti tanggal, status, atau isi kegiatan.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFF64748B), height: 1.45),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -185,10 +285,7 @@ class _IntegrityPactView extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Mahasiswa wajib membaca dan menyetujui pakta integritas sebelum mengakses halaman logbook.',
-                  style: TextStyle(
-                    color: Color(0xFFE8EEFF),
-                    height: 1.45,
-                  ),
+                  style: TextStyle(color: Color(0xFFE8EEFF), height: 1.45),
                 ),
               ],
             ),
@@ -218,10 +315,7 @@ class _IntegrityPactView extends StatelessWidget {
                 SizedBox(height: 12),
                 Text(
                   'Saya menyatakan bahwa selama kegiatan PLP berlangsung, saya tidak memiliki hubungan keluarga, kedekatan pribadi yang menimbulkan konflik kepentingan, atau hubungan lain yang dapat memengaruhi objektivitas saya dengan siswa di tempat saya melaksanakan PLP.',
-                  style: TextStyle(
-                    height: 1.6,
-                    color: Color(0xFF334155),
-                  ),
+                  style: TextStyle(height: 1.6, color: Color(0xFF334155)),
                 ),
                 SizedBox(height: 18),
                 _PactSectionTitle(
@@ -249,10 +343,7 @@ class _IntegrityPactView extends StatelessWidget {
                 SizedBox(height: 12),
                 Text(
                   'Persetujuan ini dicatat per akun dan hanya perlu dilakukan satu kali, kecuali ada kebijakan baru dari program PLP.',
-                  style: TextStyle(
-                    height: 1.6,
-                    color: Color(0xFF334155),
-                  ),
+                  style: TextStyle(height: 1.6, color: Color(0xFF334155)),
                 ),
               ],
             ),
@@ -296,7 +387,7 @@ class _IntegrityPactView extends StatelessWidget {
                       shadowColor: const Color(0xFF1D4ED8),
                       onTap: () {
                         if (!controller.integrityPactChecked.value) {
-                          Get.snackbar(
+                          AppSnackbar.show(
                             'Perhatian',
                             'Centang persetujuan terlebih dahulu.',
                           );
@@ -315,10 +406,7 @@ class _IntegrityPactView extends StatelessWidget {
 }
 
 class _PactSectionTitle extends StatelessWidget {
-  const _PactSectionTitle({
-    required this.title,
-    required this.icon,
-  });
+  const _PactSectionTitle({required this.title, required this.icon});
 
   final String title;
   final IconData icon;
@@ -367,10 +455,7 @@ class _PactBullet extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                height: 1.55,
-                color: Color(0xFF334155),
-              ),
+              style: const TextStyle(height: 1.55, color: Color(0xFF334155)),
             ),
           ),
         ],
@@ -681,9 +766,7 @@ class _LogbookCard extends StatelessWidget {
                           logbook.canEdit ? Icons.edit_note : Icons.edit,
                         ),
                         label: Text(
-                          logbook.canEdit
-                              ? 'Perbaiki Logbook'
-                              : 'Edit Logbook',
+                          logbook.canEdit ? 'Perbaiki Logbook' : 'Edit Logbook',
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2563EB),
@@ -786,10 +869,7 @@ class _ApprovalTile extends StatelessWidget {
               color: const Color(0xFFE0E7FF),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.person_outline,
-              color: Color(0xFF4F46E5),
-            ),
+            child: const Icon(Icons.person_outline, color: Color(0xFF4F46E5)),
           ),
           const SizedBox(width: 12),
           Expanded(

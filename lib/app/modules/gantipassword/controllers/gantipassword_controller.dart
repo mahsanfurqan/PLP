@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class GantipasswordController extends GetxController {
   var isPasswordHidden = true.obs;
@@ -22,18 +23,18 @@ class GantipasswordController extends GetxController {
   void confirmPassword() {
     if (newPasswordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
-      Get.snackbar("Error", "Password tidak boleh kosong");
+      AppSnackbar.show("Error", "Password tidak boleh kosong");
       return;
     }
     if (newPasswordController.text != confirmPasswordController.text) {
-      Get.snackbar("Error", "Password tidak cocok");
+      AppSnackbar.show("Error", "Password tidak cocok");
       return;
     }
 
     isConfirming.value = true;
     Future.delayed(const Duration(seconds: 2), () {
       isConfirming.value = false;
-      Get.snackbar("Success", "Password berhasil diubah");
+      AppSnackbar.show("Success", "Password berhasil diubah");
       Get.toNamed('/login');
     });
   }

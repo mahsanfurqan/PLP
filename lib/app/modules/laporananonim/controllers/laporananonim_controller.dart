@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:plp/service/laporan_anonim_service.dart';
 import 'dart:typed_data';
+import 'package:plp/widget/app_snackbar.dart';
 
 class LaporananonimController extends GetxController {
   final studentNameController = TextEditingController();
@@ -48,18 +49,21 @@ class LaporananonimController extends GetxController {
         selectedEvidenceImage.value = picked;
         selectedEvidenceImageBytes.value = bytes;
       } else {
-        Get.snackbar('Info', 'Pemilihan gambar dibatalkan');
+        AppSnackbar.show('Info', 'Pemilihan gambar dibatalkan');
       }
     } catch (e) {
       final message = e.toString();
       if (message.toLowerCase().contains('permission')) {
-        Get.snackbar(
+        AppSnackbar.show(
           'Gagal',
           'Izin galeri belum diberikan. Aktifkan izin Foto/Galeri di pengaturan aplikasi.',
         );
         return;
       }
-      Get.snackbar('Gagal', 'Tidak dapat mengakses galeri perangkat: $message');
+      AppSnackbar.show(
+        'Gagal',
+        'Tidak dapat mengakses galeri perangkat: $message',
+      );
     }
   }
 
@@ -76,7 +80,7 @@ class LaporananonimController extends GetxController {
     if (studentName.isEmpty ||
         incidentDateRaw.isEmpty ||
         incidentDescription.isEmpty) {
-      Get.snackbar('Gagal', 'Lengkapi semua field terlebih dahulu');
+      AppSnackbar.show('Gagal', 'Lengkapi semua field terlebih dahulu');
       return;
     }
 
@@ -99,13 +103,13 @@ class LaporananonimController extends GetxController {
       selectedEvidenceImage.value = null;
       selectedEvidenceImageBytes.value = null;
 
-      Get.snackbar(
+      AppSnackbar.show(
         'Sukses',
         'Laporan berhasil dikirim.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
-      Get.snackbar(
+      AppSnackbar.show(
         'Gagal',
         e.toString().replaceFirst('Exception: ', ''),
         snackPosition: SnackPosition.BOTTOM,

@@ -2,10 +2,19 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plp/app/navbar/navbar_popup_helper.dart';
 import 'dart:developer';
+import 'package:plp/widget/app_snackbar.dart';
 
 class NavbarController extends GetxController {
   final selectedIndex = 0.obs;
   final role = 'Observer'.obs;
+
+  static NavbarController ensureRegistered() {
+    if (Get.isRegistered<NavbarController>()) {
+      return Get.find<NavbarController>();
+    }
+
+    return Get.put(NavbarController());
+  }
 
   @override
   void onInit() {
@@ -49,7 +58,7 @@ class NavbarController extends GetxController {
         isScrollControlled: true,
       );
     } else if (role.value == 'Observer') {
-      Get.snackbar(
+      AppSnackbar.show(
         "Akses Terbatas",
         "Anda masuk sebagai observer. Silakan buat akun terlebih dahulu.",
         snackPosition: SnackPosition.TOP,

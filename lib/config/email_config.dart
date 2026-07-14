@@ -3,7 +3,8 @@ class EmailConfig {
   static const String mailHost = 'live.smtp.mailtrap.io';
   static const int mailPort = 587;
   static const String mailUsername = 'smtp@mailtrap.io';
-  static const String mailPassword = '8257c0afaee3d2cf649833256a950d3c';
+  // Supply this at build/run time with --dart-define=MAIL_PASSWORD=...
+  static const String mailPassword = String.fromEnvironment('MAIL_PASSWORD');
   static const String mailFromAddress = 'no-reply@demomailtrap.co';
   static const String mailFromName = 'PLP App';
 

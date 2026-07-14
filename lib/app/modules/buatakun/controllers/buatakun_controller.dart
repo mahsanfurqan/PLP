@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plp/service/akun_service.dart';
 import 'package:flutter/material.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class BuatakunController extends GetxController {
   // Form fields
@@ -81,7 +82,7 @@ class BuatakunController extends GetxController {
 
       // Specific validation messages
       if (name.value.isEmpty) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Nama harus diisi",
           backgroundColor: Colors.orange,
@@ -90,7 +91,7 @@ class BuatakunController extends GetxController {
         return;
       }
       if (email.value.isEmpty) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Email harus diisi",
           backgroundColor: Colors.orange,
@@ -99,7 +100,7 @@ class BuatakunController extends GetxController {
         return;
       }
       if (!_isValidEmail(email.value)) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Format email tidak valid (contoh: user@example.com)",
           backgroundColor: Colors.orange,
@@ -108,7 +109,7 @@ class BuatakunController extends GetxController {
         return;
       }
       if (password.value.isEmpty) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Password harus diisi",
           backgroundColor: Colors.orange,
@@ -117,7 +118,7 @@ class BuatakunController extends GetxController {
         return;
       }
       if (passwordConfirmation.value.isEmpty) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Konfirmasi password harus diisi",
           backgroundColor: Colors.orange,
@@ -126,7 +127,7 @@ class BuatakunController extends GetxController {
         return;
       }
       if (selectedRole.value.isEmpty) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Validasi",
           "Role harus dipilih",
           backgroundColor: Colors.orange,
@@ -135,7 +136,7 @@ class BuatakunController extends GetxController {
         return;
       }
 
-      Get.snackbar(
+      AppSnackbar.show(
         "Validasi",
         "Mohon lengkapi semua field yang diperlukan",
         backgroundColor: Colors.orange,
@@ -146,7 +147,7 @@ class BuatakunController extends GetxController {
 
     if (password.value != passwordConfirmation.value) {
       print('❌ Password confirmation mismatch');
-      Get.snackbar(
+      AppSnackbar.show(
         "Validasi",
         "Password dan konfirmasi password tidak sama",
         backgroundColor: Colors.red,
@@ -176,7 +177,7 @@ class BuatakunController extends GetxController {
 
       print('✅ Account created successfully: $result');
 
-      Get.snackbar(
+      AppSnackbar.show(
         "Sukses",
         "Akun berhasil dibuat!",
         backgroundColor: Colors.green,
@@ -191,7 +192,7 @@ class BuatakunController extends GetxController {
       Get.offAllNamed('/home');
     } catch (e) {
       print('❌ Error creating account: $e');
-      Get.snackbar(
+      AppSnackbar.show(
         "Error",
         "Gagal membuat akun:\n${e.toString()}",
         backgroundColor: Colors.red,

@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:plp/app/modules/isilogbook/controllers/isilogbook_controller.dart';
+import 'package:plp/app/routes/app_pages.dart';
 import 'package:plp/service/logbook_service.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class FormlogbookController extends GetxController {
   final tanggal = ''.obs;
@@ -11,6 +13,20 @@ class FormlogbookController extends GetxController {
   final idLogbook = RxnInt();
 
   final isLoading = false.obs;
+
+  Future<void> returnToLogbook({bool refresh = false}) async {
+    if (refresh && Get.isRegistered<IsilogbookController>()) {
+      await Get.find<IsilogbookController>().fetchLogbookData();
+    }
+
+    final navigator = Get.key.currentState;
+    if (navigator != null && navigator.canPop()) {
+      Get.back(result: refresh);
+      return;
+    }
+
+    Get.offNamed(Routes.ISILOGBOOK);
+  }
 
   String formatTanggal(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
@@ -56,22 +72,18 @@ class FormlogbookController extends GetxController {
         );
       }
 
-      Get.back(result: true);
+      await returnToLogbook(refresh: true);
     } catch (e) {
       if (_isMissingLogbookError(e)) {
-        if (Get.isRegistered<IsilogbookController>()) {
-          await Get.find<IsilogbookController>().fetchLogbookData();
-        }
-
-        Get.back();
-        Get.snackbar(
+        await returnToLogbook(refresh: true);
+        AppSnackbar.show(
           'Info',
           'Logbook yang ingin diedit sudah berubah atau tidak ada lagi. Daftar logbook dimuat ulang.',
         );
         return;
       }
 
-      Get.snackbar('Gagal', e.toString());
+      AppSnackbar.show('Gagal', e.toString());
     } finally {
       isLoading.value = false;
     }

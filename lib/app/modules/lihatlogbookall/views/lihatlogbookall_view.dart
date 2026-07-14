@@ -13,10 +13,12 @@ class LihatlogbookallView extends GetView<LihatlogbookallController> {
 
   @override
   Widget build(BuildContext context) {
-    final pageController = Get.put(LihatlogbookallController());
+    final pageController = controller;
 
     return Obx(() {
       final activeGroup = pageController.selectedGroup.value;
+      final filteredGroups = pageController.filteredGroups;
+      final filteredLogbooks = pageController.filteredSelectedGroupLogbooks;
 
       return Scaffold(
         backgroundColor: const Color(0xFFF8FAFF),
@@ -35,26 +37,48 @@ class LihatlogbookallView extends GetView<LihatlogbookallController> {
           ),
           centerTitle: true,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: pageController.isLoading.value
-              ? const Center(child: CircularProgressIndicator())
-              : activeGroup == null
-              ? _GroupListSection(
-                groups: pageController.groups,
-                onTap: pageController.openGroup,
-              )
-              : _GroupDetailSection(
-                group: activeGroup,
-                onTapLogbook: (logbook) {
-                  _showLogbookDetail(
-                    context,
-                    logbook,
-                    logbook.userName ?? 'Mahasiswa',
-                  );
-                },
-              ),
-        ),
+        body:
+            pageController.isLoading.value
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                  onRefresh: pageController.fetchGroups,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _SearchBar(
+                        controller: pageController,
+                        activeGroup: activeGroup,
+                      ),
+                      const SizedBox(height: 14),
+                      if (activeGroup == null)
+                        _GroupListSection(
+                          groups: filteredGroups,
+                          searchQuery: pageController.searchQuery.value,
+                          onTap: pageController.openGroup,
+                        )
+                      else
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).size.height -
+                              kToolbarHeight -
+                              220,
+                          child: _GroupDetailSection(
+                            group: activeGroup,
+                            logbooks: filteredLogbooks,
+                            searchQuery: pageController.searchQuery.value,
+                            onTapLogbook: (logbook) {
+                              _showLogbookDetail(
+                                context,
+                                logbook,
+                                logbook.userName ?? 'Mahasiswa',
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
         bottomNavigationBar: const CustomNavbar(),
       );
     });
@@ -84,38 +108,91 @@ class LihatlogbookallView extends GetView<LihatlogbookallController> {
   }
 }
 
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.controller, required this.activeGroup});
+
+  final LihatlogbookallController controller;
+  final LogbookGroupModel? activeGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller.searchController,
+      decoration: InputDecoration(
+        hintText:
+            activeGroup == null
+                ? 'Cari kelompok, pembimbing, guru, atau mahasiswa...'
+                : 'Cari mahasiswa, kegiatan, tanggal, atau status logbook...',
+        prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B)),
+        suffixIcon: Obx(
+          () =>
+              controller.searchQuery.value.isNotEmpty
+                  ? IconButton(
+                    onPressed: () {
+                      controller.searchController.clear();
+                      controller.searchQuery.value = '';
+                    },
+                    icon: const Icon(Icons.close, color: Color(0xFF64748B)),
+                  )
+                  : const SizedBox.shrink(),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+        ),
+      ),
+    );
+  }
+}
+
 class _GroupListSection extends StatelessWidget {
   const _GroupListSection({
     required this.groups,
+    required this.searchQuery,
     required this.onTap,
   });
 
   final List<LogbookGroupModel> groups;
+  final String searchQuery;
   final ValueChanged<LogbookGroupModel> onTap;
 
   @override
   Widget build(BuildContext context) {
     if (groups.isEmpty) {
-      return const Center(
-        child: Text(
-          'Belum ada kelompok logbook yang bisa ditampilkan.',
-          textAlign: TextAlign.center,
-        ),
+      return _EmptySearchState(
+        title:
+            searchQuery.isEmpty
+                ? 'Belum ada kelompok logbook'
+                : 'Kelompok tidak ditemukan',
+        description:
+            searchQuery.isEmpty
+                ? 'Data kelompok akan muncul setelah mahasiswa memiliki penugasan dan logbook.'
+                : 'Coba gunakan kata kunci lain seperti nama kelompok, pembimbing, guru, atau mahasiswa.',
       );
     }
 
-    return ListView.builder(
-      itemCount: groups.length,
-      itemBuilder: (context, index) {
+    return Column(
+      children: List.generate(groups.length, (index) {
         final group = groups[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: _GroupCard(
-            group: group,
-            onTap: () => onTap(group),
-          ),
+          child: _GroupCard(group: group, onTap: () => onTap(group)),
         );
-      },
+      }),
     );
   }
 }
@@ -123,10 +200,14 @@ class _GroupListSection extends StatelessWidget {
 class _GroupDetailSection extends StatelessWidget {
   const _GroupDetailSection({
     required this.group,
+    required this.logbooks,
+    required this.searchQuery,
     required this.onTapLogbook,
   });
 
   final LogbookGroupModel group;
+  final List<LogbookModel> logbooks;
+  final String searchQuery;
   final ValueChanged<LogbookModel> onTapLogbook;
 
   @override
@@ -146,33 +227,89 @@ class _GroupDetailSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Expanded(
-          child: group.logbooks.isEmpty
-              ? const Center(
-                child: Text('Belum ada logbook pada kelompok ini.'),
-              )
-              : ListView.builder(
-                itemCount: group.logbooks.length,
-                itemBuilder: (context, index) {
-                  final logbook = group.logbooks[index];
-                  return LogbookCard(
-                    logbook: logbook,
-                    userName: logbook.userName ?? 'Mahasiswa',
-                    index: index,
-                    onTap: () => onTapLogbook(logbook),
-                  );
-                },
-              ),
+          child:
+              logbooks.isEmpty
+                  ? _EmptySearchState(
+                    title:
+                        searchQuery.isEmpty
+                            ? 'Belum ada logbook'
+                            : 'Logbook tidak ditemukan',
+                    description:
+                        searchQuery.isEmpty
+                            ? 'Kelompok ini belum memiliki logbook yang bisa ditampilkan.'
+                            : 'Coba gunakan kata kunci lain seperti nama mahasiswa, tanggal, status, atau isi kegiatan.',
+                  )
+                  : ListView.builder(
+                    itemCount: logbooks.length,
+                    itemBuilder: (context, index) {
+                      final logbook = logbooks[index];
+                      return LogbookCard(
+                        logbook: logbook,
+                        userName: logbook.userName ?? 'Mahasiswa',
+                        index: index,
+                        onTap: () => onTapLogbook(logbook),
+                      );
+                    },
+                  ),
         ),
       ],
     );
   }
 }
 
+class _EmptySearchState extends StatelessWidget {
+  const _EmptySearchState({required this.title, required this.description});
+
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.search_off_rounded,
+            size: 40,
+            color: Color(0xFF94A3B8),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF0F172A),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Color(0xFF64748B), height: 1.45),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _GroupCard extends StatelessWidget {
-  const _GroupCard({
-    required this.group,
-    required this.onTap,
-  });
+  const _GroupCard({required this.group, required this.onTap});
 
   final LogbookGroupModel group;
   final VoidCallback onTap;
@@ -272,27 +409,28 @@ class _GroupCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: group.students
-                    .map(
-                      (student) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          student.name,
-                          style: const TextStyle(
-                            color: Color(0xFF475569),
-                            fontWeight: FontWeight.w500,
+                children:
+                    group.students
+                        .map(
+                          (student) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              student.name,
+                              style: const TextStyle(
+                                color: Color(0xFF475569),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        )
+                        .toList(),
               ),
             ],
           ),
@@ -371,10 +509,7 @@ class _GroupHeader extends StatelessWidget {
 }
 
 class _HeaderMiniCard extends StatelessWidget {
-  const _HeaderMiniCard({
-    required this.title,
-    required this.value,
-  });
+  const _HeaderMiniCard({required this.title, required this.value});
 
   final String title;
   final String value;
@@ -392,10 +527,7 @@ class _HeaderMiniCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: Color(0xFFE8EEFF),
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Color(0xFFE8EEFF), fontSize: 12),
           ),
           const SizedBox(height: 4),
           Text(

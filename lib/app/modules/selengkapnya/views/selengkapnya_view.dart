@@ -5,14 +5,28 @@ import 'package:plp/widget/rounded_menu_item.dart';
 import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/app/navbar/navbar_controller.dart'; // import controller
 import '../controllers/selengkapnya_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class SelengkapnyaView extends GetView<SelengkapnyaController> {
   const SelengkapnyaView({super.key});
 
+  void _showFeatureInDevelopmentSnackbar() {
+    AppSnackbar.show(
+      'Informasi',
+      'Fitur sedang dikembangkan. Nantikan pembaruan berikutnya.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.orange.shade300,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Ambil role dari controller
-    final role = Get.find<NavbarController>().role.value;
+    final navbarController = NavbarController.ensureRegistered();
+    final role = navbarController.role.value;
 
     return Scaffold(
       body: SafeArea(
@@ -45,7 +59,7 @@ class SelengkapnyaView extends GetView<SelengkapnyaController> {
               icon: 'assets/icons/kepalaorang.png',
               label: 'Biodata',
               onTap: () {
-                Get.toNamed('/masukkan-data');
+                _showFeatureInDevelopmentSnackbar();
               },
             ),
 

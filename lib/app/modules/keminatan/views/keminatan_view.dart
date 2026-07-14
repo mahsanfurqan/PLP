@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/widget/custom_button_action.dart';
 import '../controllers/keminatan_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class KeminatanView extends GetView<KeminatanController> {
   const KeminatanView({super.key});
@@ -161,7 +162,10 @@ class KeminatanView extends GetView<KeminatanController> {
               shadowColor: const Color(0xFFD68718),
               onPressed: () {
                 if (namaKeminatanC.text.trim().isEmpty) {
-                  Get.snackbar('Gagal', 'Nama keminatan tidak boleh kosong.');
+                  AppSnackbar.show(
+                    'Gagal',
+                    'Nama keminatan tidak boleh kosong.',
+                  );
                   return;
                 }
 

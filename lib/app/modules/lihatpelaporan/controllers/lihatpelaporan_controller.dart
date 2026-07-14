@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:plp/app/routes/app_pages.dart';
 import 'package:plp/models/laporan_anonim_model.dart';
 import 'package:plp/service/laporan_anonim_service.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class LihatpelaporanController extends GetxController {
   static const int _evidenceAutoRetryCount = 3;
@@ -27,10 +28,10 @@ class LihatpelaporanController extends GetxController {
     final userData = GetStorage().read('user');
     final role = userData?['role']?.toString() ?? 'Observer';
 
-    if (role != 'Dosen Koordinator') {
-      Get.snackbar(
+    if (role != 'Dosen Koordinator' && role != 'Kaprodi') {
+      AppSnackbar.show(
         'Akses Ditolak',
-        'Hanya Dosen Koordinator yang dapat melihat halaman ini.',
+        'Hanya Dosen Koordinator dan Kaprodi yang dapat melihat halaman ini.',
         snackPosition: SnackPosition.TOP,
       );
       Get.offAllNamed(Routes.HOME);
@@ -97,7 +98,7 @@ class LihatpelaporanController extends GetxController {
 
       for (var attempt = 0; attempt < _evidenceAutoRetryCount; attempt++) {
         try {
-          bytes = await LaporanAnonimService.fetchEvidenceImageBytes(imageUrl);
+          bytes = await LaporanAnonimService.fetchEvidenceImageBytes(reportId);
           break;
         } catch (error) {
           lastError = error;
@@ -143,13 +144,13 @@ class LihatpelaporanController extends GetxController {
         );
       }
 
-      Get.snackbar(
+      AppSnackbar.show(
         'Sukses',
         'Laporan ditandai sebagai dibaca.',
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
-      Get.snackbar(
+      AppSnackbar.show(
         'Gagal',
         'Tidak dapat menandai laporan: $e',
         snackPosition: SnackPosition.BOTTOM,

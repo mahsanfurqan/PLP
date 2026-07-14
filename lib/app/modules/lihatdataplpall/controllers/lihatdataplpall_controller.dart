@@ -7,6 +7,7 @@ import 'package:plp/service/pendaftaran_plp_service.dart';
 import 'package:plp/service/smk_service.dart';
 import 'package:plp/service/guru_service.dart'; // tambahkan ini kalau service guru kamu pisah
 import 'package:flutter/material.dart'; // Added for Colors
+import 'package:plp/widget/app_snackbar.dart';
 
 class LihatdataplpallController extends GetxController {
   // 📌 State untuk data pendaftaran PLP
@@ -35,7 +36,10 @@ class LihatdataplpallController extends GetxController {
       final data = await PendaftaranPlpService.getAllPendaftaranPlp();
       pendaftaranList.assignAll(data);
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat data pendaftaran:\n${e.toString()}");
+      AppSnackbar.show(
+        "Error",
+        "Gagal memuat data pendaftaran:\n${e.toString()}",
+      );
     } finally {
       isLoading.value = false;
     }
@@ -57,7 +61,7 @@ class LihatdataplpallController extends GetxController {
       // Fetch Guru Pamong data
       await fetchGuruPamong();
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
+      AppSnackbar.show("Error", "Gagal memuat data dropdown:\n${e.toString()}");
     }
   }
 
@@ -67,7 +71,10 @@ class LihatdataplpallController extends GetxController {
       final result = await GuruPamongService.getAllGuruPamong();
       guruPamongs.assignAll(result.map((e) => UserModel.fromJson(e)).toList());
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat data guru pamong:\n${e.toString()}");
+      AppSnackbar.show(
+        "Error",
+        "Gagal memuat data guru pamong:\n${e.toString()}",
+      );
     }
   }
 
@@ -148,7 +155,7 @@ class LihatdataplpallController extends GetxController {
           idGuruPamong: idGuruPamong,
         );
 
-        Get.snackbar(
+        AppSnackbar.show(
           "Sukses",
           "Assign berhasil dikirim. Data server belum sinkron di respons terbaru, tampilan diperbarui sementara.",
           backgroundColor: Colors.orange,
@@ -158,7 +165,7 @@ class LihatdataplpallController extends GetxController {
         return;
       }
 
-      Get.snackbar(
+      AppSnackbar.show(
         "Sukses",
         "Berhasil meng-assign:\n• SMK: ${getNamaSmk(idSmk)}\n• Dosen: ${getNamaDospem(idDospem)}\n• Guru: ${getNamaGuruPamong(idGuruPamong)}",
         backgroundColor: Colors.green,
@@ -166,7 +173,7 @@ class LihatdataplpallController extends GetxController {
         duration: const Duration(seconds: 4),
       );
     } catch (e) {
-      Get.snackbar(
+      AppSnackbar.show(
         "Error",
         "Gagal meng-assign:\n${_normalizeErrorMessage(e)}",
         backgroundColor: Colors.red,

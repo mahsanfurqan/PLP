@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plp/models/auth_response_model.dart';
 import 'package:plp/service/auth_service.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class CreateprofileController extends GetxController {
   var isPasswordVisible = false.obs;
@@ -15,6 +16,35 @@ class CreateprofileController extends GetxController {
 
   final box = GetStorage();
 
+  bool isUbEmail(String email) {
+    final emailRegex = RegExp(
+      r'^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)*ub\.ac\.id$',
+      caseSensitive: false,
+    );
+    return emailRegex.hasMatch(email.trim());
+  }
+
+  String? validateRegistrationInput({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+  }) {
+    if ([name, email, password, confirmPassword].any((e) => e.trim().isEmpty)) {
+      return 'Semua field harus diisi!';
+    }
+
+    if (!isUbEmail(email)) {
+      return 'Hanya email dengan domain ub.ac.id yang diperbolehkan!';
+    }
+
+    if (password.trim() != confirmPassword.trim()) {
+      return 'Password dan konfirmasi tidak cocok!';
+    }
+
+    return null;
+  }
+
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
@@ -25,13 +55,14 @@ class CreateprofileController extends GetxController {
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
-    if ([name, email, password, confirmPassword].any((e) => e.isEmpty)) {
-      Get.snackbar("Error", "Semua field harus diisi!");
-      return;
-    }
-
-    if (password != confirmPassword) {
-      Get.snackbar("Error", "Password dan konfirmasi tidak cocok!");
+    final validationMessage = validateRegistrationInput(
+      name: name,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+    if (validationMessage != null) {
+      AppSnackbar.show("Error", validationMessage);
       return;
     }
 
@@ -58,17 +89,15 @@ class CreateprofileController extends GetxController {
           'role': result.data?.user.role,
         });
 
-        print("✅ Token register: ${result.data?.token}");
-
-        Get.snackbar("Berhasil", result.message);
+        AppSnackbar.show("Berhasil", result.message);
         Get.toNamed('/login'); // langsung ke home
       } else {
         final result = AuthResponseModel.fromJson(response.body);
-        Get.snackbar("Gagal", result.message);
+        AppSnackbar.show("Gagal", result.message);
       }
     } catch (e) {
       isCreateAccountPressed.value = false;
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+      AppSnackbar.show("Error", "Terjadi kesalahan: $e");
     }
   }
 

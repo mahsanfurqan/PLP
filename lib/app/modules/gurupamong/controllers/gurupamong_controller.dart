@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plp/service/guru_service.dart';
 import 'package:plp/models/user_model.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class GurupamongController extends GetxController {
   var guruList = <UserModel>[].obs;
@@ -19,7 +20,10 @@ class GurupamongController extends GetxController {
       final result = await GuruPamongService.getAllGuruPamong();
       guruList.assignAll(result.map((e) => UserModel.fromJson(e)).toList());
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat data guru pamong:\n${e.toString()}');
+      AppSnackbar.show(
+        'Error',
+        'Gagal memuat data guru pamong:\n${e.toString()}',
+      );
     } finally {
       isLoading.value = false;
     }

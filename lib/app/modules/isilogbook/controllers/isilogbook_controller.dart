@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plp/app/modules/formlogbook/controllers/formlogbook_controller.dart';
@@ -5,10 +6,13 @@ import 'package:plp/app/modules/formlogbook/views/formlogbook_view.dart';
 import 'package:plp/models/logbook_model.dart';
 import 'package:plp/service/logbook_service.dart';
 import 'package:intl/intl.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class IsilogbookController extends GetxController {
   var logbookList = <LogbookModel>[].obs;
   var isLoading = false.obs;
+  final searchController = TextEditingController();
+  final searchQuery = ''.obs;
   final isIntegrityPactLoading = false.obs;
   final isSubmittingIntegrityPact = false.obs;
   final hasAcceptedIntegrityPact = false.obs;
@@ -19,7 +23,47 @@ class IsilogbookController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    searchController.addListener(() {
+      searchQuery.value = searchController.text.trim();
+    });
     initializePage();
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
+  }
+
+  List<LogbookModel> get filteredLogbookList {
+    final query = searchQuery.value.trim().toLowerCase();
+    if (query.isEmpty) {
+      return logbookList;
+    }
+
+    return logbookList.where((logbook) {
+      final approvalTexts =
+          logbook.approvers
+              .map(
+                (approval) =>
+                    '${approval.name} ${approval.role} ${approval.status} ${approval.note}',
+              )
+              .join(' ')
+              .toLowerCase();
+
+      final searchableText =
+          [
+            logbook.keterangan,
+            logbook.tanggal,
+            logbook.mulai,
+            logbook.selesai,
+            logbook.status,
+            logbook.dokumentasi,
+            approvalTexts,
+          ].join(' ').toLowerCase();
+
+      return searchableText.contains(query);
+    }).toList();
   }
 
   Future<void> initializePage() async {
@@ -41,7 +85,7 @@ class IsilogbookController extends GetxController {
         await fetchLogbookData();
       }
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat status pakta integritas: $e");
+      AppSnackbar.show("Error", "Gagal memuat status pakta integritas: $e");
     } finally {
       isIntegrityPactLoading.value = false;
     }
@@ -63,12 +107,12 @@ class IsilogbookController extends GetxController {
       box.write('user', userData);
 
       await fetchLogbookData();
-      Get.snackbar(
+      AppSnackbar.show(
         "Berhasil",
         "Pakta integritas disetujui. Anda sekarang dapat mengakses logbook.",
       );
     } catch (e) {
-      Get.snackbar("Gagal", e.toString());
+      AppSnackbar.show("Gagal", e.toString());
     } finally {
       isSubmittingIntegrityPact.value = false;
     }
@@ -122,7 +166,7 @@ class IsilogbookController extends GetxController {
       final data = await LogbookService.getLogbooks();
       logbookList.assignAll(data);
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat data logbook: $e");
+      AppSnackbar.show("Error", "Gagal memuat data logbook: $e");
     } finally {
       isLoading.value = false;
     }
@@ -133,18 +177,18 @@ class IsilogbookController extends GetxController {
     try {
       await LogbookService.deleteLogbook(id);
       logbookList.removeWhere((l) => l.id == id);
-      Get.snackbar("Sukses", "Logbook berhasil dihapus");
+      AppSnackbar.show("Sukses", "Logbook berhasil dihapus");
     } catch (e) {
       if (_isMissingLogbookError(e)) {
         await fetchLogbookData();
-        Get.snackbar(
+        AppSnackbar.show(
           "Info",
           "Data logbook sudah berubah di server. Daftar dimuat ulang.",
         );
         return;
       }
 
-      Get.snackbar("Error", "Gagal menghapus logbook: $e");
+      AppSnackbar.show("Error", "Gagal menghapus logbook: $e");
     }
   }
 

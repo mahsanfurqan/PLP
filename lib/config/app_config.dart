@@ -1,12 +1,21 @@
 class AppConfig {
-  // true = backend lokal emulator Android, false = backend server
+  // Pilihan backend untuk pengujian:
+  // useNgrokBackend = true  -> akses backend lokal dari HP fisik via ngrok
+  // useLocalBackend = true  -> akses backend lokal dari Android Emulator
+  // keduanya false          -> akses backend server produksi
+  static const bool useNgrokBackend = true;
   static const bool useLocalBackend = true;
 
   // Untuk Android Emulator gunakan 10.0.2.2 ke host Windows
   static const String localBaseUrl = "http://10.0.2.2:8000/api";
-  static const String productionBaseUrl = "http://plp.divisigurutugasduba.com/api";
+  static const String ngrokBaseUrl =
+      "https://arguable-swapping-strength.ngrok-free.dev/api";
+  static const String productionBaseUrl =
+      "http://plp.divisigurutugasduba.com/api";
   static const String baseUrl =
-      useLocalBackend ? localBaseUrl : productionBaseUrl;
+      useNgrokBackend
+          ? ngrokBaseUrl
+          : (useLocalBackend ? localBaseUrl : productionBaseUrl);
 
   // Timeout untuk request (dalam detik)
   static const int requestTimeout = 30;

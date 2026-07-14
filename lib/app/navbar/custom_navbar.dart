@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plp/app/navbar/navbar_popup_helper.dart';
 import 'navbar_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class CustomNavbar extends StatelessWidget {
   const CustomNavbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(NavbarController());
+    final controller = NavbarController.ensureRegistered();
     return Obx(
       () => Container(
         color: Colors.white,
@@ -46,7 +47,7 @@ class CustomNavbar extends StatelessWidget {
                 } else if (index == 2) {
                   // Tambahkan pengecekan role Dosen Pembimbing
                   if (controller.role.value == 'Dosen Pembimbing') {
-                    Get.snackbar(
+                    AppSnackbar.show(
                       'Akses Ditolak',
                       'Anda tidak memiliki akses',
                       snackPosition: SnackPosition.TOP,

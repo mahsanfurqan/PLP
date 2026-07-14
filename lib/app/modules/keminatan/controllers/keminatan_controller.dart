@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plp/service/keminatan_service.dart';
 import 'package:plp/app/navbar/navbar_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class KeminatanController extends GetxController {
   var keminatanList = <Map<String, dynamic>>[].obs;
@@ -21,7 +22,10 @@ class KeminatanController extends GetxController {
       final keminatans = await KeminatanService.getKeminatan();
       keminatanList.assignAll(keminatans);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat data keminatan:\n${e.toString()}');
+      AppSnackbar.show(
+        'Error',
+        'Gagal memuat data keminatan:\n${e.toString()}',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -29,16 +33,16 @@ class KeminatanController extends GetxController {
 
   /// Menambahkan keminatan baru ke server
   Future<void> tambahKeminatan() async {
-    final role = Get.find<NavbarController>().role.value;
+    final role = NavbarController.ensureRegistered().role.value;
     if (role == 'Dosen Pembimbing') {
-      Get.snackbar(
+      AppSnackbar.show(
         'Akses Ditolak',
         'Role Dosen Pembimbing tidak dapat menambah keminatan.',
       );
       return;
     }
     if (namaKeminatanBaru.value.isEmpty) {
-      Get.snackbar('Gagal', 'Nama keminatan tidak boleh kosong.');
+      AppSnackbar.show('Gagal', 'Nama keminatan tidak boleh kosong.');
       return;
     }
 
@@ -46,11 +50,14 @@ class KeminatanController extends GetxController {
       isSubmitting.value = true;
       await KeminatanService.addKeminatan(namaKeminatanBaru.value);
 
-      Get.snackbar('Sukses', 'Keminatan berhasil ditambahkan.');
+      AppSnackbar.show('Sukses', 'Keminatan berhasil ditambahkan.');
       fetchKeminatan(); // Refresh list setelah tambah
       namaKeminatanBaru.value = ''; // Reset input
     } catch (e) {
-      Get.snackbar('Gagal', 'Gagal menambahkan keminatan:\n${e.toString()}');
+      AppSnackbar.show(
+        'Gagal',
+        'Gagal menambahkan keminatan:\n${e.toString()}',
+      );
     } finally {
       isSubmitting.value = false;
     }

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plp/service/smk_service.dart';
 import 'package:plp/models/smk_model.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class SmkController extends GetxController {
   final isLoading = false.obs;
@@ -22,7 +23,7 @@ class SmkController extends GetxController {
       final data = await SmkService.getSmks();
       smkList.assignAll(data);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat daftar SMK:\n${e.toString()}');
+      AppSnackbar.show('Error', 'Gagal memuat daftar SMK:\n${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -30,7 +31,7 @@ class SmkController extends GetxController {
 
   Future<void> tambahSmk() async {
     if (namaSmkBaru.value.isEmpty) {
-      Get.snackbar('Error', 'Nama SMK tidak boleh kosong.');
+      AppSnackbar.show('Error', 'Nama SMK tidak boleh kosong.');
       return;
     }
 
@@ -38,12 +39,12 @@ class SmkController extends GetxController {
       isSubmitting.value = true;
       await SmkService.addSmk(namaSmkBaru.value);
 
-      Get.snackbar('Sukses', 'SMK berhasil ditambahkan.');
+      AppSnackbar.show('Sukses', 'SMK berhasil ditambahkan.');
       namaSmkBaru.value = '';
 
       fetchSmkList();
     } catch (e) {
-      Get.snackbar('Gagal', 'Gagal menambahkan SMK:\n${e.toString()}');
+      AppSnackbar.show('Gagal', 'Gagal menambahkan SMK:\n${e.toString()}');
     } finally {
       isSubmitting.value = false;
     }

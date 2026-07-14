@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plp/app/navbar/navbar_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 // ==== LOGBOOK ====
 
@@ -29,7 +30,7 @@ class LogbookBottomSheet extends StatelessWidget {
               if (role == 'Mahasiswa') {
                 Get.toNamed('/isilogbook');
               } else {
-                Get.snackbar(
+                AppSnackbar.show(
                   "Akses Ditolak",
                   "Hanya Mahasiswa yang dapat mengisi logbook.",
                   snackPosition: SnackPosition.TOP,
@@ -49,7 +50,7 @@ class AdminLogbookValidationSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil role dari NavbarController
-    final role = Get.find<NavbarController>().role.value;
+    final role = NavbarController.ensureRegistered().role.value;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
@@ -100,8 +101,8 @@ class AdminLogbookValidationSheet extends StatelessWidget {
               },
             ),
 
-          if (role == 'Dosen Koordinator') const Divider(),
-          if (role == 'Dosen Koordinator')
+          if (role == 'Dosen Koordinator' || role == 'Kaprodi') const Divider(),
+          if (role == 'Dosen Koordinator' || role == 'Kaprodi')
             ListTile(
               leading: const Icon(
                 Icons.assignment,
@@ -181,7 +182,7 @@ class AdminLihatKelengkapanSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil role dari NavbarController
-    final role = Get.find<NavbarController>().role.value;
+    final role = NavbarController.ensureRegistered().role.value;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(

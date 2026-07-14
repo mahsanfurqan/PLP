@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class OtpController extends GetxController {
   var isVerifying = false.obs;
@@ -14,13 +15,16 @@ class OtpController extends GetxController {
       otpError.value = "Masukkan 4 digit OTP";
     } else {
       otpError.value = "";
-      Get.snackbar("Berhasil", "Silahkan ganti password Anda");
+      AppSnackbar.show("Berhasil", "Silahkan ganti password Anda");
       Get.toNamed('/gantipassword');
     }
   }
 
   void resendOTP() {
-    Get.snackbar("OTP Dikirim", "Kode OTP baru telah dikirim ke email Anda.");
+    AppSnackbar.show(
+      "OTP Dikirim",
+      "Kode OTP baru telah dikirim ke email Anda.",
+    );
   }
 
   void onInit() {

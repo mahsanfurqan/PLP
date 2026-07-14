@@ -4,6 +4,7 @@ import 'package:plp/app/navbar/custom_navbar.dart';
 import 'package:plp/models/logbook_model.dart';
 
 import '../controllers/validasilogbook_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class ValidasilogbookView extends GetView<ValidasilogbookController> {
   const ValidasilogbookView({super.key});
@@ -13,7 +14,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
 
     final pending = controller.pendingCount;
     if (pending == 0) {
-      Get.snackbar(
+      AppSnackbar.show(
         'Info',
         'Tidak ada logbook pending untuk disetujui.',
         snackPosition: SnackPosition.BOTTOM,
@@ -32,7 +33,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
     if (result.totalTarget == 0) return;
 
     if (result.failedCount == 0) {
-      Get.snackbar(
+      AppSnackbar.show(
         'Sukses',
         'Berhasil menyetujui ${result.successCount} logbook.',
         snackPosition: SnackPosition.BOTTOM,
@@ -40,7 +41,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
         colorText: Colors.white,
       );
     } else {
-      Get.snackbar(
+      AppSnackbar.show(
         'Selesai dengan catatan',
         'Sukses: ${result.successCount}, Gagal: ${result.failedCount}',
         snackPosition: SnackPosition.BOTTOM,
@@ -136,6 +137,8 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
           );
         }
 
+        final filteredLogbooks = controller.filteredLogbooks;
+
         return Column(
           children: [
             if (controller.isBulkApproving.value)
@@ -147,28 +150,48 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
                 pending: controller.pendingCount,
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+              child: _SearchBar(controller: controller),
+            ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                itemCount: controller.logbooks.length,
-                itemBuilder: (context, index) {
-                  final logbook = controller.logbooks[index];
+              child: RefreshIndicator(
+                onRefresh: controller.fetchLogbooksValidasi,
+                child:
+                    filteredLogbooks.isEmpty
+                        ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                          children: const [_EmptySearchState()],
+                        )
+                        : ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          itemCount: filteredLogbooks.length,
+                          itemBuilder: (context, index) {
+                            final logbook = filteredLogbooks[index];
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _ValidationCard(
-                      logbook: logbook,
-                      isBusy: controller.isBulkApproving.value,
-                      onApprove: () => _onValidatePressed(
-                        context,
-                        logbook.id,
-                        'approved',
-                      ),
-                      onReject: () => _showRejectDialog(context, logbook),
-                      onTap: () => _showLogbookDetailDialog(context, logbook),
-                    ),
-                  );
-                },
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _ValidationCard(
+                                logbook: logbook,
+                                isBusy: controller.isBulkApproving.value,
+                                onApprove:
+                                    () => _onValidatePressed(
+                                      context,
+                                      logbook.id,
+                                      'approved',
+                                    ),
+                                onReject:
+                                    () => _showRejectDialog(context, logbook),
+                                onTap:
+                                    () => _showLogbookDetailDialog(
+                                      context,
+                                      logbook,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
               ),
             ),
           ],
@@ -217,7 +240,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
                 onPressed: () async {
                   final note = noteController.text.trim();
                   if (note.isEmpty) {
-                    Get.snackbar(
+                    AppSnackbar.show(
                       'Catatan wajib',
                       'Isi alasan penolakan terlebih dahulu.',
                       snackPosition: SnackPosition.BOTTOM,
@@ -262,7 +285,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
     );
 
     if (success) {
-      Get.snackbar(
+      AppSnackbar.show(
         'Sukses',
         action == 'approved'
             ? 'Logbook disetujui'
@@ -272,7 +295,7 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
         colorText: Colors.white,
       );
     } else {
-      Get.snackbar(
+      AppSnackbar.show(
         'Gagal',
         action == 'approved'
             ? 'Gagal menyetujui logbook'
@@ -368,6 +391,96 @@ class ValidasilogbookView extends GetView<ValidasilogbookController> {
       default:
         return 'Menunggu';
     }
+  }
+}
+
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.controller});
+
+  final ValidasilogbookController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller.searchController,
+      decoration: InputDecoration(
+        hintText: 'Cari mahasiswa, kegiatan, tanggal, atau catatan...',
+        prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B)),
+        suffixIcon: Obx(
+          () =>
+              controller.searchQuery.value.isNotEmpty
+                  ? IconButton(
+                    onPressed: () {
+                      controller.searchController.clear();
+                      controller.searchQuery.value = '';
+                    },
+                    icon: const Icon(Icons.close, color: Color(0xFF64748B)),
+                  )
+                  : const SizedBox.shrink(),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptySearchState extends StatelessWidget {
+  const _EmptySearchState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10000000),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.search_off_rounded, size: 40, color: Color(0xFF94A3B8)),
+          SizedBox(height: 12),
+          Text(
+            'Logbook tidak ditemukan',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            'Coba gunakan kata kunci lain seperti nama mahasiswa, tanggal, atau isi kegiatan.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFF64748B), height: 1.45),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:plp/widget/custom_button_action.dart';
 import 'package:plp/widget/custom_text_field.dart';
 import 'package:plp/widget/input_formatters.dart';
 import '../controllers/formlogbook_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class FormlogbookView extends GetView<FormlogbookController> {
   const FormlogbookView({super.key});
@@ -27,7 +28,7 @@ class FormlogbookView extends GetView<FormlogbookController> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
+          onPressed: () => controller.returnToLogbook(),
         ),
         title: const Text(
           'Form Logbook',
@@ -171,7 +172,7 @@ class FormlogbookView extends GetView<FormlogbookController> {
                               controller.mulai.value.isEmpty ||
                               controller.selesai.value.isEmpty ||
                               controller.keterangan.value.isEmpty) {
-                            Get.snackbar(
+                            AppSnackbar.show(
                               'Gagal',
                               'Lengkapi semua field terlebih dahulu',
                             );

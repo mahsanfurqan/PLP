@@ -4,6 +4,7 @@ import 'package:plp/service/pendaftaran_plp_service.dart';
 import 'package:plp/service/keminatan_service.dart';
 import 'package:plp/service/smk_service.dart';
 import 'package:plp/models/smk_model.dart'; // Tambahkan import SmkModel
+import 'package:plp/widget/app_snackbar.dart';
 
 class PendaftaranplpController extends GetxController {
   final isSubmitting = false.obs;
@@ -50,7 +51,7 @@ class PendaftaranplpController extends GetxController {
       smkList.assignAll(smks);
     } catch (e) {
       Get.log("🔴 Error saat fetchDropdownData: $e", isError: true);
-      Get.snackbar("Error", "Gagal memuat data dropdown:\n${e.toString()}");
+      AppSnackbar.show("Error", "Gagal memuat data dropdown:\n${e.toString()}");
     }
   }
 
@@ -59,18 +60,18 @@ class PendaftaranplpController extends GetxController {
       final status = await PendaftaranPlpService.cekSudahDaftar();
       if (status) {
         sudahDaftar.value = true;
-        Get.snackbar("Info", "Anda sudah terdaftar untuk PLP.");
+        AppSnackbar.show("Info", "Anda sudah terdaftar untuk PLP.");
       } else {
         sudahDaftar.value = false;
       }
     } catch (e) {
       final errorMsg = e.toString();
       if (errorMsg.contains("berhasil dibuat")) {
-        Get.snackbar("Sukses", "Pendaftaran berhasil.");
+        AppSnackbar.show("Sukses", "Pendaftaran berhasil.");
         Get.offAllNamed(Routes.HOME);
       } else {
         print("Error during cekStatusPendaftaran: $e");
-        Get.snackbar("Gagal", "Gagal mengecek pendaftaran:\n$errorMsg");
+        AppSnackbar.show("Gagal", "Gagal mengecek pendaftaran:\n$errorMsg");
       }
     }
   }
@@ -80,26 +81,26 @@ class PendaftaranplpController extends GetxController {
     isSubmitting.value = true;
 
     if (selectedKeminatanId.value == null) {
-      Get.snackbar("Error", "Keminatan belum dipilih.");
+      AppSnackbar.show("Error", "Keminatan belum dipilih.");
       isSubmitting.value = false;
       return;
     }
 
     if (selectedNilaiPlp1.value.isEmpty || selectedNilaiMicro.value.isEmpty) {
-      Get.snackbar("Error", "Nilai PLP 1 dan Micro Teaching harus diisi.");
+      AppSnackbar.show("Error", "Nilai PLP 1 dan Micro Teaching harus diisi.");
       isSubmitting.value = false;
       return;
     }
 
     if (selectedSmk1Id.value == null || selectedSmk2Id.value == null) {
-      Get.snackbar("Error", "Silakan pilih dua SMK.");
+      AppSnackbar.show("Error", "Silakan pilih dua SMK.");
       isSubmitting.value = false;
       return;
     }
 
     if (sudahDaftar.value) {
       isSubmitting.value = false;
-      Get.snackbar("Info", "Anda sudah terdaftar untuk PLP.");
+      AppSnackbar.show("Info", "Anda sudah terdaftar untuk PLP.");
       return;
     }
 
@@ -113,17 +114,17 @@ class PendaftaranplpController extends GetxController {
       );
 
       if (pendaftaran != null) {
-        Get.snackbar(
+        AppSnackbar.show(
           "Sukses",
           "Pendaftaran berhasil dengan ID ${pendaftaran.id}",
         );
         Get.offAllNamed(Routes.HOME);
       } else {
-        Get.snackbar("Gagal", "Pendaftaran gagal. Silakan coba lagi.");
+        AppSnackbar.show("Gagal", "Pendaftaran gagal. Silakan coba lagi.");
       }
     } catch (e) {
       print("Error during submitPendaftaran: $e");
-      Get.snackbar("Gagal", "Pendaftaran gagal:\n${e.toString()}");
+      AppSnackbar.show("Gagal", "Pendaftaran gagal:\n${e.toString()}");
     } finally {
       isSubmitting.value = false;
     }

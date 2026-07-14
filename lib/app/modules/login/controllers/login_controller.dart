@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:plp/models/simple_login_response.dart';
 import 'package:plp/service/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class LoginController extends GetxController {
   var isPasswordVisible = false.obs;
@@ -16,25 +17,53 @@ class LoginController extends GetxController {
 
   final box = GetStorage();
 
+  bool isUbEmail(String email) {
+    final emailRegex = RegExp(
+      r'^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)*ub\.ac\.id$',
+      caseSensitive: false,
+    );
+    return emailRegex.hasMatch(email.trim());
+  }
+
+  String? validateLoginInput({
+    required String email,
+    required String password,
+  }) {
+    final trimmedEmail = email.trim();
+    final trimmedPassword = password.trim();
+
+    if (trimmedEmail.isEmpty || trimmedPassword.isEmpty) {
+      return 'Email dan password wajib diisi!';
+    }
+
+    if (!isUbEmail(trimmedEmail)) {
+      return 'Hanya email dengan domain .ub.ac.id yang diperbolehkan!';
+    }
+
+    return null;
+  }
+
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
+  void _showSingleSnackbar(String title, String message) {
+    if (AppSnackbar.isShowing) return;
+    AppSnackbar.show(title, message);
+  }
+
   Future<void> login() async {
+    if (isLoginPressed.value) return;
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      Get.snackbar("Error", "Email dan password wajib diisi!");
-      return;
-    }
-
-    // Validate email format
-    if (!email.endsWith('ub.ac.id')) {
-      Get.snackbar(
-        "Error",
-        "Hanya email dengan domain .ub.ac.id yang diperbolehkan!",
-      );
+    final validationMessage = validateLoginInput(
+      email: email,
+      password: password,
+    );
+    if (validationMessage != null) {
+      _showSingleSnackbar("Error", validationMessage);
       return;
     }
 
@@ -68,16 +97,16 @@ class LoginController extends GetxController {
               jsonResponse['integrity_pact_accepted_at'],
         });
 
-        Get.snackbar("Berhasil", result.status);
+        _showSingleSnackbar("Berhasil", result.status);
         Get.offAllNamed('/home');
       } else {
         final json = jsonDecode(response.body);
         final message = json['message'] ?? 'Login gagal';
-        Get.snackbar("Gagal", message);
+        _showSingleSnackbar("Gagal", message);
       }
     } catch (e) {
       isLoginPressed.value = false;
-      Get.snackbar("Error", "Terjadi kesalahan: $e");
+      _showSingleSnackbar("Error", "Terjadi kesalahan: $e");
     }
   }
 
@@ -90,7 +119,7 @@ class LoginController extends GetxController {
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
-      Get.snackbar('Error', 'Tidak dapat membuka halaman lupa password');
+      AppSnackbar.show('Error', 'Tidak dapat membuka halaman lupa password');
     }
   }
 }

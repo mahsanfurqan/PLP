@@ -39,7 +39,7 @@ class CreateprofileView extends GetView<CreateprofileController> {
 
             // Email
             CustomTextField(
-              hintText: "Email",
+              hintText: "Email ub.ac.id",
               controller: controller.emailController,
             ),
             const SizedBox(height: 10),

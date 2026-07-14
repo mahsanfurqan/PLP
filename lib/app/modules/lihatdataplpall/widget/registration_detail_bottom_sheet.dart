@@ -6,6 +6,7 @@ import 'package:plp/models/user_model.dart';
 import '../controllers/lihatdataplpall_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:plp/app/navbar/navbar_controller.dart';
+import 'package:plp/widget/app_snackbar.dart';
 
 class RegistrationDetailBottomSheet extends StatelessWidget {
   final PendaftaranPlpModel registration;
@@ -25,7 +26,7 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navbarController = Get.find<NavbarController>();
+    final navbarController = NavbarController.ensureRegistered();
     final userRole = navbarController.role.value;
     final isAkademik = userRole == 'Akademik';
 
@@ -483,7 +484,7 @@ class RegistrationDetailBottomSheet extends StatelessWidget {
                               if (selectedSmk.value == null ||
                                   selectedDospem.value == null ||
                                   selectedGuruPamong.value == null) {
-                                Get.snackbar(
+                                AppSnackbar.show(
                                   "Validasi",
                                   "Mohon pilih SMK, Dosen Pembimbing, dan Guru Pamong",
                                 );

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plp/models/logbook_model.dart';
 import 'package:plp/service/logbook_service.dart';
@@ -19,11 +20,22 @@ class ValidasilogbookController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var isBulkApproving = false.obs;
+  final searchController = TextEditingController();
+  final searchQuery = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+    searchController.addListener(() {
+      searchQuery.value = searchController.text.trim();
+    });
     fetchLogbooksValidasi();
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 
   Future<void> fetchLogbooksValidasi() async {
@@ -50,6 +62,40 @@ class ValidasilogbookController extends GetxController {
   }
 
   int get pendingCount => logbooks.where(_isPendingForCurrentApprover).length;
+
+  List<LogbookModel> get filteredLogbooks {
+    final query = searchQuery.value.trim().toLowerCase();
+    if (query.isEmpty) {
+      return logbooks;
+    }
+
+    return logbooks.where((logbook) {
+      final approvalTexts =
+          logbook.approvers
+              .map(
+                (approval) =>
+                    '${approval.name} ${approval.role} ${approval.status} ${approval.note}',
+              )
+              .join(' ')
+              .toLowerCase();
+
+      final searchableText =
+          [
+            logbook.userName ?? '',
+            logbook.keterangan,
+            logbook.tanggal,
+            logbook.mulai,
+            logbook.selesai,
+            logbook.status,
+            logbook.yourApprovalStatus,
+            logbook.yourNote,
+            logbook.dokumentasi,
+            approvalTexts,
+          ].join(' ').toLowerCase();
+
+      return searchableText.contains(query);
+    }).toList();
+  }
 
   Future<bool> _validateLogbookWithoutRefresh(
     int id,
